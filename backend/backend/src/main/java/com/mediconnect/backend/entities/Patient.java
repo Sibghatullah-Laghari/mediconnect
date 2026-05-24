@@ -6,10 +6,10 @@ public class Patient {
     private String patientEmail;
     private String patientPhone;
     private String patientAge;
-    private String patientGender;
+    private Gender patientGender;
     private String patientAddress;
 
-    public Patient(String patientName, String patientId, String patientEmail, String patientPhone, String patientAge, String patientGender, String patientAddress) {
+    public Patient(String patientName, String patientId, String patientEmail, String patientPhone, String patientAge, Gender patientGender, String patientAddress) {
         this.patientName = patientName;
         this.patientId = patientId;
         this.patientEmail = patientEmail;
@@ -39,7 +39,7 @@ public class Patient {
         return patientAge;
     }
 
-    public String getPatientGender() {
+    public Gender getPatientGender() {
         return patientGender;
     }
 
@@ -67,7 +67,7 @@ public class Patient {
         this.patientAge = patientAge;
     }
 
-    public void setPatientGender(String patientGender) {
+    public void setPatientGender(Gender patientGender) {
         this.patientGender = patientGender;
     }
 

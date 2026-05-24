@@ -3,14 +3,14 @@ package com.mediconnect.backend.entities;
 public class Doctor {
     private String doctorName;
     protected String doctorId;
-    private String doctorGender;
+    private Gender doctorGender;
     private String specialization;
     private String doctorPhone;
     private String doctorEmail;
     private String doctorFee;
     private String doctorExperience;
 
-    public Doctor(String doctorName, String doctorId, String doctorGender, String specialization, String doctorPhone, String doctorEmail, String doctorFee, String doctorExperience) {
+    public Doctor(String doctorName, String doctorId, Gender doctorGender, String specialization, String doctorPhone, String doctorEmail, String doctorFee, String doctorExperience) {
         this.doctorName = doctorName;
         this.doctorId = doctorId;
         this.doctorGender = doctorGender;
@@ -38,11 +38,11 @@ public class Doctor {
         this.doctorId = doctorId;
     }
 
-    public String getDoctorGender() {
+    public Gender getDoctorGender() {
         return doctorGender;
     }
 
-    public void setDoctorGender(String doctorGender) {
+    public void setDoctorGender(Gender doctorGender) {
         this.doctorGender = doctorGender;
     }
 
