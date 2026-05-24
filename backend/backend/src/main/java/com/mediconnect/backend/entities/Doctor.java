@@ -1,16 +1,24 @@
 package com.mediconnect.backend.entities;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "doctors")
 public class Doctor {
+
     private String doctorName;
-    protected String doctorId;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int doctorId;
     private Gender doctorGender;
     private String specialization;
     private String doctorPhone;
     private String doctorEmail;
-    private String doctorFee;
-    private String doctorExperience;
+    private int doctorFee;
+    private int doctorExperience;
 
-    public Doctor(String doctorName, String doctorId, Gender doctorGender, String specialization, String doctorPhone, String doctorEmail, String doctorFee, String doctorExperience) {
+    public Doctor(String doctorName, int doctorId, Gender doctorGender, String specialization, String doctorPhone, String doctorEmail, int doctorFee, int doctorExperience) {
         this.doctorName = doctorName;
         this.doctorId = doctorId;
         this.doctorGender = doctorGender;
@@ -19,6 +27,10 @@ public class Doctor {
         this.doctorEmail = doctorEmail;
         this.doctorFee = doctorFee;
         this.doctorExperience = doctorExperience;
+    }
+
+    public Doctor() {
+
     }
 
 
@@ -30,11 +42,11 @@ public class Doctor {
         this.doctorName = doctorName;
     }
 
-    public String getDoctorId() {
+    public int getDoctorId() {
         return doctorId;
     }
 
-    public void setDoctorId(String doctorId) {
+    public void setDoctorId(int doctorId) {
         this.doctorId = doctorId;
     }
 
@@ -70,19 +82,19 @@ public class Doctor {
         this.doctorEmail = doctorEmail;
     }
 
-    public String getDoctorFee() {
+    public int getDoctorFee() {
         return doctorFee;
     }
 
-    public void setDoctorFee(String doctorFee) {
+    public void setDoctorFee(int doctorFee) {
         this.doctorFee = doctorFee;
     }
 
-    public String getDoctorExperience() {
+    public int getDoctorExperience() {
         return doctorExperience;
     }
 
-    public void setDoctorExperience(String doctorExperience) {
+    public void setDoctorExperience(int doctorExperience) {
         this.doctorExperience = doctorExperience;
     }
 

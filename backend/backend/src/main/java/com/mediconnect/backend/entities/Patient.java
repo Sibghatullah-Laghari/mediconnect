@@ -1,15 +1,22 @@
 package com.mediconnect.backend.entities;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "patients")
+
 public class Patient {
     private String patientName;
-    protected String patientId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int patientId;
     private String patientEmail;
     private String patientPhone;
-    private String patientAge;
+    private int patientAge;
     private Gender patientGender;
     private String patientAddress;
 
-    public Patient(String patientName, String patientId, String patientEmail, String patientPhone, String patientAge, Gender patientGender, String patientAddress) {
+    public Patient(String patientName, int patientId, String patientEmail, String patientPhone, int patientAge, Gender patientGender, String patientAddress) {
         this.patientName = patientName;
         this.patientId = patientId;
         this.patientEmail = patientEmail;
@@ -19,11 +26,14 @@ public class Patient {
         this.patientAddress = patientAddress;
     }
 
+    public Patient(){};
+
+
     public String getPatientName() {
         return patientName;
     }
 
-    public String getPatientId() {
+    public int getPatientId() {
         return patientId;
     }
 
@@ -35,7 +45,7 @@ public class Patient {
         return patientPhone;
     }
 
-    public String getPatientAge() {
+    public int getPatientAge() {
         return patientAge;
     }
 
@@ -51,7 +61,7 @@ public class Patient {
         this.patientName = patientName;
     }
 
-    public void setPatientId(String patientId) {
+    public void setPatientId(int patientId) {
         this.patientId = patientId;
     }
 
@@ -63,7 +73,7 @@ public class Patient {
         this.patientPhone = patientPhone;
     }
 
-    public void setPatientAge(String patientAge) {
+    public void setPatientAge(int patientAge) {
         this.patientAge = patientAge;
     }
 

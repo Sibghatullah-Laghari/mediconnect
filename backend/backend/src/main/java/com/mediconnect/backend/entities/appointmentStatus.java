@@ -1,8 +1,8 @@
 package com.mediconnect.backend.entities;
 
 public enum appointmentStatus{
-    pending,
-    confirmend,
-    completed,
-    cancled
+    PENDING,
+    CONFIRMEND,
+    COMPLETED,
+    CANCLED
 }
