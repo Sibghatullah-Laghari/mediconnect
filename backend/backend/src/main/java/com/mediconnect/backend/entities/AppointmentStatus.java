@@ -1,6 +1,9 @@
 package com.mediconnect.backend.entities;
 
-public enum appointmentStatus{
+import jakarta.persistence.Entity;
+
+
+public enum AppointmentStatus {
     PENDING,
     CONFIRMEND,
     COMPLETED,

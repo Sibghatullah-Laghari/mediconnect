@@ -1,17 +1,24 @@
 package com.mediconnect.backend.entities;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "appointments")
 public class Appointment{
-    private String appointmentId;
-    private appointmentStatus appointmentStatus;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int appointmentId;
+    private AppointmentStatus appointmentStatus;
     private LocalDateTime appointmentDate;
     private String appointmentReason;
     private String appointmentTime;
     private String patientId;
     private String doctorId;
 
-    public Appointment(String appointmentId, appointmentStatus appointmentStatus, LocalDateTime appointmentDate, String appointmentReason, String appointmentTime, String patientId, String doctorId) {
+    public Appointment(int appointmentId, AppointmentStatus appointmentStatus, LocalDateTime appointmentDate, String appointmentReason, String appointmentTime, String patientId, String doctorId) {
         this.appointmentId = appointmentId;
         this.appointmentStatus = appointmentStatus;
         this.appointmentDate = appointmentDate;
@@ -20,16 +27,15 @@ public class Appointment{
         this.patientId = patientId;
         this.doctorId = doctorId;
     }
+    public Appointment (){}
 
-    public String getAppointmentId() {
+    public int getAppointmentId() {
         return appointmentId;
     }
 
-    public void setAppointmentId(String appointmentId) {
-        this.appointmentId = appointmentId;
-    }
+    public void setAppointmentId(int appointmentId) {this.appointmentId = appointmentId;}
 
-    public appointmentStatus getAppointmentStatus() {
+    public AppointmentStatus getAppointmentStatus() {
         return appointmentStatus;
     }
 
