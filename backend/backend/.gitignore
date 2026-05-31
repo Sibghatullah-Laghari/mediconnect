@@ -1,6 +1,56 @@
+# ===== Secrets / environment =====
+.env
+*.env
+!.env.example
+
+# ===== Compiled output =====
+*.class
+target/
+build/
+out/
+bin/
+
+# ===== Maven =====
+.mvn/wrapper/maven-wrapper.jar
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+# ===== Gradle =====
+.gradle/
+
+# ===== Logs =====
+*.log
+
+# ===== IntelliJ IDEA =====
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# ===== Eclipse / STS =====
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+
+# ===== OS files =====
+.DS_Store
+Thumbs.db
+
+# ===== Misc =====
+HELP.md
 HELP.md
 target/
-.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
@@ -13,71 +63,14 @@ target/
 .springBeans
 .sts4-cache
 
+### IntelliJ IDEA ###
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+### Secrets ###
 .env
-### IntelliJ IDEA #### Compiled class files
-                     #*.class
-                     #
-                     ## Log files
-                     #*.log
-                     #
-                     ## BlueJ files
-                     #*.ctxt
-                     #
-                     ## Mobile Tools for Java (J2ME)
-                     #.mtj.tmp/
-                     #
-                     ## Package Files #
-                     #*.jar
-                     #*.war
-                     #*.nar
-                     #*.ear
-                     #*.zip
-                     #*.tar.gz
-                     #*.rar
-                     #
-                     ## virtual machine crash logs, see http://java.com
-                     #hs_err_pid*
-                     #replay_pid*
-                     #
-                     ## Maven target directory
-                     #target/
-                     #pom.xml.tag
-                     #pom.xml.releaseBackup
-                     #pom.xml.versionsBackup
-                     #pom.xml.next
-                     #release.properties
-                     #dependency-reduced-pom.xml
-                     #buildNumber.properties
-                     #.mvn/timing.properties
-                     ## https://github.com
-                     #.mvn/wrapper/maven-wrapper.jar
-                     #
-                     ## Gradle build directory
-                     #build/
-                     #.gradle/
-                     #/bin/
-                     #
-                     ## IntelliJ IDEA settings (Ignores all configuration files shown in your screenshot)
-                     #.idea/
-                     #*.iml
-                     #*.iws
-                     #*.ipr
-                     #out/
-                     #
-                     ## Eclipse settings
-                     #.settings/
-                     #.project
-                     #.classpath
-                     #.factorypath
-                     #
-                     ## NetBeans settings
-                     #nbproject/
-                     #build/
-                     #nbbuild/
-                     #dist/
-                     #nbdist/
-                     #.nb-gradle/
-                     #
-                     ## Operating System files
-                     #.DS_Store
-                     #Thumbs.db
+*.env
+!.env.example

@@ -1,4 +1,4 @@
-package com.mediconnect.backend;
+package com.mediconnect;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
