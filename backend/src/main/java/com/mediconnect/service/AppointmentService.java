@@ -46,8 +46,9 @@ public class AppointmentService {
                 appointment.getAppointmentDate(),
                 appointment.getAppointmentTime(),
                 appointment.getPatient().getId(),
-                appointment.getDoctor().getId()
+                appointment.getDoctor().getId(),
+                appointment.getPatient().getName(),
+                appointment.getDoctor().getName()
         );
     }
 }
-

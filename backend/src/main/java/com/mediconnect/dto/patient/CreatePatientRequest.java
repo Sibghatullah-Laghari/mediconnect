@@ -2,6 +2,7 @@ package com.mediconnect.dto.patient;
 
 import com.mediconnect.model.Gender;
 import jakarta.validation.constraints.*;
+import java.time.LocalDate;
 
 public record CreatePatientRequest(
 
@@ -21,10 +22,9 @@ public record CreatePatientRequest(
         )
         String phone,
 
-        @NotNull(message = "Age is required")
-        @Min(value = 1, message = "Age must be at least 1")
-        @Max(value = 120, message = "Age cannot exceed 120")
-        Integer age,
+        @NotNull(message = "Date of birth is required")
+        @Past(message = "Date of birth must be in the past")
+        LocalDate dateOfBirth,
 
         @NotNull(message = "Gender is required")
         Gender gender,
