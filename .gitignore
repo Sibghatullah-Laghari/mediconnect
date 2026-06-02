@@ -3,10 +3,6 @@
 ##################
 target/
 build/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-.gradle/
 *.class
 *.jar
 *.war
@@ -17,6 +13,7 @@ build/
 *.rar
 dist/
 site/
+.gradle/
 build-info.properties
 
 ####################
@@ -28,6 +25,7 @@ build-info.properties
 *.iml
 *.iws
 *.ipr
+*.iws
 out/
 *.swp
 
@@ -39,14 +37,15 @@ out/
 jsconfig.json
 
 ### Eclipse ###
-.apt_generated
-.sts4-cache
-.springBeans
 .classpath
 .factorypath
 .project
 .settings/
+.apt_generated
+.sts4-cache
+.springBeans
 bin/
+.settings
 
 ### Sublime ###
 *.sublime-project
@@ -69,12 +68,12 @@ bin/
 ### NetBeans ###
 nbproject/
 nbbuild/
+dist/
 nbdist/
 
 #####################
 # Environment & Config #
 #####################
-### Secrets ###
 .env
 .env.local
 .env.*.local
@@ -86,8 +85,6 @@ application-local.properties
 application-dev.properties
 application-prod.properties
 application-test.properties
-
-### Credentials ###
 credentials.json
 credentials.yaml
 secrets.json
@@ -140,8 +137,10 @@ logs/
 # Maven & Build    #
 #####################
 .mvn/
+.mvn
 mvnw.cmd
 *.mvn
+.gradle
 gradle-app.setting
 gradlew
 gradlew.bat
@@ -187,10 +186,14 @@ failsafe-reports/
 .vscode/settings.json
 .vscode/launch.json
 .vscode/extensions.json
+.classpath
+.c9/
 *.launch
 .scala_dependencies
 .worksheet
 *.sage.py
+.ruby-version
+.ruby-gemset
 
 #####################
 # Docker & Container #
@@ -199,7 +202,7 @@ docker-compose.override.yml
 .docker/
 
 #####################
-# Misc             #
+# Misc & Extras    #
 #####################
 HELP.md
 .netrc
