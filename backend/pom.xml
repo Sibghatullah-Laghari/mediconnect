@@ -27,6 +27,12 @@
 
 	<dependencies>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+
 		<!-- ==================== CORE WEB ==================== -->
 		<!-- Enables REST API — @RestController, @GetMapping etc -->
 		<dependency>
