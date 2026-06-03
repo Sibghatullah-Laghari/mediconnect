@@ -2,6 +2,8 @@ package com.mediconnect.service;
 
 import com.mediconnect.dto.doctor.CreateDoctorRequest;
 import com.mediconnect.dto.doctor.DoctorResponse;
+import com.mediconnect.exception.DuplicateEmailException;
+import com.mediconnect.exception.ResourceNotFoundException;
 import com.mediconnect.model.Doctor;
 import com.mediconnect.repository.DoctorRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +19,7 @@ public class DoctorService {
 
     public DoctorResponse createDoctor(CreateDoctorRequest request) {
         if (doctorRepository.existsByEmail(request.email())) {
-            throw new RuntimeException("Doctor email already exists");
+            throw new DuplicateEmailException( "Doctor having " + request.email() + "email already exists");
         }
 
         Doctor doctor = new Doctor();
@@ -44,6 +46,13 @@ public class DoctorService {
                 doctor.getFee(),
                 doctor.getExperience()
         );
+    }
+
+    private Doctor getDoctorById(Long id) {
+        return doctorRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Doctor", id)
+                );
     }
 }
 

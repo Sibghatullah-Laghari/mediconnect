@@ -51,4 +51,9 @@ public class AppointmentService {
                 appointment.getDoctor().getName()
         );
     }
+
+    public Appointment getAppointmentById(Long id) {
+        return appointmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+    }
 }
