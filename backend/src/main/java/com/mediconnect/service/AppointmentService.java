@@ -2,14 +2,19 @@ package com.mediconnect.service;
 
 import com.mediconnect.dto.appointment.AppointmentResponse;
 import com.mediconnect.dto.appointment.CreateAppointmentRequest;
+import com.mediconnect.exception.AppointmentConflictException;
 import com.mediconnect.exception.BadRequestException;
+import com.mediconnect.exception.InvalidStatusTransitionException;
 import com.mediconnect.exception.ResourceNotFoundException;
 import com.mediconnect.model.Appointment;
+import com.mediconnect.model.AppointmentStatus;
 import com.mediconnect.model.Doctor;
 import com.mediconnect.model.Patient;
 import com.mediconnect.repository.AppointmentRepository;
 import com.mediconnect.repository.DoctorRepository;
 import com.mediconnect.repository.PatientRepository;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +26,7 @@ import java.time.LocalTime;
 @Service
 @Transactional
 @SuppressWarnings("unused")
+
 public class AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
@@ -104,12 +110,74 @@ public class AppointmentService {
             throw new BadRequestException("Appointment request is required");
         }
 
-        validateBookableAppointmentSlot(request.appointmentDate(), request.appointmentTime());
+        // First, ensure the requested date/time is in the future
+        if (!canBookAppointmentSlot(request.appointmentDate(), request.appointmentTime())) {
+            throw new BadRequestException("Appointment must be scheduled in the future");
+        }
+
+        // Then, ensure the doctor's slot is not already taken. The repository does not
+        // expose a direct existsByDoctorIdAndAppointmentDateAndAppointmentTime method,
+        // so fetch the doctor's appointments and check for a matching date/time.
+        java.util.List<Appointment> doctorAppointments = appointmentRepository.findByDoctorId(request.doctorId());
+        boolean slotTaken = doctorAppointments.stream().anyMatch(a ->
+                request.appointmentDate().equals(a.getAppointmentDate()) &&
+                        request.appointmentTime().equals(a.getAppointmentTime())
+        );
+
+        if (slotTaken) {
+            Doctor doctor = doctorRepository.findById(request.doctorId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
+
+            throw new AppointmentConflictException(
+                    "Dr. " + doctor.getName() +
+                            " is already booked on " + request.appointmentDate() +
+                            " at " + request.appointmentTime()
+            );
+        }
+    }
+
+    private boolean isDoctorSlotTaken(Long doctorId, LocalDate appointmentDate, LocalTime appointmentTime) {
+        if (doctorId == null || appointmentDate == null || appointmentTime == null) {
+            return false;
+        }
+
+        java.util.List<Appointment> doctorAppointments = appointmentRepository.findByDoctorId(doctorId);
+        return doctorAppointments.stream().anyMatch(a ->
+                appointmentDate.equals(a.getAppointmentDate()) && appointmentTime.equals(a.getAppointmentTime())
+        );
     }
 
     public void validateBookableAppointmentSlot(LocalDate appointmentDate, LocalTime appointmentTime) {
         if (!canBookAppointmentSlot(appointmentDate, appointmentTime)) {
             throw new BadRequestException("Appointment must be scheduled in the future");
         }
+
     }
+
+    // In AppointmentServiceImpl:
+    public AppointmentResponse updateStatus(Long id, AppointmentStatus newStatus) {
+
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment", id));
+
+        AppointmentStatus current = appointment.getStatus();
+
+        // Check valid transitions
+        boolean isValidTransition =
+                (current == AppointmentStatus.PENDING &&
+                        (newStatus == AppointmentStatus.CONFIRMED ||
+                                newStatus == AppointmentStatus.CANCELLED))
+                        ||
+                        (current == AppointmentStatus.CONFIRMED &&
+                                (newStatus == AppointmentStatus.COMPLETED ||
+                                        newStatus == AppointmentStatus.CANCELLED));
+
+        if (!isValidTransition) {
+            throw new InvalidStatusTransitionException(current, newStatus);
+        }
+
+        appointment.setStatus(newStatus);
+        return toResponse(appointmentRepository.save(appointment));
+    }
+
 }

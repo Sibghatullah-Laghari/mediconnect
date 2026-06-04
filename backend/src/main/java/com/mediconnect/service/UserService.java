@@ -2,6 +2,7 @@ package com.mediconnect.service;
 
 import com.mediconnect.dto.auth.RegisterUserRequest;
 import com.mediconnect.dto.auth.UserResponse;
+import com.mediconnect.exception.DuplicateEmailException;
 import com.mediconnect.model.User;
 import com.mediconnect.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class UserService {
 
     public UserResponse registerUser(RegisterUserRequest request) {
         if (userRepository.existsByEmail(request.email())) {
-            throw new RuntimeException("User email already exists");
+            throw new DuplicateEmailException("User email already exists");
         }
 
         User user = new User();

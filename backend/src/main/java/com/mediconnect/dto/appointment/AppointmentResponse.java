@@ -1,5 +1,6 @@
 package com.mediconnect.dto.appointment;
 
+import com.mediconnect.model.Appointment;
 import com.mediconnect.model.AppointmentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,4 +27,11 @@ public class AppointmentResponse {
     private Long doctorId;
     private String patientName;
     private String doctorName;
+
+    private AppointmentResponse mapToResponse(Appointment appointment) {
+        return AppointmentResponse.builder()
+                .id(appointment.getId())
+                .status(appointment.getStatus())
+                .build();
+    }
 }

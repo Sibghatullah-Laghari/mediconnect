@@ -2,6 +2,7 @@ package com.mediconnect.service;
 
 import com.mediconnect.dto.patient.CreatePatientRequest;
 import com.mediconnect.dto.patient.PatientResponse;
+import com.mediconnect.exception.BadRequestException;
 import com.mediconnect.exception.DuplicateEmailException;
 import com.mediconnect.exception.ResourceNotFoundException;
 import com.mediconnect.model.Patient;
@@ -19,7 +20,7 @@ public class PatientService {
 
     public PatientResponse createPatient(CreatePatientRequest request) {
         if (patientRepository.existsByEmail(request.email())) {
-            throw new DuplicateEmailException( "Patient having " + request.email() + "email already exists");
+            throw new DuplicateEmailException("Patient having " + request.email() + "email already exists");
         }
 
         Patient patient = new Patient();
@@ -34,7 +35,7 @@ public class PatientService {
         return toResponse(saved);
     }
 
-    private PatientResponse toResponse(Patient patient) {
+    public PatientResponse toResponse(Patient patient) {
         return new PatientResponse(
                 patient.getId(),
                 patient.getName(),
@@ -45,9 +46,25 @@ public class PatientService {
                 patient.getAddress()
         );
     }
-    private Patient getPatientById(Long id) {
+
+    public Patient getPatientById(Long id) {
         return patientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + id));
+    }
+
+    public void deletePatient(Long id) {
+        // Fetch the patient or throw if not found
+        Patient patient = getPatientById(id);
+
+        // If patient has any appointments, prevent deletion
+        if (patient.getAppointments() != null && !patient.getAppointments().isEmpty()) {
+            throw new BadRequestException(
+                    "Cannot delete patient with existing appointments"
+            );
+        }
+
+        // Safe to delete
+        patientRepository.delete(patient);
     }
 }
 
