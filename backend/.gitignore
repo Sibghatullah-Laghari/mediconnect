@@ -1,0 +1,214 @@
+##################
+# Build & Compile #
+##################
+target/
+build/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+.gradle/
+*.class
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+dist/
+site/
+build-info.properties
+
+####################
+# IDE & Editors   #
+####################
+### IntelliJ IDEA ###
+.idea/
+.idea_modules/
+*.iml
+*.iws
+*.ipr
+out/
+*.swp
+
+### VS Code ###
+.vscode/
+*.code-workspace
+.history/
+.historyignore
+jsconfig.json
+
+### Eclipse ###
+.apt_generated
+.sts4-cache
+.springBeans
+.classpath
+.factorypath
+.project
+.settings/
+bin/
+
+### Sublime ###
+*.sublime-project
+*.sublime-workspace
+.sublime/
+
+### Vim ###
+*.swp
+*.swo
+*~
+.vim/
+.netrwhist
+
+### Emacs ###
+*~
+\#*\#
+.\#*
+.emacs.d/
+
+### NetBeans ###
+nbproject/
+nbbuild/
+nbdist/
+
+#####################
+# Environment & Config #
+#####################
+### Secrets ###
+.env
+.env.local
+.env.*.local
+.env.*.example
+!.env.example
+.properties
+.properties.local
+application-local.properties
+application-dev.properties
+application-prod.properties
+application-test.properties
+
+### Credentials ###
+credentials.json
+credentials.yaml
+secrets.json
+secrets.yaml
+config.json
+config.yaml
+*.p12
+*.pfx
+*.key
+*.pem
+*.jks
+*.p8
+private_key
+
+#####################
+# OS Files         #
+#####################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Thumbs.db:encryptable
+*.lnk
+.AppleDouble
+.LSOverride
+.TemporaryItems
+.VolumeIcon.icns
+
+#####################
+# Temporary Files  #
+#####################
+*.tmp
+*.temp
+*.bak
+*.backup
+*.swp
+*.swo
+*~
+*.log
+logs/
+*.lck
+*.lock
+.lock
+*.orig
+
+#####################
+# Maven & Build    #
+#####################
+.mvn/
+mvnw.cmd
+*.mvn
+gradle-app.setting
+gradlew
+gradlew.bat
+
+#####################
+# Node (if any)    #
+#####################
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+#####################
+# Database & Caches #
+#####################
+*.db
+*.sqlite
+*.sqlite3
+*.h2.db
+.h2/
+data/
+*.rdb
+.cache/
+.m2/
+
+#####################
+# Test Reports     #
+#####################
+test-results/
+test-output/
+coverage/
+jacoco/
+*.exec
+*.coverage
+surefire-reports/
+failsafe-reports/
+
+#####################
+# IDE Generated    #
+#####################
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+*.launch
+.scala_dependencies
+.worksheet
+*.sage.py
+
+#####################
+# Docker & Container #
+#####################
+docker-compose.override.yml
+.docker/
+
+#####################
+# Misc             #
+#####################
+HELP.md
+.netrc
+.ssh/
+.git/
+.gitattributes
+.sonar/
+.sonarlint/
+*.pid
+.project.local
+.ruby-version
+.nvmrc
