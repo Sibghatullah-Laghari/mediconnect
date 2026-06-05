@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -17,6 +20,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorRepository doctorRepository;
 
+    @Override
     public DoctorResponse createDoctor(CreateDoctorRequest request) {
         if (doctorRepository.existsByEmail(request.email())) {
             throw new DuplicateEmailException( "Doctor having " + request.email() + "email already exists");
@@ -52,6 +56,22 @@ public class DoctorServiceImpl implements DoctorService {
     public DoctorResponse getDoctorById(Long id) {
         Doctor doctor = getDoctorEntityById(id);
         return toResponse(doctor);
+    }
+
+    @Override
+    public List<DoctorResponse> getAllDoctors() {
+        return doctorRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DoctorResponse> getDoctorsBySpecialization(String specialization) {
+        return doctorRepository.findBySpecialization(specialization)
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 
     private Doctor getDoctorEntityById(Long id) {

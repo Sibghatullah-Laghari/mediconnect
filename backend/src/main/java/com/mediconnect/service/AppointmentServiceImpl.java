@@ -25,7 +25,6 @@ import java.time.LocalTime;
 @Service
 @Transactional
 @RequiredArgsConstructor
-@SuppressWarnings("unused")
 public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
@@ -33,6 +32,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final DoctorRepository doctorRepository;
     private final Clock clock;
 
+    @Override
     public AppointmentResponse createAppointment(CreateAppointmentRequest request) {
         validateBookableAppointmentSlot(request);
 
@@ -71,6 +71,35 @@ public class AppointmentServiceImpl implements AppointmentService {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment", id));
         return toResponse(appointment);
+    }
+
+    @Override
+    public java.util.List<AppointmentResponse> getAllAppointments() {
+        return appointmentRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    @Override
+    public java.util.List<AppointmentResponse> getAppointmentsByPatient(Long patientId) {
+        return appointmentRepository.findByPatientId(patientId)
+                .stream()
+                .map(this::toResponse)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    @Override
+    public java.util.List<AppointmentResponse> getAppointmentsByDoctor(Long doctorId) {
+        return appointmentRepository.findByDoctorId(doctorId)
+                .stream()
+                .map(this::toResponse)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    @Override
+    public void cancelAppointment(Long id) {
+        updateStatus(id, AppointmentStatus.CANCELLED);
     }
 
     private Appointment getAppointmentEntityById(Long id) {

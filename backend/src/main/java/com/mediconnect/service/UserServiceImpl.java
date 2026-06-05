@@ -11,6 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -19,6 +22,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Override
     public UserResponse registerUser(RegisterUserRequest request) {
         if (userRepository.existsByEmail(request.email())) {
             throw new DuplicateEmailException("User email already exists");
@@ -38,6 +42,14 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", id));
         return new UserResponse(user.getId(), user.getEmail(), user.getRole());
+    }
+
+    @Override
+    public List<UserResponse> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(user -> new UserResponse(user.getId(), user.getEmail(), user.getRole()))
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/doctors")
@@ -25,6 +27,16 @@ public class DoctorController {
     @GetMapping("/{id}")
     public ResponseEntity<DoctorResponse> getDoctorById(@PathVariable Long id) {
         return ResponseEntity.ok(doctorService.getDoctorById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<DoctorResponse>> getAllDoctors() {
+        return ResponseEntity.ok(doctorService.getAllDoctors());
+    }
+
+    @GetMapping("/specialization/{specialization}")
+    public ResponseEntity<List<DoctorResponse>> getDoctorsBySpecialization(@PathVariable String specialization) {
+        return ResponseEntity.ok(doctorService.getDoctorsBySpecialization(specialization));
     }
 
     @PutMapping("/{id}")

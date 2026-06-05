@@ -1,5 +1,7 @@
 package com.mediconnect.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import com.mediconnect.dto.patient.CreatePatientRequest;
 import com.mediconnect.dto.patient.PatientResponse;
 import com.mediconnect.exception.BadRequestException;
@@ -18,6 +20,7 @@ public class PatientServiceImpl implements PatientService {
 
     private final PatientRepository patientRepository;
 
+    @Override
     public PatientResponse createPatient(CreatePatientRequest request) {
         if (patientRepository.existsByEmail(request.email())) {
             throw new DuplicateEmailException("Patient having " + request.email() + "email already exists");
@@ -52,6 +55,14 @@ public class PatientServiceImpl implements PatientService {
         Patient patient = patientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient", id));
         return toResponse(patient);
+    }
+
+    @Override
+    public List<PatientResponse> getAllPatients() {
+        return patientRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 
     private Patient getPatientEntityById(Long id) {
