@@ -34,7 +34,7 @@ git checkout -b feature/short-description
 
 ## Reporting Issues
 
-When reporting a bug, include:
+When reporting a bug, error, or issue include:
 
 - What happened
 - What you expected
