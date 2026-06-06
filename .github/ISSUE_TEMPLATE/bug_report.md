@@ -24,13 +24,13 @@ What should have happened?
 
 What happened instead?
 
-## Environment
+## Environment not mendatory
 
 - OS:
 - Java version:
 - Maven version:
 - Database:
 
-## Additional Context
+## Additional Context If required
 
 Add logs, screenshots, or API responses if relevant.
