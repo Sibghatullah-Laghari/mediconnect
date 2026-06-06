@@ -139,7 +139,7 @@ appointments
 
 ## Screenshots
 
-Add Swagger screenshots, Postman examples, or workflow screenshots after implementation.
+Add screenshots
 
 ## Future Improvements
 
