@@ -22,6 +22,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+/**
+ * Implementation of {@link AppointmentService}.
+ * Handles appointment business logic, including creation, retrieval, cancellation, and status updates.
+ */
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -52,6 +56,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         return toResponse(saved);
     }
 
+    /**
+     * Helper method to map {@link Appointment} entity to {@link AppointmentResponse}.
+     */
     private AppointmentResponse toResponse(Appointment appointment) {
         return new AppointmentResponse(
                 appointment.getId(),
@@ -111,6 +118,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         validateBookableAppointmentSlot(request);
     }
 
+    /**
+     * Checks if the requested date/time slot is in the future.
+     */
     public boolean canBookAppointmentSlot(LocalDate appointmentDate, LocalTime appointmentTime) {
         if (appointmentDate == null || appointmentTime == null) {
             return false;
@@ -120,6 +130,10 @@ public class AppointmentServiceImpl implements AppointmentService {
         return requestedSlot.isAfter(LocalDateTime.now(clock));
     }
 
+    /**
+     * Validates if the requested appointment slot is bookable.
+     * Checks for future date and doctor availability.
+     */
     public void validateBookableAppointmentSlot(CreateAppointmentRequest request) {
         if (request == null) {
             throw new BadRequestException("Appointment request is required");
@@ -130,9 +144,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             throw new BadRequestException("Appointment must be scheduled in the future");
         }
 
-        // Then, ensure the doctor's slot is not already taken. The repository does not
-        // expose a direct existsByDoctorIdAndAppointmentDateAndAppointmentTime method,
-        // so fetch the doctor's appointments and check for a matching date/time.
+        // Then, ensure the doctor's slot is not already taken.
         java.util.List<Appointment> doctorAppointments = appointmentRepository.findByDoctorId(request.doctorId());
         boolean slotTaken = doctorAppointments.stream().anyMatch(a ->
                 request.appointmentDate().equals(a.getAppointmentDate()) &&
@@ -169,7 +181,6 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     }
 
-    // In AppointmentServiceImpl:
     @Override
     public AppointmentResponse updateStatus(Long id, AppointmentStatus newStatus) {
 

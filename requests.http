@@ -1,1 +1,195 @@
+### Actuator Endpoints
+# Check the health of the application
 GET http://localhost:8080/actuator/health
+
+### User Endpoints
+
+# Register a new user
+POST http://localhost:8080/api/v1/users/register
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "password123",
+  "role": "PATIENT"
+}
+
+###
+
+# Get all users
+GET http://localhost:8080/api/v1/users
+
+###
+
+# Get user by ID
+GET http://localhost:8080/api/v1/users/1
+
+###
+
+# Update user
+PUT http://localhost:8080/api/v1/users/1
+Content-Type: application/json
+
+{
+  "name": "John Updated",
+  "email": "john.updated@example.com",
+  "password": "newpassword123",
+  "role": "PATIENT"
+}
+
+###
+
+# Delete user
+DELETE http://localhost:8080/api/v1/users/1
+
+### Doctor Endpoints
+
+# Create a new doctor
+POST http://localhost:8080/api/v1/doctors
+Content-Type: application/json
+
+{
+  "name": "Dr. Smith",
+  "gender": "MALE",
+  "specialization": "Cardiology",
+  "phone": "1234567890",
+  "email": "dr.smith@example.com",
+  "fee": 100.0,
+  "experience": 10
+}
+
+###
+
+# Get all doctors
+GET http://localhost:8080/api/v1/doctors
+
+###
+
+# Get doctor by ID
+GET http://localhost:8080/api/v1/doctors/1
+
+###
+
+# Get doctors by specialization
+GET http://localhost:8080/api/v1/doctors/specialization/Cardiology
+
+###
+
+# Update doctor
+PUT http://localhost:8080/api/v1/doctors/1
+Content-Type: application/json
+
+{
+  "name": "Dr. Smith Updated",
+  "gender": "MALE",
+  "specialization": "Cardiology",
+  "phone": "0987654321",
+  "email": "dr.smith.updated@example.com",
+  "fee": 120.0,
+  "experience": 11
+}
+
+###
+
+# Delete doctor
+DELETE http://localhost:8080/api/v1/doctors/1
+
+### Patient Endpoints
+
+# Create a new patient
+POST http://localhost:8080/api/v1/patients
+Content-Type: application/json
+
+{
+  "name": "Jane Doe",
+  "email": "jane.doe@example.com",
+  "phone": "1122334455",
+  "dateOfBirth": "1990-01-01",
+  "gender": "FEMALE",
+  "address": "123 Main St, Anytown"
+}
+
+###
+
+# Get all patients
+GET http://localhost:8080/api/v1/patients
+
+###
+
+# Get patient by ID
+GET http://localhost:8080/api/v1/patients/1
+
+###
+
+# Update patient
+PUT http://localhost:8080/api/v1/patients/1
+Content-Type: application/json
+
+{
+  "name": "Jane Updated",
+  "email": "jane.updated@example.com",
+  "phone": "5544332211",
+  "dateOfBirth": "1990-01-01",
+  "gender": "FEMALE",
+  "address": "456 Updated St, Anytown"
+}
+
+###
+
+# Delete patient
+DELETE http://localhost:8080/api/v1/patients/1
+
+### Appointment Endpoints
+
+# Create a new appointment
+POST http://localhost:8080/api/v1/appointments
+Content-Type: application/json
+
+{
+  "patientId": 1,
+  "doctorId": 1,
+  "reason": "Regular checkup",
+  "appointmentDate": "2026-07-01",
+  "appointmentTime": "10:00:00"
+}
+
+###
+
+# Get all appointments
+GET http://localhost:8080/api/v1/appointments
+
+###
+
+# Get appointment by ID
+GET http://localhost:8080/api/v1/appointments/1
+
+###
+
+# Get appointments by patient ID
+GET http://localhost:8080/api/v1/appointments/patient/1
+
+###
+
+# Get appointments by doctor ID
+GET http://localhost:8080/api/v1/appointments/doctor/1
+
+###
+
+# Update appointment status
+PUT http://localhost:8080/api/v1/appointments/1/status
+Content-Type: application/json
+
+{
+  "status": "CONFIRMED"
+}
+
+###
+
+# Cancel appointment
+PUT http://localhost:8080/api/v1/appointments/1/cancel
+
+###
+
+# Delete appointment
+DELETE http://localhost:8080/api/v1/appointments/1
