@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class DoctorController {
      * @return the created doctor response
      */
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DoctorResponse> createDoctor(@Valid @RequestBody CreateDoctorRequest request) {
         DoctorResponse response = doctorService.createDoctor(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -44,6 +46,7 @@ public class DoctorController {
      * @return the doctor response
      */
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR', 'ADMIN')")
     public ResponseEntity<DoctorResponse> getDoctorById(@PathVariable Long id) {
         return ResponseEntity.ok(doctorService.getDoctorById(id));
     }
@@ -54,6 +57,7 @@ public class DoctorController {
      * @return a list of all doctor responses
      */
     @GetMapping
+    @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR', 'ADMIN')")
     public ResponseEntity<List<DoctorResponse>> getAllDoctors() {
         return ResponseEntity.ok(doctorService.getAllDoctors());
     }
@@ -65,6 +69,7 @@ public class DoctorController {
      * @return a list of doctor responses matching the specialization
      */
     @GetMapping("/specialization/{specialization}")
+    @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR', 'ADMIN')")
     public ResponseEntity<List<DoctorResponse>> getDoctorsBySpecialization(@PathVariable String specialization) {
         return ResponseEntity.ok(doctorService.getDoctorsBySpecialization(specialization));
     }
@@ -77,6 +82,7 @@ public class DoctorController {
      * @return the updated doctor response
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
     public ResponseEntity<DoctorResponse> updateDoctor(
             @PathVariable Long id,
             @Valid @RequestBody CreateDoctorRequest request) {
@@ -90,6 +96,7 @@ public class DoctorController {
      * @return a response entity
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteDoctor(@PathVariable Long id) {
         doctorService.deleteDoctor(id);
         return ResponseEntity.noContent().build();

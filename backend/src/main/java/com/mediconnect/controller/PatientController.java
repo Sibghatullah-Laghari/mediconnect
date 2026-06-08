@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,6 +48,7 @@ public class PatientController {
      * @return the patient response
      */
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR', 'ADMIN')")
     public ResponseEntity<PatientResponse> getPatientById(
             @PathVariable Long id
     ) {
@@ -59,6 +61,7 @@ public class PatientController {
      * @return a list of all patient responses
      */
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<PatientResponse>> getAllPatients() {
         return ResponseEntity.ok(patientService.getAllPatients());
     }
@@ -71,6 +74,7 @@ public class PatientController {
      * @return the updated patient response
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('PATIENT', 'ADMIN')")
     public ResponseEntity<PatientResponse> updatePatient(
             @PathVariable Long id,
             @Valid @RequestBody CreatePatientRequest request
@@ -85,6 +89,7 @@ public class PatientController {
      * @return a response entity
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deletePatient(@PathVariable Long id) {
         patientService.deletePatient(id);
         return ResponseEntity.noContent().build();
