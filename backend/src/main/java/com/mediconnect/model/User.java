@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -13,11 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class User {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+public class User extends BaseEntity {
 
 	@Setter
 	@Column(nullable = false, unique = true, length = 255)
@@ -32,11 +26,24 @@ public class User {
 	@Column(nullable = false, length = 20)
 	private Role role;
 
-	@CreationTimestamp
-	@Column(nullable = false, updatable = false)
-	private LocalDateTime createdAt;
+	@Setter
+	private String refreshToken;
 
-	@UpdateTimestamp
+	@Setter
 	@Column(nullable = false)
-	private LocalDateTime updatedAt;
+	private boolean emailVerified = false;
+
+	@Setter
+	private String verificationCode;
+
+	@Setter
+	@Column(nullable = false)
+	private int loginAttempts = 0;
+
+	@Setter
+	private LocalDateTime lastFailedLoginTime;
+
+	@Setter
+	@Column(nullable = false)
+	private boolean accountLocked = false;
 }

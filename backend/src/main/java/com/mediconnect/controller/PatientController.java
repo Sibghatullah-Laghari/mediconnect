@@ -5,6 +5,9 @@ import com.mediconnect.dto.patient.PatientResponse;
 import com.mediconnect.service.PatientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -56,14 +59,20 @@ public class PatientController {
     }
 
     /**
-     * Retrieves all patients.
+     * Retrieves all patients with pagination.
      *
-     * @return a list of all patient responses
+     * @param page the page number
+     * @param size the page size
+     * @return a page of patient responses
      */
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<PatientResponse>> getAllPatients() {
-        return ResponseEntity.ok(patientService.getAllPatients());
+    public ResponseEntity<Page<PatientResponse>> getAllPatients(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(patientService.getAllPatients(pageable));
     }
 
     /**

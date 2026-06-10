@@ -1,5 +1,9 @@
 package com.mediconnect.service;
 
+import com.mediconnect.dto.auth.AuthResponse;
+import com.mediconnect.dto.auth.LoginRequest;
+
 public interface AuthService {
-    void authenticate(String email, String password);
+    AuthResponse login(LoginRequest request);
+    void verifyEmail(String email, String code);
 }

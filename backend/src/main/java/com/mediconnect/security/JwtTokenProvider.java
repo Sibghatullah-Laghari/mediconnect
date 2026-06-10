@@ -29,51 +29,50 @@ public class JwtTokenProvider {
     }
 
     /**
-     * Generates a JWT token for the authenticated user.
-     *
-     * @param authentication the authentication object
-     * @return a signed JWT string
+     * Generates an access token.
      */
-    public String generateToken(Authentication authentication) {
-        String email = authentication.getName();
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
-
+    public String generateAccessToken(String email, String role) {
         return Jwts.builder()
                 .setSubject(email)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 15 * 60 * 1000))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    /**
+     * Generates a refresh token.
+     */
+    public String generateRefreshToken(String email) {
+        return Jwts.builder()
+                .setSubject(email)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 30L * 24 * 60 * 60 * 1000))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
     /**
      * Extracts the email from the JWT token.
-     *
-     * @param token the JWT string
-     * @return the email extracted from the token
      */
-    public String getUserEmailFromJWT(String token) {
-        Claims claims = Jwts.parserBuilder()
+    public String extractEmail(String token) {
+        return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
-                .getBody();
-
-        return claims.getSubject();
+                .getBody()
+                .getSubject();
     }
 
     /**
      * Validates the JWT token.
-     *
-     * @param authToken the JWT string
-     * @return true if the token is valid, false otherwise
      */
-    public boolean validateToken(String authToken) {
+    public boolean isTokenValid(String authToken) {
         try {
             Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(authToken);
             return true;
-        } catch (SignatureException | MalformedJwtException | ExpiredJwtException | UnsupportedJwtException | IllegalArgumentException ex) {
+        } catch (JwtException | IllegalArgumentException ex) {
             // Log the exception in a production system
         }
         return false;

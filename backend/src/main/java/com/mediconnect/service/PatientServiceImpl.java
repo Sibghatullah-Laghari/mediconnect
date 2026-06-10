@@ -10,9 +10,15 @@ import com.mediconnect.exception.ResourceNotFoundException;
 import com.mediconnect.model.Patient;
 import com.mediconnect.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -22,8 +28,10 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public PatientResponse createPatient(CreatePatientRequest request) {
+        log.info("Creating patient with email: {}", request.email());
         if (patientRepository.existsByEmail(request.email())) {
-            throw new DuplicateEmailException("Patient having " + request.email() + "email already exists");
+            log.warn("Duplicate email attempt: {}", request.email());
+            throw new DuplicateEmailException("Patient having " + request.email() + " email already exists");
         }
 
         Patient patient = new Patient();
@@ -35,6 +43,7 @@ public class PatientServiceImpl implements PatientService {
         patient.setAddress(request.address());
 
         Patient saved = patientRepository.save(patient);
+        log.info("Patient created successfully with id: {}, email: {}", saved.getId(), saved.getEmail());
         return toResponse(saved);
     }
 
@@ -52,17 +61,21 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public PatientResponse getPatientById(Long id) {
+        log.debug("Fetching patient with id: {}", id);
         Patient patient = patientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Patient", id));
+                .orElseThrow(() -> {
+                    log.error("Patient not found with id: {}", id);
+                    return new ResourceNotFoundException("Patient", id);
+                });
+        log.debug("Patient found: {}", patient.getEmail());
         return toResponse(patient);
     }
 
     @Override
-    public List<PatientResponse> getAllPatients() {
-        return patientRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
+    public Page<PatientResponse> getAllPatients(Pageable pageable) {
+        log.info("Fetching all patients with pagination: {}", pageable);
+        return patientRepository.findAll(pageable)
+                .map(this::toResponse);
     }
 
     private Patient getPatientEntityById(Long id) {
@@ -72,6 +85,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public PatientResponse updatePatient(Long id, CreatePatientRequest request) {
+        log.info("Updating patient with id: {}", id);
         Patient patient = getPatientEntityById(id);
         
         patient.setName(request.name());
@@ -86,18 +100,18 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public void deletePatient(Long id) {
-        // Fetch the patient or throw if not found
+        log.warn("Soft deleting patient with id: {}", id);
         Patient patient = getPatientEntityById(id);
 
-        // If patient has any appointments, prevent deletion
         if (patient.getAppointments() != null && !patient.getAppointments().isEmpty()) {
-            throw new BadRequestException(
-                    "Cannot delete patient with existing appointments"
-            );
+            log.error("Cannot delete patient id: {} with {} appointments", id, patient.getAppointments().size());
+            throw new BadRequestException("Cannot delete patient with existing appointments");
         }
 
-        // Safe to delete
-        patientRepository.delete(patient);
+        patient.setIsDeleted(true);
+        patient.setDeletedAt(LocalDateTime.now());
+        patientRepository.save(patient);
+        log.info("Patient soft deleted successfully: id: {}", id);
     }
 }
 
