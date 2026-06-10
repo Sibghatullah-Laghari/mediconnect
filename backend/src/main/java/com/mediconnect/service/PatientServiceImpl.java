@@ -8,7 +8,11 @@ import com.mediconnect.exception.BadRequestException;
 import com.mediconnect.exception.DuplicateEmailException;
 import com.mediconnect.exception.ResourceNotFoundException;
 import com.mediconnect.model.Patient;
+import com.mediconnect.model.Role;
+import com.mediconnect.model.User;
 import com.mediconnect.repository.PatientRepository;
+import com.mediconnect.security.OwnershipValidator;
+import com.mediconnect.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,10 +29,16 @@ import java.time.LocalDateTime;
 public class PatientServiceImpl implements PatientService {
 
     private final PatientRepository patientRepository;
+    private final SecurityUtils securityUtils;
+    private final OwnershipValidator ownershipValidator;
 
     @Override
     public PatientResponse createPatient(CreatePatientRequest request) {
         log.info("Creating patient with email: {}", request.email());
+        User currentUser = securityUtils.getCurrentUser();
+        if (currentUser.getRole() == Role.PATIENT && patientRepository.existsByUserId(currentUser.getId())) {
+            throw new BadRequestException("Patient profile already exists for this account");
+        }
         if (patientRepository.existsByEmail(request.email())) {
             log.warn("Duplicate email attempt: {}", request.email());
             throw new DuplicateEmailException("Patient having " + request.email() + " email already exists");
@@ -41,6 +51,9 @@ public class PatientServiceImpl implements PatientService {
         patient.setDateOfBirth(request.dateOfBirth());
         patient.setGender(request.gender());
         patient.setAddress(request.address());
+        if (currentUser.getRole() == Role.PATIENT) {
+            patient.setUserId(currentUser.getId());
+        }
 
         Patient saved = patientRepository.save(patient);
         log.info("Patient created successfully with id: {}, email: {}", saved.getId(), saved.getEmail());
@@ -67,6 +80,7 @@ public class PatientServiceImpl implements PatientService {
                     log.error("Patient not found with id: {}", id);
                     return new ResourceNotFoundException("Patient", id);
                 });
+        ownershipValidator.assertPatientAccess(securityUtils.getCurrentUser(), patient);
         log.debug("Patient found: {}", patient.getEmail());
         return toResponse(patient);
     }
@@ -87,7 +101,8 @@ public class PatientServiceImpl implements PatientService {
     public PatientResponse updatePatient(Long id, CreatePatientRequest request) {
         log.info("Updating patient with id: {}", id);
         Patient patient = getPatientEntityById(id);
-        
+        ownershipValidator.assertPatientAccess(securityUtils.getCurrentUser(), patient);
+
         patient.setName(request.name());
         patient.setEmail(request.email());
         patient.setPhone(request.phone());
@@ -108,7 +123,7 @@ public class PatientServiceImpl implements PatientService {
             throw new BadRequestException("Cannot delete patient with existing appointments");
         }
 
-        patient.setIsDeleted(true);
+        patient.setDeleted(true);
         patient.setDeletedAt(LocalDateTime.now());
         patientRepository.save(patient);
         log.info("Patient soft deleted successfully: id: {}", id);

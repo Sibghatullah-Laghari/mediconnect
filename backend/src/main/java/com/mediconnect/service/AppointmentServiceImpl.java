@@ -10,9 +10,12 @@ import com.mediconnect.model.Appointment;
 import com.mediconnect.model.AppointmentStatus;
 import com.mediconnect.model.Doctor;
 import com.mediconnect.model.Patient;
+import com.mediconnect.model.User;
 import com.mediconnect.repository.AppointmentRepository;
 import com.mediconnect.repository.DoctorRepository;
 import com.mediconnect.repository.PatientRepository;
+import com.mediconnect.security.OwnershipValidator;
+import com.mediconnect.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +38,8 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final Clock clock;
+    private final SecurityUtils securityUtils;
+    private final OwnershipValidator ownershipValidator;
 
     @Override
     public AppointmentResponse createAppointment(CreateAppointmentRequest request) {
@@ -44,6 +49,9 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
         Doctor doctor = doctorRepository.findById(request.doctorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
+
+        User currentUser = securityUtils.getCurrentUser();
+        ownershipValidator.assertPatientAccess(currentUser, patient);
 
         Appointment appointment = new Appointment();
         appointment.setReason(request.reason());
@@ -75,8 +83,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public AppointmentResponse getAppointmentById(Long id) {
-        Appointment appointment = appointmentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Appointment", id));
+        Appointment appointment = getAppointmentEntityById(id);
+        ownershipValidator.assertAppointmentAccess(securityUtils.getCurrentUser(), appointment);
         return toResponse(appointment);
     }
 
@@ -90,6 +98,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public java.util.List<AppointmentResponse> getAppointmentsByPatient(Long patientId) {
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient", patientId));
+        ownershipValidator.assertPatientAccess(securityUtils.getCurrentUser(), patient);
         return appointmentRepository.findByPatientId(patientId)
                 .stream()
                 .map(this::toResponse)
@@ -98,6 +109,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public java.util.List<AppointmentResponse> getAppointmentsByDoctor(Long doctorId) {
+        Doctor doctor = doctorRepository.findById(doctorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor", doctorId));
+        ownershipValidator.assertDoctorAccess(securityUtils.getCurrentUser(), doctor);
         return appointmentRepository.findByDoctorId(doctorId)
                 .stream()
                 .map(this::toResponse)
@@ -106,6 +120,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public void cancelAppointment(Long id) {
+        Appointment appointment = getAppointmentEntityById(id);
+        ownershipValidator.assertAppointmentAccess(securityUtils.getCurrentUser(), appointment);
         updateStatus(id, AppointmentStatus.CANCELLED);
     }
 
@@ -147,8 +163,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         // Then, ensure the doctor's slot is not already taken.
         java.util.List<Appointment> doctorAppointments = appointmentRepository.findByDoctorId(request.doctorId());
         boolean slotTaken = doctorAppointments.stream().anyMatch(a ->
-                request.appointmentDate().equals(a.getAppointmentDate()) &&
-                        request.appointmentTime().equals(a.getAppointmentTime())
+                a.getStatus() != AppointmentStatus.CANCELLED
+                        && request.appointmentDate().equals(a.getAppointmentDate())
+                        && request.appointmentTime().equals(a.getAppointmentTime())
         );
 
         if (slotTaken) {
@@ -183,8 +200,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public AppointmentResponse updateStatus(Long id, AppointmentStatus newStatus) {
-
         Appointment appointment = getAppointmentEntityById(id);
+        ownershipValidator.assertAppointmentAccess(securityUtils.getCurrentUser(), appointment);
 
         AppointmentStatus current = appointment.getStatus();
 

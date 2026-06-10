@@ -17,6 +17,10 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 
     boolean existsByEmail(String email);
 
+    Optional<Patient> findByUserId(Long userId);
+
+    boolean existsByUserId(Long userId);
+
     List<Patient> findByNameContainingIgnoreCase(String name);
 
     Page<Patient> findAll(Pageable pageable);

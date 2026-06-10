@@ -1,13 +1,11 @@
 package com.mediconnect;
 
+import com.mediconnect.support.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class BackendApplicationTests {
+class BackendApplicationTests extends AbstractIntegrationTest {
 
 	@Test
 	void contextLoads() {
 	}
-
 }

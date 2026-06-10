@@ -44,6 +44,10 @@ public class Doctor extends BaseEntity {
     @Column(nullable = false)
     private Integer experience;
 
+    @Setter
+    @Column(name = "user_id")
+    private Long userId;
+
     @OneToMany(mappedBy = "doctor")
     private List<Appointment> appointments = new ArrayList<>();
 }

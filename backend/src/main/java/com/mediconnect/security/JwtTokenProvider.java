@@ -21,8 +21,8 @@ public class JwtTokenProvider {
     @Value("${app.jwt.secret:defaultSecretKeyThatShouldBeVeryLongToMeetSecurityRequirements}")
     private String jwtSecret;
 
-    @Value("${app.jwt.expiration:86400000}")
-    private long jwtExpirationInMs;
+    @Value("${app.jwt.expiration:900000}")
+    private long accessTokenExpirationMs;
 
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
@@ -36,7 +36,7 @@ public class JwtTokenProvider {
                 .setSubject(email)
                 .claim("role", role)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 15 * 60 * 1000))
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

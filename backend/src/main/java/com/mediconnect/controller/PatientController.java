@@ -36,6 +36,7 @@ public class PatientController {
      * @return the created patient response
      */
     @PostMapping
+    @PreAuthorize("hasAnyRole('PATIENT', 'ADMIN')")
     public ResponseEntity<PatientResponse> createPatient(
             @Valid @RequestBody CreatePatientRequest request
     ) {

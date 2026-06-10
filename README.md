@@ -1,155 +1,108 @@
 # MediConnect API
 
-Spring Boot healthcare REST API for patient, doctor, appointment, and authentication workflows.
+Production-oriented Spring Boot healthcare REST API for patient profiles, doctor directory, appointment booking, and JWT authentication.
 
-## Project Overview
+## Highlights
 
-MediConnect is a backend-focused healthcare system designed to manage core clinic workflows through secure REST APIs. The project demonstrates practical backend engineering: layered architecture, authentication, validation, persistence, API documentation, and testable service logic.
-
-## Planned Features
-
-- Patient registration and profile management
-- Doctor profile and specialization management
-- Appointment booking, status updates, and cancellation
-- Role-based authentication for patients, doctors, and admins
-- JWT-based login and protected endpoints
-- PostgreSQL-backed persistence
-- Swagger/OpenAPI documentation
-- Validation and centralized exception handling
-
-## Architecture
-
-```text
-Controller Layer
-    -> Service Layer
-        -> Repository Layer
-            -> PostgreSQL Database
-```
-
-Recommended package structure:
-
-```text
-com.mediconnect.backend
-|-- auth
-|-- patient
-|-- doctor
-|-- appointment
-|-- common
-|   |-- exception
-|   `-- config
-`-- security
-```
+- Layered architecture (controller → service → repository)
+- JWT access + refresh tokens with rotation
+- Email verification, password reset, account lockout
+- Role-based access control with ownership checks (IDOR protection)
+- Flyway database migrations
+- OpenAPI / Swagger UI
+- Docker Compose deployment
+- GitHub Actions CI with JaCoCo coverage
+- Testcontainers integration tests
 
 ## Tech Stack
 
-- Java 17+
-- Spring Boot 3+
-- Spring Web
-- Spring Security
-- Spring Data JPA
-- PostgreSQL
-- Maven
-- JWT
-- Swagger / OpenAPI
+| Layer | Technology |
+| --- | --- |
+| Runtime | Java 21, Spring Boot 3.2 |
+| Security | Spring Security, JWT (jjwt) |
+| Persistence | PostgreSQL, Spring Data JPA, Flyway |
+| API Docs | springdoc-openapi |
+| Observability | Spring Actuator |
+| Testing | JUnit 5, Mockito, Testcontainers |
 
-## Installation
+## Quick Start
 
-```bash
-git clone https://github.com/Sibghatullah-Laghari/mediconnect.git
-cd mediconnect/backend/backend
-./mvnw clean install
-```
+### Prerequisites
 
-## Configuration
+- Java 21+
+- Docker & Docker Compose (recommended)
+- Maven 3.9+ (or use `./mvnw`)
 
-Update `src/main/resources/application.properties`:
-
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/mediconnect
-spring.datasource.username=postgres
-spring.datasource.password=postgres
-spring.jpa.hibernate.ddl-auto=update
-jwt.secret=replace-with-a-secure-secret
-```
-
-## Run Locally
+### 1. Configure environment
 
 ```bash
+cp .env.example .env
+# Edit JWT_SECRET and database credentials
+```
+
+### 2. Start with Docker Compose
+
+```bash
+docker compose up --build
+```
+
+API: `http://localhost:8080`  
+Swagger: `http://localhost:8080/swagger-ui.html`  
+Health: `http://localhost:8080/actuator/health`
+
+### 3. Run locally (without Docker)
+
+```bash
+# Start PostgreSQL, then:
+cd backend
 ./mvnw spring-boot:run
 ```
 
-Default API URL:
+## API Overview
 
-```text
-http://localhost:8080
+| Method | Endpoint | Auth | Description |
+| --- | --- | --- | --- |
+| POST | `/api/v1/users/register` | Public | Register patient/doctor account |
+| POST | `/api/auth/login` | Public | Login, returns JWT pair |
+| POST | `/api/auth/refresh` | Public | Rotate refresh token |
+| POST | `/api/auth/verify-email` | Public | Verify email with OTP code |
+| POST | `/api/auth/forgot-password` | Public | Request password reset |
+| POST | `/api/auth/reset-password` | Public | Reset password with token |
+| CRUD | `/api/v1/patients/**` | JWT | Patient profiles |
+| CRUD | `/api/v1/doctors/**` | JWT | Doctor directory |
+| CRUD | `/api/v1/appointments/**` | JWT | Appointment lifecycle |
+
+## Security Model
+
+- **Authentication**: Stateless JWT (15 min access, 30 day refresh)
+- **Authorization**: `@PreAuthorize` role checks + service-layer ownership validation
+- **Account protection**: 5-attempt lockout with 30-minute auto-unlock
+- **Registration**: ADMIN role cannot be self-assigned
+- **Rate limiting**: In-memory per-IP filter (100 req/min)
+
+## Testing
+
+```bash
+cd backend
+./mvnw verify
 ```
 
-## API Documentation
+Integration tests use Testcontainers (requires Docker).
 
-Recommended endpoints:
-
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| POST | `/api/auth/register` | Register a user |
-| POST | `/api/auth/login` | Authenticate and return JWT |
-| GET | `/api/patients` | List patients |
-| GET | `/api/doctors` | List doctors |
-| POST | `/api/appointments` | Book appointment |
-| PATCH | `/api/appointments/{id}/status` | Update appointment status |
-
-When Swagger is added:
+## Project Structure
 
 ```text
-http://localhost:8080/swagger-ui/index.html
+backend/src/main/java/com/mediconnect/
+├── config/          # Security, OpenAPI
+├── controller/      # REST endpoints
+├── dto/             # Request/response records
+├── exception/       # Domain exceptions + global handler
+├── model/           # JPA entities
+├── repository/      # Spring Data repositories
+├── security/        # JWT, filters, ownership
+└── service/         # Business logic
 ```
 
-## Database Schema
+## License
 
-Recommended first schema:
-
-```text
-users
-- id
-- full_name
-- email
-- password_hash
-- role
-- created_at
-
-patients
-- id
-- user_id
-- date_of_birth
-- phone
-
-doctors
-- id
-- user_id
-- specialization
-- availability_status
-
-appointments
-- id
-- patient_id
-- doctor_id
-- appointment_time
-- status
-- notes
-```
-
-## Screenshots
-
-Add Swagger screenshots, Postman examples, or workflow screenshots after implementation.
-
-## Future Improvements
-
-- Email reminders
-- Doctor availability calendar
-- Admin dashboard endpoints
-- Docker Compose
-- CI workflow
-- Integration tests with Testcontainers
-
-## Contributing
-
-Contributions are welcome after the first stable API version is complete. Please open an issue before large changes.
+MIT — see repository for details.

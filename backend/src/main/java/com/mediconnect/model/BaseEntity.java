@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @MappedSuperclass
 public abstract class BaseEntity {
+    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;

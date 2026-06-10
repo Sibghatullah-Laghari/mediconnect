@@ -1,0 +1,13 @@
+spring:
+  jpa:
+    show-sql: false
+
+management:
+  endpoint:
+    health:
+      show-details: never
+
+logging:
+  level:
+    root: WARN
+    com.mediconnect: INFO

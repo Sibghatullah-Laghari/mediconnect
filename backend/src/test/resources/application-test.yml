@@ -1,0 +1,16 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  flyway:
+    enabled: true
+
+app:
+  jwt:
+    secret: test-secret-key-that-is-long-enough-for-hmac-sha256-algorithm
+    expiration: 900000
+
+logging:
+  level:
+    com.mediconnect: INFO

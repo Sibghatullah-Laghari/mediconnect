@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "patients")
+@SQLRestriction("is_deleted = false")
 public class Patient extends BaseEntity {
 
     @Setter
@@ -40,10 +42,10 @@ public class Patient extends BaseEntity {
     @Column(length = 500)
     private String address;
 
+    @Setter
+    @Column(name = "user_id")
+    private Long userId;
+
     @OneToMany(mappedBy = "patient")
     private List<Appointment> appointments = new ArrayList<>();
-
-    public void setIsDeleted(boolean b) {
-
-    }
 }

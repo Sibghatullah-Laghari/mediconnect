@@ -2,10 +2,15 @@ package com.mediconnect.service;
 
 import com.mediconnect.dto.doctor.CreateDoctorRequest;
 import com.mediconnect.dto.doctor.DoctorResponse;
+import com.mediconnect.exception.BadRequestException;
 import com.mediconnect.exception.DuplicateEmailException;
 import com.mediconnect.exception.ResourceNotFoundException;
 import com.mediconnect.model.Doctor;
+import com.mediconnect.model.Role;
+import com.mediconnect.model.User;
 import com.mediconnect.repository.DoctorRepository;
+import com.mediconnect.security.OwnershipValidator;
+import com.mediconnect.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +24,15 @@ import java.util.stream.Collectors;
 public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorRepository doctorRepository;
+    private final SecurityUtils securityUtils;
+    private final OwnershipValidator ownershipValidator;
 
     @Override
     public DoctorResponse createDoctor(CreateDoctorRequest request) {
+        User currentUser = securityUtils.getCurrentUser();
+        if (currentUser.getRole() == Role.DOCTOR && doctorRepository.findByUserId(currentUser.getId()).isPresent()) {
+            throw new BadRequestException("Doctor profile already exists for this account");
+        }
         if (doctorRepository.existsByEmail(request.email())) {
             throw new DuplicateEmailException( "Doctor having " + request.email() + "email already exists");
         }
@@ -34,6 +45,9 @@ public class DoctorServiceImpl implements DoctorService {
         doctor.setEmail(request.email());
         doctor.setFee(request.fee());
         doctor.setExperience(request.experience());
+        if (currentUser.getRole() == Role.DOCTOR) {
+            doctor.setUserId(currentUser.getId());
+        }
 
         Doctor saved = doctorRepository.save(doctor);
         return toResponse(saved);
@@ -55,6 +69,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public DoctorResponse getDoctorById(Long id) {
         Doctor doctor = getDoctorEntityById(id);
+        ownershipValidator.assertDoctorAccess(securityUtils.getCurrentUser(), doctor);
         return toResponse(doctor);
     }
 
@@ -84,7 +99,8 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public DoctorResponse updateDoctor(Long id, CreateDoctorRequest request) {
         Doctor doctor = getDoctorEntityById(id);
-        
+        ownershipValidator.assertDoctorAccess(securityUtils.getCurrentUser(), doctor);
+
         doctor.setName(request.name());
         doctor.setGender(request.gender());
         doctor.setSpecialization(request.specialization());

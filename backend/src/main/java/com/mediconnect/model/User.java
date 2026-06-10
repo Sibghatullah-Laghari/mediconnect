@@ -14,6 +14,10 @@ import java.time.LocalDateTime;
 public class User extends BaseEntity {
 
 	@Setter
+	@Column(nullable = false, length = 100)
+	private String name;
+
+	@Setter
 	@Column(nullable = false, unique = true, length = 255)
 	private String email;
 
@@ -46,4 +50,10 @@ public class User extends BaseEntity {
 	@Setter
 	@Column(nullable = false)
 	private boolean accountLocked = false;
+
+	@Setter
+	private String passwordResetToken;
+
+	@Setter
+	private LocalDateTime passwordResetExpiry;
 }

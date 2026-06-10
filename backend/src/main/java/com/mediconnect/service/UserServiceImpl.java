@@ -2,8 +2,10 @@ package com.mediconnect.service;
 
 import com.mediconnect.dto.auth.RegisterUserRequest;
 import com.mediconnect.dto.auth.UserResponse;
+import com.mediconnect.exception.BadRequestException;
 import com.mediconnect.exception.DuplicateEmailException;
 import com.mediconnect.exception.ResourceNotFoundException;
+import com.mediconnect.model.Role;
 import com.mediconnect.model.User;
 import com.mediconnect.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,14 +24,19 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     @Override
     public UserResponse registerUser(RegisterUserRequest request) {
+        if (request.role() == Role.ADMIN) {
+            throw new BadRequestException("Admin accounts cannot be self-registered");
+        }
         if (userRepository.existsByEmail(request.email())) {
             throw new DuplicateEmailException("User email already exists");
         }
 
         User user = new User();
+        user.setName(request.name());
         user.setEmail(request.email());
         user.setPasswordHash(passwordEncoder.encode(request.password()));
         user.setRole(request.role());
@@ -39,6 +46,7 @@ public class UserServiceImpl implements UserService {
         user.setVerificationCode(code);
 
         User saved = userRepository.save(user);
+        emailService.sendVerificationEmail(saved.getEmail(), code);
         return new UserResponse(saved.getId(), saved.getEmail(), saved.getRole());
     }
 
