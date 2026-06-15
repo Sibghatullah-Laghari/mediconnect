@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for your interest in contributing.
+Thank you for your interest in contributing in mediconnect.
 
 ## How To Contribute
 
