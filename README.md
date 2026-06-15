@@ -149,6 +149,7 @@ Add screenshots
 - Docker Compose
 - CI workflow
 - Integration tests with Testcontainers
+- AI will be integrated.
 
 ## Contributing
 
