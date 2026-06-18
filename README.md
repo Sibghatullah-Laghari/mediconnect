@@ -150,6 +150,7 @@ Add screenshots
 - CI workflow
 - Integration tests with Testcontainers
 - AI will be integrated.
+- Adding more comments for better readability of the code.
 
 ## Contributing
 

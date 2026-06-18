@@ -28,7 +28,7 @@ public class AppointmentController {
 
     /**
      * Creates a new appointment.
-     *
+     * This endpoint is used to create a new appointment.
      * @param request the appointment creation details
      * @return the created appointment response
      */
@@ -119,4 +119,3 @@ public class AppointmentController {
         return ResponseEntity.noContent().build();
     }
 }
-
