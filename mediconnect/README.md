@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # MediConnect API
 
 Spring Boot healthcare REST API for patient, doctor, appointment, and authentication workflows.
@@ -156,9 +155,3 @@ Add screenshots
 ## Contributing
 
 Contributions are welcome after the first stable API version is complete. Please open an issue before large changes.
-=======
-
-# Welcome to Antigravity!
-
-Run the @fbs-to-agy-export.md workflow to bootstrap firebase into your project: [Learn more](https://firebase.google.com/docs/studio/migrating-project)
->>>>>>> 204154e (created frontend)
