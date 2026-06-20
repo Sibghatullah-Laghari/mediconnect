@@ -6,7 +6,6 @@ import { useAuth } from '../../auth/useAuth.js';
 import Button from '../../components/ui/Button.jsx';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card.jsx';
 import Input from '../../components/ui/Input.jsx';
-import Select from '../../components/ui/Select.jsx';
 import { getDashboardRoute } from '../../constants/routes.js';
 import { useToast } from '../../hooks/useToast.jsx';
 import { getErrorMessage } from '../../utils/errorUtils.js';
@@ -18,7 +17,6 @@ const schema = z.object({
     .string()
     .min(8, 'Password must be at least 8 characters')
     .regex(/\d/, 'Password must include at least one number'),
-  role: z.enum(['PATIENT', 'DOCTOR']),
 });
 
 export default function RegisterPage() {
@@ -31,9 +29,6 @@ export default function RegisterPage() {
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: {
-      role: 'PATIENT',
-    },
   });
 
   return (
@@ -69,13 +64,6 @@ export default function RegisterPage() {
               <label className="mb-1 block text-sm font-medium text-slate-700">Password</label>
               <Input type="password" {...register('password')} />
               {errors.password ? <p className="mt-1 text-xs text-red-600">{errors.password.message}</p> : null}
-            </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">Role</label>
-              <Select {...register('role')}>
-                <option value="PATIENT">Patient</option>
-                <option value="DOCTOR">Doctor</option>
-              </Select>
             </div>
             <Button type="submit" loading={isSubmitting} fullWidth>
               Create account

@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # MediConnect API
 
 Spring Boot healthcare REST API for patient, doctor, appointment, and authentication workflows.
@@ -157,8 +158,68 @@ Add screenshots
 
 Contributions are welcome after the first stable API version is complete. Please open an issue before large changes.
 =======
+=======
+# MediConnect
+>>>>>>> 30133c4 (docker files are added, and some changes are made in backend as well as frontend)
 
-# Welcome to Antigravity!
+MediConnect is a healthcare scheduling app with:
 
+<<<<<<< HEAD
 Run the @fbs-to-agy-export.md workflow to bootstrap firebase into your project: [Learn more](https://firebase.google.com/docs/studio/migrating-project)
 >>>>>>> 204154e (created frontend)
+=======
+- a Spring Boot backend in `mediconnect/backend`
+- a React frontend in `frontend`
+
+## Quick Start
+
+### Docker Compose
+
+```bash
+docker compose up --build
+```
+
+Services:
+
+- Frontend: `http://localhost:5173`
+- Backend API: `http://localhost:8080/api/v1`
+- Health check: `http://localhost:8080/actuator/health`
+
+### Local Development
+
+Backend:
+
+```bash
+cd mediconnect/backend
+mvn test
+mvn spring-boot:run
+```
+
+Frontend:
+
+```bash
+cd frontend
+npm ci
+npm run dev
+```
+
+## Environment
+
+Backend uses these variables:
+
+- `DB_URL`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+- `JWT_SECRET`
+- `JWT_ACCESS_TOKEN_EXPIRATION_MS`
+- `JWT_REFRESH_TOKEN_EXPIRATION_MS`
+
+See `mediconnect/backend/.env.example` for a starter template.
+
+## Verification
+
+Current local checks:
+
+- `mvn test` in `mediconnect/backend`
+- `npm run build` in `frontend`
+>>>>>>> 30133c4 (docker files are added, and some changes are made in backend as well as frontend)

@@ -4,6 +4,7 @@ import com.mediconnect.dto.auth.RegisterUserRequest;
 import com.mediconnect.dto.auth.UserResponse;
 import com.mediconnect.exception.DuplicateEmailException;
 import com.mediconnect.exception.ResourceNotFoundException;
+import com.mediconnect.model.Role;
 import com.mediconnect.model.User;
 import com.mediconnect.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,17 +25,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse registerUser(RegisterUserRequest request) {
-        if (userRepository.existsByEmail(request.email())) {
-            throw new DuplicateEmailException("User email already exists");
-        }
-
-        User user = new User();
-        user.setEmail(request.email());
-        user.setPasswordHash(passwordEncoder.encode(request.password()));
-        user.setRole(request.role());
-
-        User saved = userRepository.save(user);
+        User saved = createUser(request.email(), request.password(), resolveRole(request.role()));
         return new UserResponse(saved.getId(), saved.getEmail(), saved.getRole());
+    }
+
+    @Override
+    public User registerPublicPatient(RegisterUserRequest request) {
+        return createUser(request.email(), request.password(), Role.PATIENT);
     }
 
     @Override
@@ -56,10 +53,10 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateUser(Long id, RegisterUserRequest request) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", id));
-        
+
         user.setEmail(request.email());
         user.setPasswordHash(passwordEncoder.encode(request.password()));
-        user.setRole(request.role());
+        user.setRole(resolveRole(request.role()));
 
         User saved = userRepository.save(user);
         return new UserResponse(saved.getId(), saved.getEmail(), saved.getRole());
@@ -72,5 +69,20 @@ public class UserServiceImpl implements UserService {
         }
         userRepository.deleteById(id);
     }
-}
 
+    private User createUser(String email, String rawPassword, Role role) {
+        if (userRepository.existsByEmail(email)) {
+            throw new DuplicateEmailException("User email already exists");
+        }
+
+        User user = new User();
+        user.setEmail(email);
+        user.setPasswordHash(passwordEncoder.encode(rawPassword));
+        user.setRole(role);
+        return userRepository.save(user);
+    }
+
+    private Role resolveRole(Role requestedRole) {
+        return requestedRole == null ? Role.PATIENT : requestedRole;
+    }
+}
