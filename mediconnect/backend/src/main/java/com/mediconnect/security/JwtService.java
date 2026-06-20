@@ -65,6 +65,10 @@ public class JwtService {
         return "access".equals(extractClaim(token, claims -> claims.get(TOKEN_TYPE_CLAIM, String.class)));
     }
 
+    public long getRefreshTokenExpirationMs() {
+        return refreshTokenExpirationMs;
+    }
+
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         return claimsResolver.apply(extractAllClaims(token));
     }

@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+.env
+.idea/
+target/
+*.class
+=======
 .DS_Store
 Thumbs.db
 
@@ -34,3 +40,4 @@ tmp/
 temp/
 *.swp
 *.swo
+>>>>>>> 204154e (created frontend)
