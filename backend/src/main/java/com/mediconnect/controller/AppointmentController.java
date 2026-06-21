@@ -6,6 +6,8 @@ import com.mediconnect.dto.appointment.StatusRequest;
 import com.mediconnect.service.AppointmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +20,7 @@ import java.util.List;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/appointments")
+@RequestMapping("/appointments")
 public class AppointmentController {
 
     /**
@@ -36,6 +38,13 @@ public class AppointmentController {
     public ResponseEntity<AppointmentResponse> createAppointment(@Valid @RequestBody CreateAppointmentRequest request) {
         AppointmentResponse response = appointmentService.createAppointment(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AppointmentResponse> updateAppointment(
+            @PathVariable Long id,
+            @Valid @RequestBody CreateAppointmentRequest request) {
+        return ResponseEntity.ok(appointmentService.updateAppointment(id, request));
     }
 
     /**
@@ -59,6 +68,13 @@ public class AppointmentController {
         return ResponseEntity.ok(appointmentService.getAllAppointments());
     }
 
+    @GetMapping(params = {"page", "size"})
+    public ResponseEntity<Page<AppointmentResponse>> getAllAppointmentsPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(appointmentService.getAllAppointments(PageRequest.of(page, size)));
+    }
+
     /**
      * Retrieves all appointments for a given patient.
      *
@@ -70,6 +86,14 @@ public class AppointmentController {
         return ResponseEntity.ok(appointmentService.getAppointmentsByPatient(patientId));
     }
 
+    @GetMapping(value = "/patient/{patientId}", params = {"page", "size"})
+    public ResponseEntity<Page<AppointmentResponse>> getAppointmentsByPatientPaginated(
+            @PathVariable Long patientId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(appointmentService.getAppointmentsByPatient(patientId, PageRequest.of(page, size)));
+    }
+
     /**
      * Retrieves all appointments for a given doctor.
      *
@@ -79,6 +103,14 @@ public class AppointmentController {
     @GetMapping("/doctor/{doctorId}")
     public ResponseEntity<List<AppointmentResponse>> getAppointmentsByDoctor(@PathVariable Long doctorId) {
         return ResponseEntity.ok(appointmentService.getAppointmentsByDoctor(doctorId));
+    }
+
+    @GetMapping(value = "/doctor/{doctorId}", params = {"page", "size"})
+    public ResponseEntity<Page<AppointmentResponse>> getAppointmentsByDoctorPaginated(
+            @PathVariable Long doctorId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(appointmentService.getAppointmentsByDoctor(doctorId, PageRequest.of(page, size)));
     }
 
     /**
@@ -95,16 +127,25 @@ public class AppointmentController {
         return ResponseEntity.ok(appointmentService.updateStatus(id, request.status()));
     }
 
+    @PatchMapping("/{id}/confirm")
+    public ResponseEntity<AppointmentResponse> confirmAppointment(@PathVariable Long id) {
+        return ResponseEntity.ok(appointmentService.confirmAppointment(id));
+    }
+
+    @PatchMapping("/{id}/complete")
+    public ResponseEntity<AppointmentResponse> completeAppointment(@PathVariable Long id) {
+        return ResponseEntity.ok(appointmentService.completeAppointment(id));
+    }
+
     /**
      * Cancels an appointment by ID.
      *
      * @param id the appointment ID
      * @return a response entity
      */
-    @PutMapping("/{id}/cancel")
-    public ResponseEntity<Void> cancelAppointment(@PathVariable Long id) {
-        appointmentService.cancelAppointment(id);
-        return ResponseEntity.ok().build();
+    @PatchMapping("/{id}/cancel")
+    public ResponseEntity<AppointmentResponse> cancelAppointment(@PathVariable Long id) {
+        return ResponseEntity.ok(appointmentService.cancelAppointment(id));
     }
 
     /**

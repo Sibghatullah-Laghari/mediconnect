@@ -5,6 +5,8 @@ import com.mediconnect.dto.doctor.DoctorResponse;
 import com.mediconnect.service.DoctorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +19,7 @@ import java.util.List;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/doctors")
+@RequestMapping("/doctors")
 public class DoctorController {
 
     /**
@@ -35,6 +37,11 @@ public class DoctorController {
     public ResponseEntity<DoctorResponse> createDoctor(@Valid @RequestBody CreateDoctorRequest request) {
         DoctorResponse response = doctorService.createDoctor(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<DoctorResponse> getCurrentDoctor() {
+        return ResponseEntity.ok(doctorService.getCurrentDoctor());
     }
 
     /**
@@ -56,6 +63,18 @@ public class DoctorController {
     @GetMapping
     public ResponseEntity<List<DoctorResponse>> getAllDoctors() {
         return ResponseEntity.ok(doctorService.getAllDoctors());
+    }
+
+    @GetMapping(params = {"page", "size"})
+    public ResponseEntity<Page<DoctorResponse>> getAllDoctorsPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(doctorService.getAllDoctors(PageRequest.of(page, size)));
+    }
+
+    @GetMapping("/specializations")
+    public ResponseEntity<List<String>> getSpecializations() {
+        return ResponseEntity.ok(doctorService.getAllSpecializations().stream().sorted().toList());
     }
 
     /**
@@ -95,4 +114,3 @@ public class DoctorController {
         return ResponseEntity.noContent().build();
     }
 }
-

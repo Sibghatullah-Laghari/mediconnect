@@ -1,14 +1,21 @@
 {
-    "configurations": [
-        {
-            "type": "java",
-            "name": "Spring Boot-BackendApplication<mediconnect-api>",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "mainClass": "com.mediconnect.BackendApplication",
-            "projectName": "mediconnect-api",
-            "args": "",
-            "envFile": "${workspaceFolder}/.env"
-        }
-    ]
+  "configurations": [
+    {
+      "type": "java",
+      "name": "BackendApplication",
+      "request": "launch",
+      "mainClass": "com.mediconnect.BackendApplication",
+      "projectName": ""
+    },
+    {
+      "type": "java",
+      "name": "BackendApplication",
+      "request": "launch",
+      "mainClass": "com.mediconnect.BackendApplication",
+      "projectName": "mediconnect-api",
+      "cwd": "${workspaceFolder}/backend",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
 }

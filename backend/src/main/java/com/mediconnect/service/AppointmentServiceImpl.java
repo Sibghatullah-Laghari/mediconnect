@@ -6,26 +6,29 @@ import com.mediconnect.exception.AppointmentConflictException;
 import com.mediconnect.exception.BadRequestException;
 import com.mediconnect.exception.InvalidStatusTransitionException;
 import com.mediconnect.exception.ResourceNotFoundException;
+import com.mediconnect.exception.UnauthorizedException;
 import com.mediconnect.model.Appointment;
 import com.mediconnect.model.AppointmentStatus;
 import com.mediconnect.model.Doctor;
 import com.mediconnect.model.Patient;
+import com.mediconnect.model.Role;
 import com.mediconnect.repository.AppointmentRepository;
 import com.mediconnect.repository.DoctorRepository;
 import com.mediconnect.repository.PatientRepository;
+import com.mediconnect.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
-/**
- * Implementation of {@link AppointmentService}.
- * Handles appointment business logic, including creation, retrieval, cancellation, and status updates.
- */
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -38,12 +41,13 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public AppointmentResponse createAppointment(CreateAppointmentRequest request) {
-        validateBookableAppointmentSlot(request);
+        validateBookableAppointmentSlot(request, null);
 
         Patient patient = patientRepository.findById(request.patientId())
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Patient", request.patientId()));
         Doctor doctor = doctorRepository.findById(request.doctorId())
-                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor", request.doctorId()));
+        ensureCanCreateAppointment(patient);
 
         Appointment appointment = new Appointment();
         appointment.setReason(request.reason());
@@ -52,13 +56,179 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointment.setPatient(patient);
         appointment.setDoctor(doctor);
 
-        Appointment saved = appointmentRepository.save(appointment);
-        return toResponse(saved);
+        return toResponse(appointmentRepository.save(appointment));
     }
 
-    /**
-     * Helper method to map {@link Appointment} entity to {@link AppointmentResponse}.
-     */
+    @Override
+    public AppointmentResponse updateAppointment(Long id, CreateAppointmentRequest request) {
+        Appointment appointment = getAppointmentEntityById(id);
+        ensureCanModifyAppointment(appointment);
+
+        validateBookableAppointmentSlot(request, appointment.getId());
+
+        Patient patient = patientRepository.findById(request.patientId())
+                .orElseThrow(() -> new ResourceNotFoundException("Patient", request.patientId()));
+        Doctor doctor = doctorRepository.findById(request.doctorId())
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor", request.doctorId()));
+        ensureCanCreateAppointment(patient);
+
+        appointment.setReason(request.reason());
+        appointment.setAppointmentDate(request.appointmentDate());
+        appointment.setAppointmentTime(request.appointmentTime());
+        appointment.setPatient(patient);
+        appointment.setDoctor(doctor);
+
+        return toResponse(appointmentRepository.save(appointment));
+    }
+
+    @Override
+    public AppointmentResponse getAppointmentById(Long id) {
+        Appointment appointment = getAppointmentEntityById(id);
+        ensureCanAccessAppointment(appointment);
+        return toResponse(appointment);
+    }
+
+    @Override
+    public List<AppointmentResponse> getAllAppointments() {
+        List<Appointment> appointments;
+        if (SecurityUtils.hasRole(Role.ADMIN)) {
+            appointments = appointmentRepository.findAll();
+        } else if (SecurityUtils.hasRole(Role.PATIENT)) {
+            appointments = appointmentRepository.findByPatientEmail(SecurityUtils.getCurrentUserEmail());
+        } else if (SecurityUtils.hasRole(Role.DOCTOR)) {
+            appointments = appointmentRepository.findByDoctorEmail(SecurityUtils.getCurrentUserEmail());
+        } else {
+            throw new UnauthorizedException("You do not have permission to view appointments");
+        }
+
+        return appointments.stream().map(this::toResponse).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<AppointmentResponse> getAllAppointments(Pageable pageable) {
+        if (SecurityUtils.hasRole(Role.ADMIN)) {
+            return appointmentRepository.findAll(pageable).map(this::toResponse);
+        } else if (SecurityUtils.hasRole(Role.PATIENT)) {
+            return appointmentRepository.findByPatientEmail(SecurityUtils.getCurrentUserEmail(), pageable)
+                    .map(this::toResponse);
+        } else if (SecurityUtils.hasRole(Role.DOCTOR)) {
+            return appointmentRepository.findByDoctorEmail(SecurityUtils.getCurrentUserEmail(), pageable)
+                    .map(this::toResponse);
+        }
+
+        throw new UnauthorizedException("You do not have permission to view appointments");
+    }
+
+    @Override
+    public List<AppointmentResponse> getAppointmentsByPatient(Long patientId) {
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient", patientId));
+        ensureCanAccessPatientAppointments(patient);
+
+        return appointmentRepository.findByPatientId(patientId)
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<AppointmentResponse> getAppointmentsByPatient(Long patientId, Pageable pageable) {
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient", patientId));
+        ensureCanAccessPatientAppointments(patient);
+
+        return appointmentRepository.findByPatientId(patientId, pageable).map(this::toResponse);
+    }
+
+    @Override
+    public List<AppointmentResponse> getAppointmentsByDoctor(Long doctorId) {
+        Doctor doctor = doctorRepository.findById(doctorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor", doctorId));
+        ensureCanAccessDoctorAppointments(doctor);
+
+        return appointmentRepository.findByDoctorId(doctorId)
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<AppointmentResponse> getAppointmentsByDoctor(Long doctorId, Pageable pageable) {
+        Doctor doctor = doctorRepository.findById(doctorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor", doctorId));
+        ensureCanAccessDoctorAppointments(doctor);
+
+        return appointmentRepository.findByDoctorId(doctorId, pageable).map(this::toResponse);
+    }
+
+    @Override
+    public AppointmentResponse updateStatus(Long id, AppointmentStatus newStatus) {
+        Appointment appointment = getAppointmentEntityById(id);
+        ensureCanManageStatus(appointment);
+
+        AppointmentStatus current = appointment.getStatus();
+        boolean isValidTransition =
+                (current == AppointmentStatus.PENDING
+                        && (newStatus == AppointmentStatus.CONFIRMED || newStatus == AppointmentStatus.CANCELLED))
+                        || (current == AppointmentStatus.CONFIRMED
+                        && (newStatus == AppointmentStatus.COMPLETED || newStatus == AppointmentStatus.CANCELLED));
+
+        if (!isValidTransition) {
+            throw new InvalidStatusTransitionException(current, newStatus);
+        }
+
+        appointment.setStatus(newStatus);
+        return toResponse(appointmentRepository.save(appointment));
+    }
+
+    @Override
+    public AppointmentResponse confirmAppointment(Long id) {
+        return updateStatus(id, AppointmentStatus.CONFIRMED);
+    }
+
+    @Override
+    public AppointmentResponse completeAppointment(Long id) {
+        return updateStatus(id, AppointmentStatus.COMPLETED);
+    }
+
+    @Override
+    public AppointmentResponse cancelAppointment(Long id) {
+        return updateStatus(id, AppointmentStatus.CANCELLED);
+    }
+
+    @Override
+    public void deleteAppointment(Long id) {
+        Appointment appointment = getAppointmentEntityById(id);
+        ensureCanModifyAppointment(appointment);
+        appointmentRepository.delete(appointment);
+    }
+
+    public boolean canBookAppointmentSlot(LocalDate appointmentDate, LocalTime appointmentTime) {
+        if (appointmentDate == null || appointmentTime == null) {
+            return false;
+        }
+
+        LocalDateTime requestedSlot = LocalDateTime.of(appointmentDate, appointmentTime);
+        return requestedSlot.isAfter(LocalDateTime.now(clock));
+    }
+
+    public void validateBookableAppointmentSlot(CreateAppointmentRequest request, Long excludedAppointmentId) {
+        if (request == null) {
+            throw new BadRequestException("Appointment request is required");
+        }
+
+        if (!canBookAppointmentSlot(request.appointmentDate(), request.appointmentTime())) {
+            throw new BadRequestException("Appointment must be scheduled in the future");
+        }
+
+        validateDoctorAvailability(request.doctorId(), request.appointmentDate(), request.appointmentTime(), excludedAppointmentId);
+    }
+
+    private Appointment getAppointmentEntityById(Long id) {
+        return appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment", id));
+    }
+
     private AppointmentResponse toResponse(Appointment appointment) {
         return new AppointmentResponse(
                 appointment.getId(),
@@ -73,142 +243,119 @@ public class AppointmentServiceImpl implements AppointmentService {
         );
     }
 
-    @Override
-    public AppointmentResponse getAppointmentById(Long id) {
-        Appointment appointment = appointmentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Appointment", id));
-        return toResponse(appointment);
-    }
-
-    @Override
-    public java.util.List<AppointmentResponse> getAllAppointments() {
-        return appointmentRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .collect(java.util.stream.Collectors.toList());
-    }
-
-    @Override
-    public java.util.List<AppointmentResponse> getAppointmentsByPatient(Long patientId) {
-        return appointmentRepository.findByPatientId(patientId)
-                .stream()
-                .map(this::toResponse)
-                .collect(java.util.stream.Collectors.toList());
-    }
-
-    @Override
-    public java.util.List<AppointmentResponse> getAppointmentsByDoctor(Long doctorId) {
-        return appointmentRepository.findByDoctorId(doctorId)
-                .stream()
-                .map(this::toResponse)
-                .collect(java.util.stream.Collectors.toList());
-    }
-
-    @Override
-    public void cancelAppointment(Long id) {
-        updateStatus(id, AppointmentStatus.CANCELLED);
-    }
-
-    private Appointment getAppointmentEntityById(Long id) {
-        return appointmentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Appointment", id));
-    }
-
-    public void validateAppointmentDate(CreateAppointmentRequest request) {
-        validateBookableAppointmentSlot(request);
-    }
-
-    /**
-     * Checks if the requested date/time slot is in the future.
-     */
-    public boolean canBookAppointmentSlot(LocalDate appointmentDate, LocalTime appointmentTime) {
-        if (appointmentDate == null || appointmentTime == null) {
-            return false;
-        }
-
-        LocalDateTime requestedSlot = LocalDateTime.of(appointmentDate, appointmentTime);
-        return requestedSlot.isAfter(LocalDateTime.now(clock));
-    }
-
-    /**
-     * Validates if the requested appointment slot is bookable.
-     * Checks for future date and doctor availability.
-     */
-    public void validateBookableAppointmentSlot(CreateAppointmentRequest request) {
-        if (request == null) {
-            throw new BadRequestException("Appointment request is required");
-        }
-
-        // First, ensure the requested date/time is in the future
-        if (!canBookAppointmentSlot(request.appointmentDate(), request.appointmentTime())) {
-            throw new BadRequestException("Appointment must be scheduled in the future");
-        }
-
-        // Then, ensure the doctor's slot is not already taken.
-        java.util.List<Appointment> doctorAppointments = appointmentRepository.findByDoctorId(request.doctorId());
-        boolean slotTaken = doctorAppointments.stream().anyMatch(a ->
-                request.appointmentDate().equals(a.getAppointmentDate()) &&
-                        request.appointmentTime().equals(a.getAppointmentTime())
+    private void validateDoctorAvailability(
+            Long doctorId,
+            LocalDate appointmentDate,
+            LocalTime appointmentTime,
+            Long excludedAppointmentId
+    ) {
+        boolean slotTaken = appointmentRepository.findByDoctorId(doctorId).stream().anyMatch(appointment ->
+                (excludedAppointmentId == null || !appointment.getId().equals(excludedAppointmentId))
+                        && appointmentDate.equals(appointment.getAppointmentDate())
+                        && appointmentTime.equals(appointment.getAppointmentTime())
         );
 
         if (slotTaken) {
-            Doctor doctor = doctorRepository.findById(request.doctorId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
-
+            Doctor doctor = doctorRepository.findById(doctorId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Doctor", doctorId));
             throw new AppointmentConflictException(
-                    "Dr. " + doctor.getName() +
-                            " is already booked on " + request.appointmentDate() +
-                            " at " + request.appointmentTime()
+                    "Dr. " + doctor.getName() + " is already booked on " + appointmentDate + " at " + appointmentTime
             );
         }
     }
 
-    private boolean isDoctorSlotTaken(Long doctorId, LocalDate appointmentDate, LocalTime appointmentTime) {
-        if (doctorId == null || appointmentDate == null || appointmentTime == null) {
-            return false;
+    private void ensureCanCreateAppointment(Patient patient) {
+        if (SecurityUtils.hasRole(Role.ADMIN)) {
+            return;
         }
 
-        java.util.List<Appointment> doctorAppointments = appointmentRepository.findByDoctorId(doctorId);
-        return doctorAppointments.stream().anyMatch(a ->
-                appointmentDate.equals(a.getAppointmentDate()) && appointmentTime.equals(a.getAppointmentTime())
-        );
-    }
-
-    public void validateBookableAppointmentSlot(LocalDate appointmentDate, LocalTime appointmentTime) {
-        if (!canBookAppointmentSlot(appointmentDate, appointmentTime)) {
-            throw new BadRequestException("Appointment must be scheduled in the future");
+        if (SecurityUtils.hasRole(Role.PATIENT)
+                && SecurityUtils.getCurrentUserEmail().equalsIgnoreCase(patient.getEmail())) {
+            return;
         }
 
+        throw new UnauthorizedException("You can only create appointments for your own patient profile");
     }
 
-    @Override
-    public AppointmentResponse updateStatus(Long id, AppointmentStatus newStatus) {
-
-        Appointment appointment = getAppointmentEntityById(id);
-
-        AppointmentStatus current = appointment.getStatus();
-
-        // Check valid transitions
-        boolean isValidTransition =
-                (current == AppointmentStatus.PENDING &&
-                        (newStatus == AppointmentStatus.CONFIRMED ||
-                                newStatus == AppointmentStatus.CANCELLED))
-                        ||
-                        (current == AppointmentStatus.CONFIRMED &&
-                                (newStatus == AppointmentStatus.COMPLETED ||
-                                        newStatus == AppointmentStatus.CANCELLED));
-
-        if (!isValidTransition) {
-            throw new InvalidStatusTransitionException(current, newStatus);
+    private void ensureCanAccessAppointment(Appointment appointment) {
+        if (SecurityUtils.hasRole(Role.ADMIN)) {
+            return;
         }
 
-        appointment.setStatus(newStatus);
-        return toResponse(appointmentRepository.save(appointment));
+        String currentEmail = SecurityUtils.getCurrentUserEmail();
+        if (SecurityUtils.hasRole(Role.PATIENT)
+                && currentEmail.equalsIgnoreCase(appointment.getPatient().getEmail())) {
+            return;
+        }
+
+        if (SecurityUtils.hasRole(Role.DOCTOR)
+                && currentEmail.equalsIgnoreCase(appointment.getDoctor().getEmail())) {
+            return;
+        }
+
+        throw new UnauthorizedException("You do not have permission to access this appointment");
     }
 
-    @Override
-    public void deleteAppointment(Long id) {
-        Appointment appointment = getAppointmentEntityById(id);
-        appointmentRepository.delete(appointment);
+    private void ensureCanManageStatus(Appointment appointment) {
+        if (SecurityUtils.hasRole(Role.ADMIN)) {
+            return;
+        }
+
+        if (SecurityUtils.hasRole(Role.DOCTOR)
+                && SecurityUtils.getCurrentUserEmail().equalsIgnoreCase(appointment.getDoctor().getEmail())) {
+            return;
+        }
+
+        if (SecurityUtils.hasRole(Role.PATIENT)
+                && SecurityUtils.getCurrentUserEmail().equalsIgnoreCase(appointment.getPatient().getEmail())) {
+            return;
+        }
+
+        throw new UnauthorizedException("Only the assigned doctor, the patient owner, or an admin can update appointment status");
+    }
+
+    private void ensureCanModifyAppointment(Appointment appointment) {
+        if (SecurityUtils.hasRole(Role.ADMIN)) {
+            return;
+        }
+
+        String currentEmail = SecurityUtils.getCurrentUserEmail();
+        if (SecurityUtils.hasRole(Role.PATIENT)
+                && currentEmail.equalsIgnoreCase(appointment.getPatient().getEmail())) {
+            return;
+        }
+
+        if (SecurityUtils.hasRole(Role.DOCTOR)
+                && currentEmail.equalsIgnoreCase(appointment.getDoctor().getEmail())) {
+            return;
+        }
+
+        throw new UnauthorizedException("You do not have permission to modify this appointment");
+    }
+
+    private void ensureCanAccessPatientAppointments(Patient patient) {
+        if (SecurityUtils.hasRole(Role.ADMIN)) {
+            return;
+        }
+
+        if (SecurityUtils.hasRole(Role.PATIENT)
+                && SecurityUtils.getCurrentUserEmail().equalsIgnoreCase(patient.getEmail())) {
+            return;
+        }
+
+        throw new UnauthorizedException("You do not have permission to view these appointments");
+    }
+
+    private void ensureCanAccessDoctorAppointments(Doctor doctor) {
+        if (SecurityUtils.hasRole(Role.ADMIN)) {
+            return;
+        }
+
+        if (SecurityUtils.hasRole(Role.DOCTOR)
+                && SecurityUtils.getCurrentUserEmail().equalsIgnoreCase(doctor.getEmail())) {
+            return;
+        }
+
+        throw new UnauthorizedException("You do not have permission to view these appointments");
     }
 }

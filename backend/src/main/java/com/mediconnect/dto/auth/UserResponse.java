@@ -5,7 +5,8 @@ import com.mediconnect.model.Role;
 public record UserResponse(
         Long id,
         String email,
-        Role role
+        String name,
+        Role role,
+        boolean emailVerified
 ) {
 }
-
