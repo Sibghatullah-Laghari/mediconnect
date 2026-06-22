@@ -12,10 +12,8 @@
       "name": "BackendApplication",
       "request": "launch",
       "mainClass": "com.mediconnect.BackendApplication",
-      "projectName": "mediconnect-api",
-      "cwd": "${workspaceFolder}/backend",
-      "args": "",
-      "envFile": "${workspaceFolder}/.env"
+      "projectName": "backend",
+      "cwd": "${workspaceFolder}/backend"
     }
   ]
 }

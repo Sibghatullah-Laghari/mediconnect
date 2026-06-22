@@ -10,15 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: mediconnect/backend
+        working-directory: backend
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
+          cache: maven
       - name: Run backend tests
-        run: mvn test
+        run: ./mvnw -q test
 
   frontend:
     runs-on: ubuntu-latest
@@ -36,3 +37,36 @@ jobs:
         run: npm ci
       - name: Build frontend
         run: npm run build
+
+  docker:
+    runs-on: ubuntu-latest
+    env:
+      POSTGRES_DB: mediconnect
+      POSTGRES_USER: mediconnect
+      POSTGRES_PASSWORD: ci-postgres-password
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mediconnect
+      SPRING_DATASOURCE_USERNAME: mediconnect
+      SPRING_DATASOURCE_PASSWORD: ci-postgres-password
+      SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: '20'
+      SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE: '5'
+      JWT_SECRET: ci-ci-ci-ci-ci-ci-ci-ci-ci-ci-ci-ci-ci-ci-ci-ci-ci-ci-ci-ci
+      JWT_ACCESS_TOKEN_EXPIRY_MINUTES: '15'
+      JWT_REFRESH_TOKEN_EXPIRY_DAYS: '7'
+      SPRING_MAIL_HOST: localhost
+      SPRING_MAIL_PORT: '1025'
+      SPRING_MAIL_USERNAME: ci@example.com
+      SPRING_MAIL_PASSWORD: ci-mail-password
+      SPRING_MAIL_SMTP_AUTH: 'false'
+      SPRING_MAIL_SMTP_STARTTLS: 'false'
+      ALLOWED_ORIGINS: http://localhost:5173
+      VITE_API_BASE_URL: /api/v1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build images
+        run: docker compose build
+      - name: Start stack
+        run: docker compose up -d --wait --wait-timeout 120
+      - name: Tear down stack
+        if: always()
+        run: docker compose down -v

@@ -1,13 +1,22 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { resolve } from 'path'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    strictPort: true, // Forces Vite to use 5173 or fail, so you don't accidentally load an old cached instance
+    strictPort: true,
+    host: '0.0.0.0',
+    proxy: {
+      '/api/v1': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+    },
   },
-  root: './', // Ensures it looks for index.html in the directory where npm run dev is executed
-})
+  preview: {
+    port: 4173,
+    strictPort: true,
+    host: '0.0.0.0',
+  },
+});

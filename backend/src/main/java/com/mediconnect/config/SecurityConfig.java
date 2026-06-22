@@ -2,7 +2,11 @@ package com.mediconnect.config;
 
 import com.mediconnect.filter.RateLimitingFilter;
 import com.mediconnect.security.JwtAuthenticationFilter;
+import java.time.Clock;
+import java.util.Arrays;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,9 +21,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
-import java.time.Clock;
-
 /**
  * Configuration class for security settings of the application.
  * Configures password encoding, security filter chains, and application clock.
@@ -32,6 +33,9 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final RateLimitingFilter rateLimitingFilter;
 
+    @Value("${app.cors.allowed-origins}")
+    private String allowedOrigins;
+
     /**
      * Configures the password encoder using BCrypt.
      *
@@ -43,8 +47,7 @@ public class SecurityConfig {
     }
 
     /**
-     * Configures the security filter chain.
-     * Currently disables CSRF and permits all requests.
+     * Configures the security filter chain for stateless JWT authentication.
      *
      * @param http the HttpSecurity to configure
      * @return the SecurityFilterChain
@@ -64,7 +67,8 @@ public class SecurityConfig {
                         "/api/v1/auth/send-otp",
                         "/api/v1/auth/verify-otp",
                         "/api/v1/users/register",
-                        "/actuator/health"
+                        "/actuator/health",
+                        "/api/v1/actuator/health"
                 ).permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/doctors", "/api/v1/doctors/*", "/api/v1/doctors/specializations", "/api/v1/doctors/specialization/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
@@ -77,11 +81,26 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        List<String> origins = Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isBlank())
+                .peek(origin -> {
+                    if ("*".equals(origin)) {
+                        throw new IllegalStateException("Wildcard CORS origins are not allowed");
+                    }
+                })
+                .toList();
+
+        if (origins.isEmpty()) {
+            throw new IllegalStateException("At least one allowed origin must be configured");
+        }
+
+        configuration.setAllowedOrigins(origins);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Origin", "Accept", "X-Requested-With"));
         configuration.setExposedHeaders(List.of("Authorization"));
         configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

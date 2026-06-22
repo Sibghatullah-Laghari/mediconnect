@@ -28,8 +28,8 @@ import org.springframework.beans.factory.annotation.Value;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.security.SecureRandom;
 import java.util.Base64;
-import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -39,6 +39,7 @@ import java.util.UUID;
 public class AuthServiceImpl implements AuthService {
 
     private static final Duration OTP_EXPIRY = Duration.ofMinutes(10);
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     private final UserRepository userRepository;
     private final UserService userService;
@@ -101,7 +102,7 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
 
-        String otp = String.format("%06d", new Random().nextInt(1_000_000));
+        String otp = String.format("%06d", SECURE_RANDOM.nextInt(1_000_000));
 
         EmailVerificationToken token = new EmailVerificationToken();
         token.setUser(user);
