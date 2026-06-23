@@ -28,6 +28,8 @@ import org.springframework.beans.factory.annotation.Value;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.UUID;
@@ -50,6 +52,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final JavaMailSender mailSender;
     private final Clock clock;
+    private final AccountLockoutService accountLockoutService;
 
     @Value("${jwt.refresh-token.expiry.days}")
     private long refreshTokenExpiryDays;
@@ -74,8 +77,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse refresh(RefreshTokenRequest request) {
+        String tokenHash = hashToken(request.refreshToken());
         LocalDateTime now = LocalDateTime.now(clock);
-        RefreshToken storedToken = refreshTokenRepository.findByToken(request.refreshToken())
+
+        RefreshToken storedToken = refreshTokenRepository.findByTokenHashForUpdate(tokenHash)
                 .orElseThrow(() -> new UnauthorizedException("Refresh token is invalid or expired"));
 
         if (storedToken.getRevokedAt() != null || storedToken.getExpiresAt().isBefore(now)) {
@@ -142,9 +147,29 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UnauthorizedException("Invalid email or password"));
 
-        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+        accountLockoutService.checkLockout(user);
+
+        if (!user.isEmailVerified()) {
             throw new UnauthorizedException("Invalid email or password");
         }
+
+        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+            accountLockoutService.recordFailedAttempt(user);
+            userRepository.save(user);
+            throw new UnauthorizedException("Invalid email or password");
+        }
+
+        accountLockoutService.resetFailedAttempts(user);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void logout() {
+        String currentEmail = SecurityUtils.getCurrentUserEmail();
+        User user = userRepository.findByEmail(currentEmail)
+                .orElseThrow(() -> new UnauthorizedException("Current user not found"));
+
+        refreshTokenRepository.revokeAllTokensByUser(user, LocalDateTime.now(clock));
     }
 
     private AuthResponse buildAuthResponse(User user) {
@@ -163,20 +188,36 @@ public class AuthServiceImpl implements AuthService {
     private String createRefreshToken(User user) {
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setUser(user);
-        refreshToken.setToken(generateRefreshTokenValue());
+        String rawToken = generateRefreshTokenValue();
+        refreshToken.setTokenHash(hashToken(rawToken));
         refreshToken.setExpiresAt(LocalDateTime.now(clock).plusDays(refreshTokenExpiryDays));
         refreshTokenRepository.save(refreshToken);
-        return refreshToken.getToken();
+        return rawToken;
     }
 
     private void pruneExpiredTokens(User user) {
         refreshTokenRepository.deleteByExpiresAtBefore(LocalDateTime.now(clock));
-        refreshTokenRepository.deleteByUserAndRevokedAtIsNotNull(user);
     }
 
     private String generateRefreshTokenValue() {
         return Base64.getUrlEncoder().withoutPadding()
                 .encodeToString(UUID.randomUUID().toString().getBytes());
+    }
+
+    private String hashToken(String token) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(token.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 algorithm not available", e);
+        }
     }
 
     private UserResponse toResponse(User user) {

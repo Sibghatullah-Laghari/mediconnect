@@ -1,5 +1,6 @@
 package com.mediconnect.exception;
 
+import com.mediconnect.exception.AccountLockedException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,6 +69,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(buildError(400, ex.getMessage(), request));
+    }
+
+    // ─── 403 FORBIDDEN — ACCOUNT LOCKED ──────────────────────
+    @ExceptionHandler(AccountLockedException.class)
+    public ResponseEntity<ErrorResponse> handleAccountLocked(
+            AccountLockedException ex,
+            HttpServletRequest request) {
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(buildError(403, ex.getMessage(), request));
     }
 
     // ─── 401 UNAUTHORIZED ────────────────────────────────────

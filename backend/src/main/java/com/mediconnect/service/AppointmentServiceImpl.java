@@ -12,9 +12,11 @@ import com.mediconnect.model.AppointmentStatus;
 import com.mediconnect.model.Doctor;
 import com.mediconnect.model.Patient;
 import com.mediconnect.model.Role;
+import com.mediconnect.model.User;
 import com.mediconnect.repository.AppointmentRepository;
 import com.mediconnect.repository.DoctorRepository;
 import com.mediconnect.repository.PatientRepository;
+import com.mediconnect.repository.UserRepository;
 import com.mediconnect.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,10 +40,12 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final Clock clock;
+    private final UserRepository userRepository;
 
     @Override
     public AppointmentResponse createAppointment(CreateAppointmentRequest request) {
         validateBookableAppointmentSlot(request, null);
+        ensureEmailVerified();
 
         Patient patient = patientRepository.findById(request.patientId())
                 .orElseThrow(() -> new ResourceNotFoundException("Patient", request.patientId()));
@@ -63,6 +67,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     public AppointmentResponse updateAppointment(Long id, CreateAppointmentRequest request) {
         Appointment appointment = getAppointmentEntityById(id);
         ensureCanModifyAppointment(appointment);
+        ensureEmailVerified();
 
         validateBookableAppointmentSlot(request, appointment.getId());
 
@@ -164,7 +169,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public AppointmentResponse updateStatus(Long id, AppointmentStatus newStatus) {
         Appointment appointment = getAppointmentEntityById(id);
-        ensureCanManageStatus(appointment);
+        ensureCanManageStatus(appointment, newStatus);
 
         AppointmentStatus current = appointment.getStatus();
         boolean isValidTransition =
@@ -183,16 +188,20 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public AppointmentResponse confirmAppointment(Long id) {
+        requireDoctorOrAdmin();
         return updateStatus(id, AppointmentStatus.CONFIRMED);
     }
 
     @Override
     public AppointmentResponse completeAppointment(Long id) {
+        requireDoctorOrAdmin();
         return updateStatus(id, AppointmentStatus.COMPLETED);
     }
 
     @Override
     public AppointmentResponse cancelAppointment(Long id) {
+        Appointment appointment = getAppointmentEntityById(id);
+        ensureCanCancelAppointment(appointment);
         return updateStatus(id, AppointmentStatus.CANCELLED);
     }
 
@@ -296,22 +305,71 @@ public class AppointmentServiceImpl implements AppointmentService {
         throw new UnauthorizedException("You do not have permission to access this appointment");
     }
 
-    private void ensureCanManageStatus(Appointment appointment) {
+    private void ensureCanManageStatus(Appointment appointment, AppointmentStatus newStatus) {
         if (SecurityUtils.hasRole(Role.ADMIN)) {
             return;
         }
 
+        String currentEmail = SecurityUtils.getCurrentUserEmail();
+        boolean isDoctor = SecurityUtils.hasRole(Role.DOCTOR)
+                && currentEmail.equalsIgnoreCase(appointment.getDoctor().getEmail());
+        boolean isPatient = SecurityUtils.hasRole(Role.PATIENT)
+                && currentEmail.equalsIgnoreCase(appointment.getPatient().getEmail());
+
+        if (newStatus == AppointmentStatus.CONFIRMED || newStatus == AppointmentStatus.COMPLETED) {
+            if (isDoctor) {
+                return;
+            }
+            throw new UnauthorizedException("Only the assigned doctor or an admin can confirm or complete appointments");
+        }
+
+        if (newStatus == AppointmentStatus.CANCELLED) {
+            if (isDoctor || isPatient) {
+                return;
+            }
+            throw new UnauthorizedException("Only the assigned doctor, the patient owner, or an admin can cancel appointments");
+        }
+
+        if (isDoctor || isPatient) {
+            return;
+        }
+
+        throw new UnauthorizedException("You do not have permission to update appointment status");
+    }
+
+    private void ensureCanCancelAppointment(Appointment appointment) {
+        if (SecurityUtils.hasRole(Role.ADMIN)) {
+            return;
+        }
+
+        String currentEmail = SecurityUtils.getCurrentUserEmail();
         if (SecurityUtils.hasRole(Role.DOCTOR)
-                && SecurityUtils.getCurrentUserEmail().equalsIgnoreCase(appointment.getDoctor().getEmail())) {
+                && currentEmail.equalsIgnoreCase(appointment.getDoctor().getEmail())) {
             return;
         }
 
         if (SecurityUtils.hasRole(Role.PATIENT)
-                && SecurityUtils.getCurrentUserEmail().equalsIgnoreCase(appointment.getPatient().getEmail())) {
+                && currentEmail.equalsIgnoreCase(appointment.getPatient().getEmail())) {
             return;
         }
 
-        throw new UnauthorizedException("Only the assigned doctor, the patient owner, or an admin can update appointment status");
+        throw new UnauthorizedException("Only the assigned doctor, the patient owner, or an admin can cancel appointments");
+    }
+
+    private void requireDoctorOrAdmin() {
+        if (SecurityUtils.hasRole(Role.DOCTOR) || SecurityUtils.hasRole(Role.ADMIN)) {
+            return;
+        }
+        throw new UnauthorizedException("Only doctors and admins can perform this action");
+    }
+
+    private void ensureEmailVerified() {
+        String email = SecurityUtils.getCurrentUserEmail();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UnauthorizedException("User not found"));
+        if (!user.isEmailVerified()) {
+            throw new UnauthorizedException("Please verify your email to create or update appointments");
+        }
     }
 
     private void ensureCanModifyAppointment(Appointment appointment) {

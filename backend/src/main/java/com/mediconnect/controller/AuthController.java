@@ -8,7 +8,6 @@ import com.mediconnect.dto.auth.RefreshTokenRequest;
 import com.mediconnect.dto.auth.RegisterUserRequest;
 import com.mediconnect.dto.auth.UserResponse;
 import com.mediconnect.service.AuthService;
-import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -55,5 +54,11 @@ public class AuthController {
     @PostMapping("/verify-otp")
     public ResponseEntity<AuthResponse> verifyOTP(@Valid @RequestBody OTPRequest request) {
         return ResponseEntity.ok(authService.verifyOTP(request.email(), request.otp()));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        authService.logout();
+        return ResponseEntity.noContent().build();
     }
 }

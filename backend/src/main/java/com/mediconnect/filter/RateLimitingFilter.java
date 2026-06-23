@@ -27,7 +27,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
             HttpServletResponse res,
             FilterChain chain
     ) throws ServletException, IOException {
-        if (req.getRequestURI().matches(".*/auth/(login|register|send-otp)")) {
+        if (req.getRequestURI().matches(".*/auth/(login|register|send-otp|verify-otp|refresh)")) {
             String ip = req.getHeader("X-Forwarded-For");
             if (ip == null || ip.isBlank()) {
                 ip = req.getRemoteAddr();
@@ -40,7 +40,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
             if (!bucket.tryConsume(1)) {
                 res.setStatus(429);
                 res.setContentType("application/json");
-                res.getWriter().write("{\"error\":\"Rate limit exceeded\"}");
+                res.getWriter().write("{\"error\":\"Too many authentication attempts. Please try again later.\"}");
                 return;
             }
         }

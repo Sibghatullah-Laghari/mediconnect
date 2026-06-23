@@ -44,6 +44,13 @@ public class User {
 	@Column(nullable = false)
 	private boolean emailVerified = false;
 
+	@Setter
+	@Column(nullable = false)
+	private int failedLoginAttempts = 0;
+
+	@Column(name = "locked_until")
+	private LocalDateTime lockedUntil;
+
 	@CreationTimestamp
 	@Column(nullable = false, updatable = false)
 	private LocalDateTime createdAt;

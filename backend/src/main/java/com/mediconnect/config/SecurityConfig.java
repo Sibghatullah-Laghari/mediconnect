@@ -1,6 +1,7 @@
 package com.mediconnect.config;
 
 import com.mediconnect.filter.RateLimitingFilter;
+import com.mediconnect.filter.SecurityHeadersFilter;
 import com.mediconnect.security.JwtAuthenticationFilter;
 import java.time.Clock;
 import java.util.Arrays;
@@ -32,6 +33,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final RateLimitingFilter rateLimitingFilter;
+    private final SecurityHeadersFilter securityHeadersFilter;
 
     @Value("${app.cors.allowed-origins}")
     private String allowedOrigins;
@@ -66,6 +68,7 @@ public class SecurityConfig {
                         "/api/v1/auth/refresh",
                         "/api/v1/auth/send-otp",
                         "/api/v1/auth/verify-otp",
+                        "/api/v1/auth/logout",
                         "/api/v1/users/register",
                         "/actuator/health",
                         "/api/v1/actuator/health"
@@ -73,6 +76,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/doctors", "/api/v1/doctors/*", "/api/v1/doctors/specializations", "/api/v1/doctors/specialization/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest().authenticated())
+            .addFilterBefore(securityHeadersFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
