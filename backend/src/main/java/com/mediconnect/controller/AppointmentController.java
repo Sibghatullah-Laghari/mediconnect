@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * REST controller for managing appointments.
- * Provides endpoints for creating, retrieving, updating, and deleting appointments.
+ * Provides endpoints for creating, retrieving, updating, and deleting appointments..
  */
 @RestController
 @RequiredArgsConstructor

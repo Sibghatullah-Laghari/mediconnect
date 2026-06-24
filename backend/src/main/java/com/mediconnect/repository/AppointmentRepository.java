@@ -6,10 +6,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
+/**
+ * Repository for managing Appointment entities.
+ *
+ * <p>Provides CRUD operations and custom query methods for
+ * retrieving appointments by patient, doctor, status, and date.
+ */
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 
@@ -32,5 +38,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Appointment> findByStatus(AppointmentStatus status);
 
     boolean existsByPatientIdAndDoctorIdAndAppointmentDate(
-            Long patientId, Long doctorId, LocalDate appointmentDate);
+            Long patientId,
+            Long doctorId,
+            LocalDate appointmentDate
+    );
 }

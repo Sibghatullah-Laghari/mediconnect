@@ -10,11 +10,13 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * Response DTO representing appointment details returned to clients.
+ */
 @Getter
 @NoArgsConstructor
-@Builder
 @AllArgsConstructor
-
+@Builder
 public class AppointmentResponse {
 
     private Long id;
@@ -23,15 +25,30 @@ public class AppointmentResponse {
     private String reason;
     private LocalDate appointmentDate;
     private LocalTime appointmentTime;
+
     private Long patientId;
     private Long doctorId;
+
     private String patientName;
     private String doctorName;
 
-    private AppointmentResponse mapToResponse(Appointment appointment) {
+    /**
+     * Converts an Appointment entity into an AppointmentResponse DTO.
+     *
+     * @param appointment the appointment entity to convert
+     * @return mapped appointment response
+     */
+    public static AppointmentResponse fromEntity(Appointment appointment) {
         return AppointmentResponse.builder()
                 .id(appointment.getId())
                 .status(appointment.getStatus())
+                .reason(appointment.getReason())
+                .appointmentDate(appointment.getAppointmentDate())
+                .appointmentTime(appointment.getAppointmentTime())
+                .patientId(appointment.getPatient().getId())
+                .doctorId(appointment.getDoctor().getId())
+                .patientName(appointment.getPatient().getFullName())
+                .doctorName(appointment.getDoctor().getFullName())
                 .build();
     }
 }
