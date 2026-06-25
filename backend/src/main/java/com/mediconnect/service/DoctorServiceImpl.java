@@ -11,6 +11,9 @@ import com.mediconnect.model.Role;
 import com.mediconnect.repository.DoctorRepository;
 import com.mediconnect.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +30,10 @@ public class DoctorServiceImpl implements DoctorService {
     private final DoctorRepository doctorRepository;
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "specializations", allEntries = true),
+            @CacheEvict(cacheNames = "doctors", allEntries = true)
+    })
     public DoctorResponse createDoctor(CreateDoctorRequest request) {
         if (doctorRepository.existsByEmail(request.email())) {
             throw new DuplicateEmailException( "Doctor having " + request.email() + "email already exists");
@@ -61,12 +68,15 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "doctors", key = "#id")
     public DoctorResponse getDoctorById(Long id) {
         Doctor doctor = getDoctorEntityById(id);
         return toResponse(doctor);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<DoctorResponse> getAllDoctors() {
         return doctorRepository.findAll()
                 .stream()
@@ -75,11 +85,14 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<DoctorResponse> getAllDoctors(Pageable pageable) {
         return doctorRepository.findAll(pageable).map(this::toResponse);
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "doctors", key = "'spec:' + #specialization")
     public List<DoctorResponse> getDoctorsBySpecialization(String specialization) {
         return doctorRepository.findBySpecialization(specialization)
                 .stream()
@@ -88,6 +101,8 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "specializations")
     public List<String> getAllSpecializations() {
         return doctorRepository.findDistinctSpecializations();
     }
@@ -107,6 +122,11 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "doctors", key = "#id"),
+            @CacheEvict(cacheNames = "doctors", key = "'spec:' + #request.specialization()", condition = "#request != null && #request.specialization() != null"),
+            @CacheEvict(cacheNames = "specializations", allEntries = true)
+    })
     public DoctorResponse updateDoctor(Long id, CreateDoctorRequest request) {
         Doctor doctor = getDoctorEntityById(id);
 
@@ -128,6 +148,10 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "doctors", key = "#id"),
+            @CacheEvict(cacheNames = "specializations", allEntries = true)
+    })
     public void deleteDoctor(Long id) {
         Doctor doctor = getDoctorEntityById(id);
         ensureCanAccessDoctor(doctor);

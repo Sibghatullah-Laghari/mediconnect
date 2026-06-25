@@ -18,6 +18,8 @@ import com.mediconnect.security.CustomUserDetailsService;
 import com.mediconnect.security.JwtService;
 import com.mediconnect.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,13 +45,16 @@ public class AuthServiceImpl implements AuthService {
     private static final Duration OTP_EXPIRY = Duration.ofMinutes(10);
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
+    @Autowired
+    @Lazy
+    private EmailService emailService;
+
     private final UserRepository userRepository;
     private final UserService userService;
     private final RefreshTokenRepository refreshTokenRepository;
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
     private final CustomUserDetailsService userDetailsService;
     private final JwtService jwtService;
-    private final EmailService emailService;
     private final Clock clock;
     private final AccountLockoutService accountLockoutService;
     private final PasswordEncoder passwordEncoder;
@@ -116,7 +121,7 @@ public class AuthServiceImpl implements AuthService {
         token.setVerified(false);
         emailVerificationTokenRepository.save(token);
 
-        emailService.sendTextEmail(email, "MediConnect verification code", "Your MediConnect OTP is " + otp + ". It expires in 10 minutes.");
+        emailService.sendEmail(email, "MediConnect verification code", "Your MediConnect OTP is " + otp + ". It expires in 10 minutes.");
     }
 
     @Override

@@ -21,6 +21,9 @@ import com.mediconnect.repository.PatientRepository;
 import com.mediconnect.repository.UserRepository;
 import com.mediconnect.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +46,15 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final DoctorRepository doctorRepository;
     private final Clock clock;
     private final UserRepository userRepository;
+    private final MeterRegistry meterRegistry;
+    private Counter appointmentsCreatedCounter;
+
+    @PostConstruct
+    void initMetrics() {
+        this.appointmentsCreatedCounter = Counter.builder("appointments.created")
+                .description("Number of appointments created")
+                .register(meterRegistry);
+    }
 
     @Override
     public AppointmentResponse createAppointment(CreateAppointmentRequest request) {
@@ -62,7 +74,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointment.setPatient(patient);
         appointment.setDoctor(doctor);
 
-        return toResponse(appointmentRepository.save(appointment));
+        Appointment saved = appointmentRepository.save(appointment);
+        appointmentsCreatedCounter.increment();
+        return toResponse(saved);
     }
 
     @Override
@@ -89,6 +103,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public AppointmentResponse getAppointmentById(Long id) {
         Appointment appointment = getAppointmentEntityById(id);
         ensureCanAccessAppointment(appointment);
@@ -96,6 +111,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<AppointmentResponse> getAllAppointments() {
         List<Appointment> appointments;
         if (SecurityUtils.hasRole(Role.ADMIN)) {
@@ -112,6 +128,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<AppointmentResponse> getAllAppointments(Pageable pageable) {
         if (SecurityUtils.hasRole(Role.ADMIN)) {
             return appointmentRepository.findAllWithDetails(pageable).map(this::toResponse);
@@ -127,6 +144,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<AppointmentResponse> getAppointmentsByPatient(Long patientId) {
         Patient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient", patientId));
@@ -139,6 +157,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<AppointmentResponse> getAppointmentsByPatient(Long patientId, Pageable pageable) {
         Patient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient", patientId));
