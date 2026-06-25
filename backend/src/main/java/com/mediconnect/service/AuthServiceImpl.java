@@ -95,8 +95,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserResponse getCurrentUser() {
-        String currentEmail = SecurityUtils.getCurrentUserEmail();
-        User user = userRepository.findByEmail(currentEmail)
+        Long currentUserId = SecurityUtils.getCurrentUserId();
+        User user = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new UnauthorizedException("Current user not found"));
 
         return toResponse(user);
@@ -165,8 +165,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void logout() {
-        String currentEmail = SecurityUtils.getCurrentUserEmail();
-        User user = userRepository.findByEmail(currentEmail)
+        Long currentUserId = SecurityUtils.getCurrentUserId();
+        User user = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new UnauthorizedException("Current user not found"));
 
         refreshTokenRepository.revokeAllTokensByUser(user, LocalDateTime.now(clock));

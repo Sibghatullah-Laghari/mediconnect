@@ -3,7 +3,6 @@ package com.mediconnect.config;
 import com.mediconnect.filter.RateLimitingFilter;
 import com.mediconnect.filter.SecurityHeadersFilter;
 import com.mediconnect.security.JwtAuthenticationFilter;
-import java.time.Clock;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -111,13 +110,4 @@ public class SecurityConfig {
         return source;
     }
 
-    /**
-     * Provides a system default clock bean.
-     *
-     * @return the system default Clock
-     */
-    @Bean
-    public Clock clock() {
-        return Clock.systemDefaultZone();
-    }
 }

@@ -47,8 +47,8 @@ public class AppointmentResponse {
                 .appointmentTime(appointment.getAppointmentTime())
                 .patientId(appointment.getPatient().getId())
                 .doctorId(appointment.getDoctor().getId())
-                .patientName(appointment.getPatient().getFullName())
-                .doctorName(appointment.getDoctor().getFullName())
+                .patientName(appointment.getPatient().getName())
+                .doctorName(appointment.getDoctor().getName())
                 .build();
     }
 }

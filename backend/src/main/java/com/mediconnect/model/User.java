@@ -49,6 +49,7 @@ public class User {
 	private int failedLoginAttempts = 0;
 
 	@Column(name = "locked_until")
+	@Setter
 	private LocalDateTime lockedUntil;
 
 	@CreationTimestamp
