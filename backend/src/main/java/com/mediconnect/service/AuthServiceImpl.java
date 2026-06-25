@@ -13,25 +13,24 @@ import com.mediconnect.model.User;
 import com.mediconnect.repository.EmailVerificationTokenRepository;
 import com.mediconnect.repository.RefreshTokenRepository;
 import com.mediconnect.repository.UserRepository;
+import com.mediconnect.security.AuthenticatedUser;
 import com.mediconnect.security.CustomUserDetailsService;
 import com.mediconnect.security.JwtService;
 import com.mediconnect.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.beans.factory.annotation.Value;
 
-import java.time.Clock;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -48,12 +47,12 @@ public class AuthServiceImpl implements AuthService {
     private final UserService userService;
     private final RefreshTokenRepository refreshTokenRepository;
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
-    private final PasswordEncoder passwordEncoder;
     private final CustomUserDetailsService userDetailsService;
     private final JwtService jwtService;
-    private final JavaMailSender mailSender;
+    private final EmailService emailService;
     private final Clock clock;
     private final AccountLockoutService accountLockoutService;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${jwt.refresh-token.expiry.days}")
     private long refreshTokenExpiryDays;
@@ -103,7 +102,6 @@ public class AuthServiceImpl implements AuthService {
         return toResponse(user);
     }
 
-    @Async
     @Override
     public void sendOTP(String email) {
         User user = userRepository.findByEmail(email)
@@ -118,11 +116,7 @@ public class AuthServiceImpl implements AuthService {
         token.setVerified(false);
         emailVerificationTokenRepository.save(token);
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setSubject("MediConnect verification code");
-        message.setText("Your MediConnect OTP is " + otp + ". It expires in 10 minutes.");
-        mailSender.send(message);
+        emailService.sendTextEmail(email, "MediConnect verification code", "Your MediConnect OTP is " + otp + ". It expires in 10 minutes.");
     }
 
     @Override
@@ -175,8 +169,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private AuthResponse buildAuthResponse(User user) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
-        pruneExpiredTokens(user);
+        AuthenticatedUser userDetails = (AuthenticatedUser) userDetailsService.loadUserByUsername(user.getEmail());
 
         String accessToken = jwtService.generateAccessToken(userDetails);
         String refreshToken = createRefreshToken(user);
@@ -197,9 +190,6 @@ public class AuthServiceImpl implements AuthService {
         return rawToken;
     }
 
-    private void pruneExpiredTokens(User user) {
-        refreshTokenRepository.deleteByExpiresAtBefore(LocalDateTime.now(clock));
-    }
 
     private String generateRefreshTokenValue() {
         return Base64.getUrlEncoder().withoutPadding()

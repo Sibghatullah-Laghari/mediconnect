@@ -59,22 +59,14 @@ public class AppointmentController {
         return ResponseEntity.ok(appointmentService.getAppointmentById(id));
     }
 
-    /**
-     * Retrieves all appointments.
-     *
-     * @return a list of all appointment responses
-     */
     @GetMapping
-    public ResponseEntity<Page<AppointmentResponse>> getAllAppointments() {
-        return ResponseEntity.ok(appointmentService.getAllAppointments(Pageable.of(page, size)));
-    }
-
-    @GetMapping(params = {"page", "size"})
-    public ResponseEntity<Page<AppointmentResponse>> getAllAppointmentsPaginated(
+    public ResponseEntity<Page<AppointmentResponse>> getAllAppointments(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return ResponseEntity.ok(appointmentService.getAllAppointments(PageRequest.of(page, size)));
     }
+
+    // Removed redundant getAllAppointmentsPaginated as it is now covered by getAllAppointments
 
     /**
      * Retrieves all appointments for a given patient.

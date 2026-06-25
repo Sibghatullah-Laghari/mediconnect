@@ -1,43 +1,54 @@
-# Contributing
+# Contributing to MediConnect
 
-Thank you for your interest in contributing in mediconnect.
+First off, thank you for considering contributing to MediConnect! It's people like you that make MediConnect a great tool for the healthcare community.
 
-## How To Contribute
+---
 
-1. Fork the repository.
-2. Create a feature branch:
+## 🚦 Getting Started
 
-```bash
-git checkout -b feature/short-description
-```
+1.  **Fork the Repository**: Create your own copy of the project.
+2.  **Clone Locally**:
+    ```bash
+    git clone https://github.com/your-username/mediconnect.git
+    ```
+3.  **Setup Development Environment**: Follow the [SETUP.md](./SETUP.md) guide.
+4.  **Create a Branch**: Use a descriptive name like `feature/appointment-cancellation` or `fix/auth-leak`.
 
-3. Make a focused change.
-4. Add or update tests where needed.
-5. Run the project checks.
-6. Open a pull request with a clear description.
+---
 
-## Development Guidelines
+## 🛠️ Development Standards
 
-- Keep commits focused and descriptive.
-- Follow the existing package structure and naming conventions.
-- Prefer clear service-layer logic over placing business rules in controllers.
-- Validate API input and return consistent error responses.
-- Do not commit secrets, local database credentials, IDE metadata, or generated build files.
+### Backend (Java/Spring Boot)
+- **Code Style**: Follow standard Google Java Style Guide.
+- **REST Principles**: Use appropriate HTTP methods (GET, POST, PUT, PATCH, DELETE) and status codes.
+- **Validation**: Use Jakarta Bean Validation (`@NotNull`, `@NotBlank`, etc.) in DTOs.
+- **Testing**: Write unit tests for new services and integration tests for new controllers.
 
-## Pull Request Checklist
+### Frontend (React)
+- **Component Design**: Prefer functional components and hooks.
+- **State Management**: Use React Query for server state. Avoid global state (Redux/Context) unless absolutely necessary.
+- **Styling**: Use Tailwind CSS utility classes. Avoid inline styles or raw CSS files.
+- **Performance**: Memoize expensive calculations and avoid unnecessary re-renders.
 
-- The change has a clear purpose.
-- Tests pass locally.
-- Documentation is updated when behavior changes.
-- New endpoints are documented.
-- Screenshots or API examples are included when helpful.
+---
 
-## Reporting Issues
+## 🧪 Submission Process
 
-When reporting a bug, error, or issue include:
+1.  **Format Your Code**: Ensure consistent indentation and formatting.
+2.  **Run Tests**:
+    - Backend: `./mvnw test`
+    - Frontend: `npm run lint`
+3.  **Commit Changes**: Follow [Conventional Commits](https://www.conventionalcommits.org/) (e.g., `feat: add doctor specialization filter`).
+4.  **Open a Pull Request**: Provide a clear description of the changes and link any related issues.
 
-- What happened
-- What you expected
-- Steps to reproduce
-- Environment details
-- Logs or screenshots if available
+---
+
+## 🛡️ Code of Conduct
+
+We are committed to providing a welcoming and inspiring community for all. Please be respectful and professional in all communications.
+
+---
+
+## ⚖️ License
+
+By contributing, you agree that your contributions will be licensed under the project's MIT License.

@@ -41,17 +41,19 @@ public class JwtService {
         }
     }
 
-    public String generateAccessToken(UserDetails userDetails) {
+    public String generateAccessToken(AuthenticatedUser user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(TOKEN_TYPE_CLAIM, "access");
+        claims.put("userId", user.getId());
+        claims.put("verified", user.isEmailVerified());
         claims.put(
                 "role",
-                userDetails.getAuthorities().stream()
+                user.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .findFirst()
                         .orElse("ROLE_PATIENT")
         );
-        return buildToken(claims, userDetails, Duration.ofMinutes(accessTokenExpiryMinutes).toMillis());
+        return buildToken(claims, user, Duration.ofMinutes(accessTokenExpiryMinutes).toMillis());
     }
 
     public String extractUsername(String token) {
@@ -89,7 +91,7 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 
-    private Claims extractAllClaims(String token) {
+    public Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()

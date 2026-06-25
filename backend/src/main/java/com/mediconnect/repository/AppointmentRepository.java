@@ -23,23 +23,40 @@ import java.util.Optional;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 
+    @Query("SELECT a FROM Appointment a JOIN FETCH a.patient JOIN FETCH a.doctor WHERE a.patient.id = :patientId")
     List<Appointment> findByPatientId(Long patientId);
 
+    @Query("SELECT a FROM Appointment a JOIN FETCH a.patient JOIN FETCH a.doctor WHERE a.doctor.id = :doctorId")
     List<Appointment> findByDoctorId(Long doctorId);
 
+    @Query(value = "SELECT a FROM Appointment a JOIN FETCH a.patient JOIN FETCH a.doctor WHERE a.patient.id = :patientId",
+           countQuery = "SELECT count(a) FROM Appointment a WHERE a.patient.id = :patientId")
     Page<Appointment> findByPatientId(Long patientId, Pageable pageable);
 
+    @Query(value = "SELECT a FROM Appointment a JOIN FETCH a.patient JOIN FETCH a.doctor WHERE a.doctor.id = :doctorId",
+           countQuery = "SELECT count(a) FROM Appointment a WHERE a.doctor.id = :doctorId")
     Page<Appointment> findByDoctorId(Long doctorId, Pageable pageable);
 
+    @Query(value = "SELECT a FROM Appointment a JOIN FETCH a.patient JOIN FETCH a.doctor WHERE a.patient.email = :email",
+           countQuery = "SELECT count(a) FROM Appointment a WHERE a.patient.email = :email")
     Page<Appointment> findByPatientEmail(String email, Pageable pageable);
 
+    @Query(value = "SELECT a FROM Appointment a JOIN FETCH a.patient JOIN FETCH a.doctor WHERE a.doctor.email = :email",
+           countQuery = "SELECT count(a) FROM Appointment a WHERE a.doctor.email = :email")
     Page<Appointment> findByDoctorEmail(String email, Pageable pageable);
 
+    @Query("SELECT a FROM Appointment a JOIN FETCH a.patient JOIN FETCH a.doctor WHERE a.patient.email = :email")
     List<Appointment> findByPatientEmail(String email);
 
+    @Query("SELECT a FROM Appointment a JOIN FETCH a.patient JOIN FETCH a.doctor WHERE a.doctor.email = :email")
     List<Appointment> findByDoctorEmail(String email);
 
+    @Query("SELECT a FROM Appointment a JOIN FETCH a.patient JOIN FETCH a.doctor WHERE a.status = :status")
     List<Appointment> findByStatus(AppointmentStatus status);
+
+    @Query(value = "SELECT a FROM Appointment a JOIN FETCH a.patient JOIN FETCH a.doctor",
+           countQuery = "SELECT count(a) FROM Appointment a")
+    Page<Appointment> findAllWithDetails(Pageable pageable);
 
     boolean existsByPatientIdAndDoctorIdAndAppointmentDate(
             Long patientId,

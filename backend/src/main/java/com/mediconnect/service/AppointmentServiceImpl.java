@@ -114,7 +114,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public Page<AppointmentResponse> getAllAppointments(Pageable pageable) {
         if (SecurityUtils.hasRole(Role.ADMIN)) {
-            return appointmentRepository.findAll(pageable).map(this::toResponse);
+            return appointmentRepository.findAllWithDetails(pageable).map(this::toResponse);
         } else if (SecurityUtils.hasRole(Role.PATIENT)) {
             return appointmentRepository.findByPatientEmail(SecurityUtils.getCurrentUserEmail(), pageable)
                     .map(this::toResponse);
