@@ -54,8 +54,8 @@ public class UserController {
      * @return a list of all user responses
      */
     @GetMapping
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<Page<UserResponse>> getAllUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(userService.getAllUsers(PageRequest.of(page, size)));
     }
 
     /**

@@ -66,8 +66,8 @@ public class PatientController {
      * @return a list of all patient responses
      */
     @GetMapping
-    public ResponseEntity<List<PatientResponse>> getAllPatients() {
-        return ResponseEntity.ok(patientService.getAllPatients());
+    public ResponseEntity<Page<PatientResponse>> getAllPatients(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+            return ResponseEntity.ok(patientService.getAllPatients(PageRequest.of(page, size)));
     }
 
     @GetMapping(params = {"page", "size"})

@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -64,8 +65,8 @@ public class AppointmentController {
      * @return a list of all appointment responses
      */
     @GetMapping
-    public ResponseEntity<List<AppointmentResponse>> getAllAppointments() {
-        return ResponseEntity.ok(appointmentService.getAllAppointments());
+    public ResponseEntity<Page<AppointmentResponse>> getAllAppointments() {
+        return ResponseEntity.ok(appointmentService.getAllAppointments(Pageable.of(page, size)));
     }
 
     @GetMapping(params = {"page", "size"})

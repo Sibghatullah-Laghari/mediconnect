@@ -1,5 +1,7 @@
 package com.mediconnect.service;
 
+import com.mediconnect.dto.appointment.AppointmentAvailabilityProjection;
+import com.mediconnect.dto.appointment.AppointmentDetailsProjection;
 import com.mediconnect.dto.appointment.AppointmentResponse;
 import com.mediconnect.dto.appointment.CreateAppointmentRequest;
 import com.mediconnect.exception.AppointmentConflictException;
