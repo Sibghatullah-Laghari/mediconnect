@@ -5,6 +5,7 @@ import com.mediconnect.dto.auth.UserResponse;
 import com.mediconnect.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -17,10 +18,12 @@ import java.util.List;
  * REST controller for managing users.
  * Provides endpoints for registering, retrieving, updating, and deleting users.
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
+
 
     /**
      * Service for handling user business logic.
@@ -35,7 +38,9 @@ public class UserController {
      */
     @PostMapping("/register")
     public ResponseEntity<UserResponse> registerUser(@Valid @RequestBody RegisterUserRequest request) {
+        log.info("Registering new user with email: {}", request.email());
         UserResponse response = userService.registerUser(request);
+        log.info("User registered successfully with ID: {}", response.id());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -47,7 +52,9 @@ public class UserController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
+        log.info("Fetching user with ID: {}", id);
+        UserResponse response = userService.getUserById(id);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -57,6 +64,7 @@ public class UserController {
      */
     @GetMapping
     public ResponseEntity<Page<UserResponse>> getAllUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+        log.info("Fetching all users, page: {}, size: {}", page, size);
         return ResponseEntity.ok(userService.getAllUsers(PageRequest.of(page, size)));
     }
 
@@ -71,7 +79,10 @@ public class UserController {
     public ResponseEntity<UserResponse> updateUser(
             @PathVariable Long id,
             @Valid @RequestBody RegisterUserRequest request) {
-        return ResponseEntity.ok(userService.updateUser(id, request));
+        log.info("Updating user with ID: {}", id);
+        UserResponse response = userService.updateUser(id, request);
+        log.info("User with ID: {} updated successfully", id);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -82,7 +93,9 @@ public class UserController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        log.info("Deleting user with ID: {}", id);
         userService.deleteUser(id);
+        log.info("User with ID: {} deleted successfully", id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -10,6 +10,7 @@ import com.mediconnect.dto.auth.UserResponse;
 import com.mediconnect.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,12 +28,14 @@ import org.springframework.web.bind.annotation.*;
  *     <li>User logout</li>
  * </ul>
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthService authService;
+
+        private final AuthService authService;
 
     /**
      * Registers a new user account.
@@ -43,8 +46,10 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(
             @Valid @RequestBody RegisterUserRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(authService.register(request));
+        log.info("Received registration request for email: {}", request.email());
+        AuthResponse response = authService.register(request);
+        log.info("User registered successfully: {}", request.email());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
@@ -56,9 +61,11 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(
             @Valid @RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+        log.info("Received login request for email: {}", request.email());
+        AuthResponse response = authService.login(request);
+        log.info("User logged in successfully: {}", request.email());
+        return ResponseEntity.ok(response);
     }
-
     /**
      * Generates a new access token using a valid refresh token.
      *
@@ -68,7 +75,10 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponse> refresh(
             @Valid @RequestBody RefreshTokenRequest request) {
-        return ResponseEntity.ok(authService.refresh(request));
+        log.info("Received token refresh request");
+        AuthResponse response = authService.refresh(request);
+        log.info("Token refreshed successfully");
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -90,7 +100,9 @@ public class AuthController {
     @PostMapping("/send-otp")
     public ResponseEntity<Void> sendOTP(
             @Valid @RequestBody EmailRequest request) {
+        log.info("Received OTP request for email: {}", request.email());
         authService.sendOTP(request.email());
+        log.info("OTP sent successfully to: {}", request.email());
         return ResponseEntity.noContent().build();
     }
 
@@ -103,9 +115,10 @@ public class AuthController {
     @PostMapping("/verify-otp")
     public ResponseEntity<AuthResponse> verifyOTP(
             @Valid @RequestBody OTPRequest request) {
-        return ResponseEntity.ok(
-                authService.verifyOTP(request.email(), request.otp())
-        );
+        log.info("Received OTP verification request for email: {}", request.email());
+        AuthResponse response = authService.verifyOTP(request.email(), request.otp());
+        log.info("OTP verified successfully for email: {}", request.email());
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -116,7 +129,9 @@ public class AuthController {
      */
     @PostMapping("/logout")
     public ResponseEntity<Void> logout() {
+        log.info("Received logout request");
         authService.logout();
+        log.info("User logged out successfully");
         return ResponseEntity.noContent().build();
     }
 }

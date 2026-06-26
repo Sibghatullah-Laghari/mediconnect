@@ -11,6 +11,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +22,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -49,6 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 if (!"access".equals(claims.get("tokenType"))) {
+                    log.warn("Invalid token type: {}", claims.get("tokenType"));
                     filterChain.doFilter(request, response);
                     return;
                 }
@@ -61,6 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (username.equals(userDetails.getUsername())) {
                     User user = userRepository.findByEmail(username).orElse(null);
                     if (user == null) {
+                        log.warn("User not found: {}", username);
                         filterChain.doFilter(request, response);
                         return;
                     }
@@ -68,6 +72,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     try {
                         accountLockoutService.checkLockout(user);
                     } catch (AccountLockedException ex) {
+                        log.warn("Account locked for user: {}", username);
                         SecurityContextHolder.clearContext();
                         response.setStatus(HttpStatus.FORBIDDEN.value());
                         response.setContentType("application/json");
@@ -76,6 +81,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     }
 
                     if (!user.isEmailVerified()) {
+                        log.warn("Email not verified for user: {}", username);
                         SecurityContextHolder.clearContext();
                         response.setStatus(HttpStatus.UNAUTHORIZED.value());
                         response.setContentType("application/json");
@@ -90,12 +96,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     );
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    log.debug("User authenticated: {}", username);
                 }
             }
         } catch (JwtException | IllegalArgumentException ex) {
+            log.error("JWT authentication failed: {}", ex.getMessage());
             // Token is invalid or expired
         }
 
         filterChain.doFilter(request, response);
     }
+
 }

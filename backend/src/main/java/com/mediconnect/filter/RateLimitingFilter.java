@@ -8,6 +8,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -16,6 +17,7 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @Component
 public class RateLimitingFilter extends OncePerRequestFilter {
 
@@ -38,6 +40,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
                     .build());
 
             if (!bucket.tryConsume(1)) {
+                log.warn("Rate limit exceeded for IP: {} at {}", ip, req.getRequestURI());
                 res.setStatus(429);
                 res.setContentType("application/json");
                 res.getWriter().write("{\"error\":\"Too many authentication attempts. Please try again later.\"}");

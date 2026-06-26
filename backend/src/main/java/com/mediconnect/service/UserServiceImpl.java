@@ -11,6 +11,7 @@ import com.mediconnect.model.User;
 import com.mediconnect.repository.UserRepository;
 import com.mediconnect.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -30,7 +32,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse registerUser(RegisterUserRequest request) {
+        log.info("Registering user: {}", request.email());
         if (userRepository.existsByEmail(request.email())) {
+            log.warn("Registration failed: Email already exists: {}", request.email());
             throw new DuplicateEmailException("User email already exists");
         }
 

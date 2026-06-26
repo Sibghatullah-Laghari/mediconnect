@@ -5,6 +5,7 @@ import com.mediconnect.dto.patient.PatientResponse;
 import com.mediconnect.service.PatientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.util.List;
  * REST controller for managing patients.
  * Provides endpoints for creating, retrieving, updating, and deleting patients.
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/patients")
@@ -37,13 +39,15 @@ public class PatientController {
     public ResponseEntity<PatientResponse> createPatient(
             @Valid @RequestBody CreatePatientRequest request
     ) {
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(patientService.createPatient(request));
+        log.info("Creating new patient profile");
+        PatientResponse response = patientService.createPatient(request);
+        log.info("Patient profile created successfully with ID: {}", response.id());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/me")
     public ResponseEntity<PatientResponse> getCurrentPatient() {
+        log.info("Fetching current patient profile");
         return ResponseEntity.ok(patientService.getCurrentPatient());
     }
 
@@ -57,6 +61,7 @@ public class PatientController {
     public ResponseEntity<PatientResponse> getPatientById(
             @PathVariable Long id
     ) {
+        log.info("Fetching patient with ID: {}", id);
         return ResponseEntity.ok(patientService.getPatientById(id));
     }
 

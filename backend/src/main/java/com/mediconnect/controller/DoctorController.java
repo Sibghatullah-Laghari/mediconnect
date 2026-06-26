@@ -5,6 +5,7 @@ import com.mediconnect.dto.doctor.DoctorResponse;
 import com.mediconnect.service.DoctorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.util.List;
  * REST controller for managing doctors.
  * Provides endpoints for creating, retrieving, updating, and deleting doctors.
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/doctors")
@@ -35,12 +37,15 @@ public class DoctorController {
      */
     @PostMapping
     public ResponseEntity<DoctorResponse> createDoctor(@Valid @RequestBody CreateDoctorRequest request) {
+        log.info("Creating new doctor profile");
         DoctorResponse response = doctorService.createDoctor(request);
+        log.info("Doctor profile created successfully with ID: {}", response.id());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/me")
     public ResponseEntity<DoctorResponse> getCurrentDoctor() {
+        log.info("Fetching current doctor profile");
         return ResponseEntity.ok(doctorService.getCurrentDoctor());
     }
 
@@ -52,6 +57,7 @@ public class DoctorController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<DoctorResponse> getDoctorById(@PathVariable Long id) {
+        log.info("Fetching doctor with ID: {}", id);
         return ResponseEntity.ok(doctorService.getDoctorById(id));
     }
 

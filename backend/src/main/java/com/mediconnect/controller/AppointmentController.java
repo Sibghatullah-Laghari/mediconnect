@@ -6,6 +6,7 @@ import com.mediconnect.dto.appointment.StatusRequest;
 import com.mediconnect.service.AppointmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,7 @@ import java.util.List;
  * REST controller for managing appointments.
  * Provides endpoints for creating, retrieving, updating, and deleting appointments..
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/appointments")
@@ -37,7 +39,9 @@ public class AppointmentController {
      */
     @PostMapping
     public ResponseEntity<AppointmentResponse> createAppointment(@Valid @RequestBody CreateAppointmentRequest request) {
+        log.info("Creating new appointment for patient ID: {} with doctor ID: {}", request.patientId(), request.doctorId());
         AppointmentResponse response = appointmentService.createAppointment(request);
+        log.info("Appointment created successfully with ID: {}", response.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -45,6 +49,7 @@ public class AppointmentController {
     public ResponseEntity<AppointmentResponse> updateAppointment(
             @PathVariable Long id,
             @Valid @RequestBody CreateAppointmentRequest request) {
+        log.info("Updating appointment with ID: {}", id);
         return ResponseEntity.ok(appointmentService.updateAppointment(id, request));
     }
 
@@ -117,6 +122,7 @@ public class AppointmentController {
     public ResponseEntity<AppointmentResponse> updateStatus(
             @PathVariable Long id,
             @Valid @RequestBody StatusRequest request) {
+        log.info("Updating status of appointment ID: {} to {}", id, request.status());
         return ResponseEntity.ok(appointmentService.updateStatus(id, request.status()));
     }
 

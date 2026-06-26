@@ -18,6 +18,7 @@ import com.mediconnect.security.CustomUserDetailsService;
 import com.mediconnect.security.JwtService;
 import com.mediconnect.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +37,7 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -64,6 +66,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse register(RegisterUserRequest request) {
+        log.info("Registering user: {}", request.email());
         userService.registerUser(request);
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + request.email()));
@@ -72,11 +75,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse login(LoginRequest request) {
+        log.info("Attempting login for user: {}", request.email());
         authenticate(request.email(), request.password());
 
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new UnauthorizedException("Invalid email or password"));
 
+        log.info("User logged in successfully: {}", request.email());
         return buildAuthResponse(user);
     }
 
@@ -146,15 +151,20 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void authenticate(String email, String password) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UnauthorizedException("Invalid email or password"));
+                .orElseThrow(() -> {
+                    log.warn("Authentication failed: User not found with email: {}", email);
+                    return new UnauthorizedException("Invalid email or password");
+                });
 
         accountLockoutService.checkLockout(user);
 
         if (!user.isEmailVerified()) {
+            log.warn("Authentication failed: Email not verified for user: {}", email);
             throw new UnauthorizedException("Invalid email or password");
         }
 
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+            log.warn("Authentication failed: Invalid password for user: {}", email);
             accountLockoutService.recordFailedAttempt(user);
             userRepository.save(user);
             throw new UnauthorizedException("Invalid email or password");

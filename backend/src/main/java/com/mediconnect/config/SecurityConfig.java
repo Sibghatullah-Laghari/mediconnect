@@ -33,6 +33,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @RequiredArgsConstructor
 public class SecurityConfig {
+    
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final RateLimitingFilter rateLimitingFilter;
@@ -60,35 +61,48 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        System.out.println("======================================");
+        System.out.println("Allowed origins property: " + allowedOrigins);
+        System.out.println("======================================");
+
         http.csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/auth/me", "/api/v1/doctors/me", "/api/v1/patients/me").authenticated()
-                .requestMatchers(
-                        "/api/v1/auth/register",
-                        "/api/v1/auth/login",
-                        "/api/v1/auth/refresh",
-                        "/api/v1/auth/send-otp",
-                        "/api/v1/auth/verify-otp",
-                        "/api/v1/auth/logout",
-                        "/api/v1/users/register",
-                        "/actuator/health",
-                        "/api/v1/actuator/health"
-                ).permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/doctors", "/api/v1/doctors/*", "/api/v1/doctors/specializations", "/api/v1/doctors/specialization/**").permitAll()
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .anyRequest().authenticated())
-            .addFilterBefore(securityHeadersFilter, UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/me", "/doctors/me", "/patients/me").authenticated()
+                        .requestMatchers(
+                                "/auth/register",
+                                "/auth/login",
+                                "/auth/refresh",
+                                "/auth/send-otp",
+                                "/auth/verify-otp",
+                                "/auth/logout",
+                                "/users/register",
+                                "/actuator/health"
+                        ).permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                "/doctors",
+                                "/doctors/*",
+                                "/doctors/specializations",
+                                "/doctors/specialization/**")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .anyRequest().authenticated())
+                .addFilterBefore(securityHeadersFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+
+
         CorsConfiguration configuration = new CorsConfiguration();
-        List<String> origins = Arrays.stream(allowedOrigins.split(","))
+
+        List <String> origins = Arrays.stream(allowedOrigins.split(","))
                 .map(String::trim)
                 .filter(origin -> !origin.isBlank())
                 .peek(origin -> {
@@ -101,6 +115,8 @@ public class SecurityConfig {
         if (origins.isEmpty()) {
             throw new IllegalStateException("At least one allowed origin must be configured");
         }
+
+        System.out.println("Parsed allowed origins: " + origins);
 
         configuration.setAllowedOrigins(origins);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
