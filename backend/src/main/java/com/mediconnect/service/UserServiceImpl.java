@@ -2,6 +2,7 @@ package com.mediconnect.service;
 
 import com.mediconnect.dto.auth.RegisterUserRequest;
 import com.mediconnect.dto.auth.UserResponse;
+import com.mediconnect.event.UserRegisteredEvent;
 import com.mediconnect.exception.BadRequestException;
 import com.mediconnect.exception.DuplicateEmailException;
 import com.mediconnect.exception.ResourceNotFoundException;
@@ -12,6 +13,7 @@ import com.mediconnect.repository.UserRepository;
 import com.mediconnect.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +31,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public UserResponse registerUser(RegisterUserRequest request) {
@@ -50,6 +53,7 @@ public class UserServiceImpl implements UserService {
         user.setEmailVerified(false);
 
         User saved = userRepository.save(user);
+        eventPublisher.publishEvent(new UserRegisteredEvent(saved));
         return toResponse(saved);
     }
 

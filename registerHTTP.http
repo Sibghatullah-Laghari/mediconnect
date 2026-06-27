@@ -1,0 +1,47 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+###
+### Register
+POST http://localhost:8080/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "name": "John",
+  "email": "john@example.com",
+  "password": "password123",
+  "role": "PATIENT"
+}
+
+### Verify
+GET http://localhost:8080/api/v1/auth/verify?token=5392fabf-0857-4522-b094-25c75dc0775d
+
+### Login
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+
+### Verify
+GET http://localhost:8080/api/v1/auth/verify?token=f389b8c6-1bc1-476b-b2eb-e0442ead9246
+
+### Login
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "ali@gmail.com",
+  "password": "ali@2006."
+}
+
+### Get current user
+GET http://localhost:8080/api/v1/auth/me
+Authorization: Bearer <f389b8c6-1bc1-476b-b2eb-e0442ead9246>
+
+### Get current user
+GET http://localhost:8080/api/v1/auth/me
+Authorization: Bearer <f389b8c6-1bc1-476b-b2eb-e0442ead9246>

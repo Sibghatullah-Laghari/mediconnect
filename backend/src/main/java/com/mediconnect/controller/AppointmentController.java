@@ -63,7 +63,6 @@ public class AppointmentController {
     public ResponseEntity<AppointmentResponse> getAppointmentById(@PathVariable Long id) {
         return ResponseEntity.ok(appointmentService.getAppointmentById(id));
     }
-
     @GetMapping
     public ResponseEntity<Page<AppointmentResponse>> getAllAppointments(
             @RequestParam(defaultValue = "0") int page,

@@ -6,6 +6,7 @@ import com.mediconnect.security.JwtAuthenticationFilter;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * Configuration class for security settings of the application.
  * Configures password encoding, security filter chains, and application clock.
  */
+@Slf4j
 @Configuration
 @EnableMethodSecurity
 @EnableAsync
@@ -62,9 +64,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        System.out.println("======================================");
-        System.out.println("Allowed origins property: " + allowedOrigins);
-        System.out.println("======================================");
+        log.info("======================================");
+        log.info("Allowed origins property: {}", allowedOrigins);
+        log.info("======================================");
 
         http.csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -79,7 +81,8 @@ public class SecurityConfig {
                                 "/auth/verify-otp",
                                 "/auth/logout",
                                 "/users/register",
-                                "/actuator/health"
+                                "/actuator/health",
+                                "/auth/verify"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/doctors",
@@ -116,7 +119,7 @@ public class SecurityConfig {
             throw new IllegalStateException("At least one allowed origin must be configured");
         }
 
-        System.out.println("Parsed allowed origins: " + origins);
+        log.info("Parsed allowed origins: {}", origins);
 
         configuration.setAllowedOrigins(origins);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));

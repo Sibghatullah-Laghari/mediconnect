@@ -179,13 +179,6 @@ GET http://localhost:8080/api/v1/appointments/doctor/1
 # Update appointment status
 PUT http://localhost:8080/api/v1/appointments/1/status
 Content-Type: application/json
-
-{
-  "status": "CONFIRMED"
-}
-
-###
-
 # Cancel appointment
 PUT http://localhost:8080/api/v1/appointments/1/cancel
 

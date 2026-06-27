@@ -8,6 +8,7 @@ import com.mediconnect.dto.auth.RefreshTokenRequest;
 import com.mediconnect.dto.auth.RegisterUserRequest;
 import com.mediconnect.dto.auth.UserResponse;
 import com.mediconnect.service.AuthService;
+import com.mediconnect.service.VerificationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,7 @@ public class AuthController {
 
 
         private final AuthService authService;
+           private final VerificationService verificationService;
 
     /**
      * Registers a new user account.
@@ -133,5 +135,11 @@ public class AuthController {
         authService.logout();
         log.info("User logged out successfully");
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<String> verifyEmail(@RequestParam String token) {
+        verificationService.verifyEmail(token);
+        return ResponseEntity.ok("Email verified successfully. You can now log in.");
     }
 }

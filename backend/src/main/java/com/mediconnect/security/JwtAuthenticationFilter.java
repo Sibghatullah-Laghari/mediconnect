@@ -38,6 +38,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+
+        // Skip token validation for public auth endpoints
+        String servletPath = request.getServletPath();
+        if (servletPath.startsWith("/auth/register") || servletPath.startsWith("/auth/login") ||
+                servletPath.startsWith("/auth/verify") || servletPath.startsWith("/auth/send-otp") ||
+                servletPath.startsWith("/auth/verify-otp")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
@@ -58,7 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 // Optimization: Load user details once. This hits DB.
                 AuthenticatedUser userDetails = (AuthenticatedUser) userDetailsService.loadUserByUsername(username);
-                
+
                 // We still check valid token (subject matches and not expired)
                 // Note: extractAllClaims already checked expiration
                 if (username.equals(userDetails.getUsername())) {
@@ -106,5 +116,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
-
 }
