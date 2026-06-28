@@ -82,7 +82,9 @@ public class SecurityConfig {
                                 "/auth/logout",
                                 "/users/register",
                                 "/actuator/health",
-                                "/auth/verify"
+                                "/auth/verify",
+                                "/auth/send-phone-otp",
+                                "/auth/verify-phone"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/doctors",

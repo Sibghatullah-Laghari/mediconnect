@@ -45,3 +45,55 @@ Authorization: Bearer <f389b8c6-1bc1-476b-b2eb-e0442ead9246>
 ### Get current user
 GET http://localhost:8080/api/v1/auth/me
 Authorization: Bearer <f389b8c6-1bc1-476b-b2eb-e0442ead9246>
+
+### get
+GET http://localhost:8080/api/v1/auth/verify?token=461fac0e-5e4b-4469-8260-279f149ea31c
+
+### Verify
+GET http://localhost:8080/api/v1/auth/verify?token=f389b8c6-1bc1-476b-b2eb-e0442ead9246
+
+### Register a new user (if you don't have one)
+POST http://localhost:8080/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "name": "Ali",
+  "email": "ali@gmail.com",
+  "password": "password123",
+  "role": "PATIENT"
+}
+
+### Resend verification email
+POST http://localhost:8080/api/v1/auth/resend-verification
+Content-Type: application/json
+
+{
+  "email": "ali@gmail.com"
+}
+
+### Verify email with the new token (copy the token from logs)
+GET http://localhost:8080/api/v1/auth/verify?token=<paste-token-here>
+
+###
+
+GET http://localhost:8080/api/v1/auth/verify?token=543d8477-be6f-4d05-a676-5dbd4fa69509
+
+### Login
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "ali@gmail.com",
+  "password": "password123"
+}
+
+### Resend verification (should fail)
+POST http://localhost:8080/api/v1/auth/resend-verification
+Content-Type: application/json
+
+{
+  "email": "ali@gmail.com"
+}
+###
+GET http://localhost:8080/api/v1/auth/me
+Authorization: Bearer <your-access-token>

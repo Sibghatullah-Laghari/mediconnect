@@ -14,5 +14,8 @@ public interface AuthService {
     void sendOTP(String email);
     AuthResponse verifyOTP(String email, String otp);
     void authenticate(String email, String password);
-    void logout();
+     void logout();
+    void resendVerification(String email);
+    void sendPhoneOtp(String email, String phone);
+    void verifyPhoneOtp(String email, String phone, String otp);
 }

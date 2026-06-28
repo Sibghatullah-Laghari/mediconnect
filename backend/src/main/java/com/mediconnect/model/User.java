@@ -62,4 +62,12 @@ public class User {
 
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
+
+	@Setter
+	@Column(unique = true, length = 20)
+	private String phone;
+
+	@Setter
+	@Column(nullable = false)
+	private boolean phoneVerified = false;
 }

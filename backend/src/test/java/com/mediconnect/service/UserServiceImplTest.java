@@ -4,10 +4,12 @@ import com.mediconnect.dto.auth.RegisterUserRequest;
 import com.mediconnect.exception.BadRequestException;
 import com.mediconnect.model.Role;
 import com.mediconnect.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -22,11 +24,15 @@ class UserServiceImplTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
+
     @Test
     void registerUserRejectsAdminSelfAssignment() {
         when(userRepository.existsByEmail("admin@example.com")).thenReturn(false);
 
-        UserServiceImpl service = new UserServiceImpl(userRepository, passwordEncoder);
+        UserServiceImpl service = new UserServiceImpl(userRepository, passwordEncoder,    applicationEventPublisher
+        );
 
         assertThrows(BadRequestException.class, () ->
                 service.registerUser(new RegisterUserRequest(

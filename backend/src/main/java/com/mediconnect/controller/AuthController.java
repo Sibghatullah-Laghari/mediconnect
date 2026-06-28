@@ -142,4 +142,25 @@ public class AuthController {
         verificationService.verifyEmail(token);
         return ResponseEntity.ok("Email verified successfully. You can now log in.");
     }
+
+    @PostMapping("/resend-verification")
+    public ResponseEntity<Void> resendVerification(@Valid @RequestBody EmailRequest request) {
+        log.info("Received resend verification request for email: {}", request.email());
+        authService.resendVerification(request.email());
+        log.info("Verification email resent successfully to: {}", request.email());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/send-phone-otp")
+    public ResponseEntity<Void> sendPhoneOtp(@Valid @RequestBody PhoneOtpRequest request) {
+        authService.sendPhoneOtp(request.email(), request.phone());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/verify-phone")
+    public ResponseEntity<Void> verifyPhoneOtp(@Valid @RequestBody PhoneOtpVerifyRequest request) {
+        authService.verifyPhoneOtp(request.email(), request.phone(), request.otp());
+        return ResponseEntity.ok().build();
+    }
+
 }
