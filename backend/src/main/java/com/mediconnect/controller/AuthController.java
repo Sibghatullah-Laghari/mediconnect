@@ -1,12 +1,6 @@
 package com.mediconnect.controller;
 
-import com.mediconnect.dto.auth.AuthResponse;
-import com.mediconnect.dto.auth.EmailRequest;
-import com.mediconnect.dto.auth.LoginRequest;
-import com.mediconnect.dto.auth.OTPRequest;
-import com.mediconnect.dto.auth.RefreshTokenRequest;
-import com.mediconnect.dto.auth.RegisterUserRequest;
-import com.mediconnect.dto.auth.UserResponse;
+import com.mediconnect.dto.auth.*;
 import com.mediconnect.service.AuthService;
 import com.mediconnect.service.VerificationService;
 import jakarta.validation.Valid;

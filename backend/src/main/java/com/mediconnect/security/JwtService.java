@@ -24,10 +24,10 @@ public class JwtService {
 
     private static final String TOKEN_TYPE_CLAIM = "tokenType";
 
-    @Value("${jwt.secret}")
+    @Value("${jwt.secret:this-is-my-super-secret-development-key-32-chars}")
     private String jwtSecret;
 
-    @Value("${jwt.expiry.minutes}")
+    @Value("${jwt.expiry.minutes:60}")
     private long accessTokenExpiryMinutes;
 
     @PostConstruct
