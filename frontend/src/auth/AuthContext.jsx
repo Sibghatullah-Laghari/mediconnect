@@ -48,40 +48,41 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
-  const value = useMemo(
-    () => ({
-      user,
-      loading,
-      isAuthenticated: Boolean(user),
-      async login(values) {
-        const response = await loginUser(values);
-        setTokens(response.token, response.refreshToken);
-        const me = await getCurrentUser();
-        setUser(me);
-        return me;
-      },
-      async register(values) {
-        const response = await registerUser(values);
-        setTokens(response.token, response.refreshToken);
-        const me = await getCurrentUser();
-        setUser(me);
-        return me;
-      },
-      logout() {
-        clearTokens();
-        setUser(null);
-      },
-      async refreshUser() {
-        const me = await getCurrentUser();
-        setUser(me);
-        return me;
-      },
-      loginWithGoogle() {
-        throw new Error('Google authentication is not configured for this environment.');
-      },
-    }),
-    [loading, user]
-  );
+const value = useMemo(
+  () => ({
+    user,
+    loading,
+    isAuthenticated: Boolean(user),
+
+    async login(values) {
+      const response = await loginUser(values);
+      setTokens(response.token, response.refreshToken);
+      const me = await getCurrentUser();
+      setUser(me);
+      return me;
+    },
+
+    async register(values) {
+      return registerUser(values);
+    },
+
+    logout() {
+      clearTokens();
+      setUser(null);
+    },
+
+    async refreshUser() {
+      const me = await getCurrentUser();
+      setUser(me);
+      return me;
+    },
+
+    loginWithGoogle() {
+      throw new Error('Google authentication is not configured for this environment.');
+    },
+  }),
+  [loading, user]
+);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

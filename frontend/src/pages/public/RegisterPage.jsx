@@ -43,18 +43,29 @@ export default function RegisterPage() {
           <CardTitle>Create your MediConnect account</CardTitle>
         </CardHeader>
         <CardContent>
-          <form
-            className="space-y-4"
-            onSubmit={handleSubmit(async (values) => {
-              try {
-                const user = await registerAccount(values);
-                toast.success('Account created successfully.');
-                navigate(getDashboardRoute(user.role), { replace: true });
-              } catch (error) {
-                toast.error(getErrorMessage(error, 'Unable to register account.'));
-              }
-            })}
-          >
+<form
+  className="space-y-4"
+  onSubmit={handleSubmit(async (values) => {
+    try {
+      const registration = await registerAccount(values);
+
+      toast.success(
+        'Account created successfully. Please verify your email before signing in.'
+      );
+
+      // Temporary: Redirect user to the login page.
+      // In the next step, this will be replaced with a Verify Email page.
+      navigate('/login', {
+        replace: true,
+        state: {
+          email: registration.email,
+        },
+      });
+    } catch (error) {
+      toast.error(getErrorMessage(error, 'Unable to register account.'));
+    }
+  })}
+>
             <div>
               <label className="mb-1 block text-sm font-medium text-slate-700">Full name</label>
               <Input {...register('name')} />
