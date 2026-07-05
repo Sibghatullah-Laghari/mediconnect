@@ -23,6 +23,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service implementation for managing user accounts.
+ * <p>
+ * Provides user registration, retrieval, update, and deletion operations.
+ * Enforces role‑based access control (ADMIN can manage all users; non‑admins
+ * can only access/update their own account). Publishes a {@link UserRegisteredEvent}
+ * upon successful registration to trigger email verification.
+ * </p>
+ */
 @Slf4j
 @Service
 @Transactional
@@ -33,6 +42,19 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher eventPublisher;
 
+    /**
+     * Registers a new user.
+     * <p>
+     * Validates that the email is not already taken and that the role is not ADMIN
+     * (self‑assignment of admin is forbidden). Encrypts the password, saves the user,
+     * and publishes a {@link UserRegisteredEvent} to trigger email verification.
+     * </p>
+     *
+     * @param request the registration request containing user details
+     * @return UserResponse containing the newly created user's information
+     * @throws DuplicateEmailException if the email already exists
+     * @throws BadRequestException if the role is ADMIN
+     */
     @Override
     public UserResponse registerUser(RegisterUserRequest request) {
         log.info("Registering user: {}", request.email());
@@ -57,6 +79,17 @@ public class UserServiceImpl implements UserService {
         return toResponse(saved);
     }
 
+    /**
+     * Retrieves a user by ID.
+     * <p>
+     * Access is granted to ADMINs or to the user themselves.
+     * </p>
+     *
+     * @param id the ID of the user to retrieve
+     * @return UserResponse containing user details
+     * @throws ResourceNotFoundException if the user does not exist
+     * @throws UnauthorizedException if the current user lacks access
+     */
     @Override
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)
@@ -69,6 +102,13 @@ public class UserServiceImpl implements UserService {
         return toResponse(user);
     }
 
+    /**
+     * Retrieves all users with pagination. Accessible only to ADMINs.
+     *
+     * @param pageable pagination information
+     * @return a page of UserResponse objects
+     * @throws UnauthorizedException if the current user is not an ADMIN
+     */
     @Override
     public Page<UserResponse> getAllUsers(Pageable pageable) {
         SecurityUtils.requireRole(Role.ADMIN);
@@ -77,6 +117,22 @@ public class UserServiceImpl implements UserService {
                 .map(this::toResponse);
     }
 
+    /**
+     * Updates an existing user's details.
+     * <p>
+     * Only ADMINs or the user themselves can update the account.
+     * If the user is not an ADMIN, they cannot change the role to ADMIN.
+     * Email uniqueness is enforced when the email is changed.
+     * </p>
+     *
+     * @param id the ID of the user to update
+     * @param request the update request
+     * @return the updated UserResponse
+     * @throws ResourceNotFoundException if the user does not exist
+     * @throws UnauthorizedException if the current user lacks permission
+     * @throws DuplicateEmailException if the new email is already in use
+     * @throws BadRequestException if a non‑ADMIN tries to assign the ADMIN role
+     */
     @Override
     public UserResponse updateUser(Long id, RegisterUserRequest request) {
         User user = userRepository.findById(id)
@@ -93,7 +149,7 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(request.email()) && !user.getEmail().equalsIgnoreCase(request.email())) {
             throw new DuplicateEmailException("User email already exists");
         }
-        
+
         user.setName(request.name());
         user.setEmail(request.email());
         user.setPasswordHash(passwordEncoder.encode(request.password()));
@@ -103,6 +159,16 @@ public class UserServiceImpl implements UserService {
         return toResponse(saved);
     }
 
+    /**
+     * Deletes a user account.
+     * <p>
+     * Only ADMINs or the user themselves can delete the account.
+     * </p>
+     *
+     * @param id the ID of the user to delete
+     * @throws ResourceNotFoundException if the user does not exist
+     * @throws UnauthorizedException if the current user lacks permission
+     */
     @Override
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
@@ -114,6 +180,14 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
     }
 
+    // ----- PRIVATE HELPER METHODS -----
+
+    /**
+     * Converts a User entity to a UserResponse DTO.
+     *
+     * @param user the user entity
+     * @return the response DTO
+     */
     private UserResponse toResponse(User user) {
         return new UserResponse(
                 user.getId(),
@@ -124,6 +198,16 @@ public class UserServiceImpl implements UserService {
         );
     }
 
+    /**
+     * Checks whether the current user has access to the given user account.
+     * <p>
+     * Access is granted if the current user is an ADMIN, or if the current user
+     * is the same as the target user (matching email).
+     * </p>
+     *
+     * @param user the target user
+     * @return true if access is allowed, false otherwise
+     */
     private boolean canAccessUser(User user) {
         if (SecurityUtils.hasRole(Role.ADMIN)) {
             return true;
