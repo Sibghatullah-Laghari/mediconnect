@@ -1,11 +1,13 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  // Paths to scan for Tailwind classes (HTML, JS, TS, JSX, TSX)
   content: [
     './index.html',
     './src/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
+      // Custom color palette defined via CSS variables (HSL) with alpha support
       colors: {
         border: 'hsl(var(--border) / <alpha-value>)',
         input: 'hsl(var(--input) / <alpha-value>)',
@@ -54,10 +56,12 @@ export default {
           accent: 'hsl(var(--sidebar-accent) / <alpha-value>)',
         },
       },
+      // Global font stack — Inter as primary sans-serif
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
         display: ['Inter', 'sans-serif'],
       },
+      // Custom border radius based on a single CSS variable with variations
       borderRadius: {
         xl: 'calc(var(--radius) - 0.25rem)',
         '2xl': 'var(--radius)',
@@ -65,5 +69,6 @@ export default {
       },
     },
   },
+  // No additional plugins (e.g., forms, typography) — pure utility base
   plugins: [],
 };
