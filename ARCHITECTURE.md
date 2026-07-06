@@ -1,19 +1,19 @@
-# Architecture Overview - MediConnect
+# Architecture Overview — MediConnect
 
 *Version: 1.0.1 | Last Updated: 2026-06-29*
 
-This document describes the high-level architecture of MediConnect, providing insights into the design patterns, data flow, and technical decisions that drive the platform.
+This document outlines the high‑level architecture of MediConnect, offering insight into the design patterns, data flows, and technical decisions that underpin the platform.
 
 ---
 
 ## 🏗️ Design Philosophy
 
-MediConnect is designed as a **Modular Monolith**. While it resides in a single repository and deployment unit, the code is structured with clear domain boundaries, allowing for a future transition to microservices if necessary.
+MediConnect follows a **Modular Monolith** approach. Although it lives in a single repository and deploys as one unit, the code is organised around clear domain boundaries, which makes a future transition to microservices feasible with minimal friction.
 
 ### Key Patterns
-- **Performance**: Optimized queries with `JOIN FETCH` to eliminate N+1 problems; asynchronous processing for emails; optimized JWT filter chain.
-- **Reliability**: Scheduled cleanup services for session maintenance.
-- **Stateless Security**: Leveraging JWT for authentication to support horizontal scaling.
+- **Performance**: Optimised queries using `JOIN FETCH` to avoid N+1 issues; asynchronous processing for emails; streamlined JWT filter chain.
+- **Reliability**: Scheduled cleanup services to maintain session hygiene.
+- **Stateless Security**: JWT‑based authentication enables horizontal scaling without session affinity.
 
 ---
 
