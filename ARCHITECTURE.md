@@ -1,32 +1,52 @@
-# Architecture Overview — MediConnect
+# Architecture Overview – MediConnect
 
-*Version: 1.0.1 | Last Updated: 2026-06-29*
+**Version:** 1.0.1
+**Last Updated:** 2026-06-29
 
-This document outlines the high‑level architecture of MediConnect, offering insight into the design patterns, data flows, and technical decisions that underpin the platform.
-
----
-
-## 🏗️ Design Philosophy
-
-MediConnect follows a **Modular Monolith** approach. Although it lives in a single repository and deploys as one unit, the code is organised around clear domain boundaries, which makes a future transition to microservices feasible with minimal friction.
-
-### Key Patterns
-- **Performance**: Optimised queries using `JOIN FETCH` to avoid N+1 issues; asynchronous processing for emails; streamlined JWT filter chain.
-- **Reliability**: Scheduled cleanup services to maintain session hygiene.
-- **Stateless Security**: JWT‑based authentication enables horizontal scaling without session affinity.
+This document provides an overview of MediConnect's architecture, highlighting its overall structure, design principles, and the core technologies that support the platform.
 
 ---
 
-## 🧱 Component Diagram
+# 🏗️ Architectural Approach
+
+MediConnect is built as a **Modular Monolith**, where the application is deployed as a single service while maintaining well-defined boundaries between business domains. This approach keeps development straightforward today while making future migration to a microservices architecture significantly easier.
+
+## Core Design Principles
+
+* **Performance-Oriented** – Database access is optimized using `JOIN FETCH` queries to eliminate N+1 problems. Asynchronous processing is used for email delivery, and the authentication pipeline is streamlined to reduce overhead.
+* **Reliability** – Scheduled background services automatically clean up expired sessions and other temporary data to keep the system healthy.
+* **Stateless Authentication** – JWT-based authentication removes server-side session dependencies, making the application easier to scale horizontally.
+
+---
+
+# 🧱 High-Level Components
 
 ```text
-[ Browser / Mobile Client ]
-           |
-           v
-[   Nginx (SPA Hosting)   ]
-           |
-           v
-[ Spring Boot API (Tomcat) ] <--- [ Mail Server (SMTP) ]
-           |
-           v
-[   PostgreSQL Database    ]
++---------------------------+
+|  Browser / Mobile Client  |
++---------------------------+
+             |
+             v
++---------------------------+
+|     Nginx (Frontend)      |
++---------------------------+
+             |
+             v
++---------------------------+        +----------------------+
+|  Spring Boot REST API     |<------>|    SMTP Mail Server  |
+|       (Embedded Tomcat)   |        +----------------------+
++---------------------------+
+             |
+             v
++---------------------------+
+|    PostgreSQL Database    |
++---------------------------+
+```
+
+### Component Responsibilities
+
+* **Client Applications** – Web and mobile clients communicate with the backend through REST APIs.
+* **Nginx** – Serves the frontend application and forwards API requests to the backend while supporting SPA routing.
+* **Spring Boot API** – Handles authentication, business logic, validation, and communication with external services.
+* **SMTP Server** – Delivers OTP verification emails and other email notifications.
+* **PostgreSQL** – Stores application data, user accounts, appointments, and other persistent information.
