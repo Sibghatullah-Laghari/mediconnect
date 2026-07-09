@@ -1,69 +1,111 @@
-# Deployment Guide - MediConnect
+# Deployment Guide – MediConnect
 
-MediConnect is designed to be deployed in a containerized environment. This guide covers the steps for production deployment.
+This guide outlines the recommended approach for deploying MediConnect in a production environment using Docker containers.
 
 ---
 
-## 🚢 Containerized Deployment (Recommended)
+# 🚀 Production Deployment
 
-### 1. Build Production Images
+## Build the Application Images
+
+Generate the production Docker images before deployment.
+
 ```bash
 docker compose build
 ```
 
-### 2. Configure Production Secrets
-Ensure your `.env` file contains production-grade secrets:
-- `JWT_SECRET`: Random 256-bit string.
-- `POSTGRES_PASSWORD`: Strong password for DB.
-- `SPRING_MAIL_PASSWORD`: App-specific password for SMTP.
+## Configure Environment Variables
 
-### 3. Database Management
-Flyway will automatically run migrations on startup. For the first deployment:
+Before starting the application, verify that your `.env` file contains secure production values.
+
+Recommended secrets include:
+
+* `JWT_SECRET` – A strong, randomly generated 256-bit secret.
+* `POSTGRES_PASSWORD` – A secure password for the PostgreSQL database.
+* `SPRING_MAIL_PASSWORD` – The SMTP provider's application password.
+
+## Initialize the Database
+
+Database migrations are executed automatically through Flyway during application startup.
+
+For an initial deployment, start the database first:
+
 ```bash
 docker compose up -d postgres
-# Wait for DB to be ready
+
+# After PostgreSQL becomes available
+
 docker compose up -d backend frontend
 ```
 
 ---
 
-## ☁️ Cloud Infrastructure Requirements
+# ☁️ Infrastructure Recommendations
 
-### Database
-- **PostgreSQL 16+**: Managed service recommended (AWS RDS, Google Cloud SQL).
-- **Storage**: Minimum 10GB with auto-growth.
+## Database
 
-### Compute
-- **CPU**: 2 vCPUs minimum for backend.
-- **RAM**: 4GB minimum (Backend JVM requires ~1-2GB).
+* Use **PostgreSQL 16** or a newer version.
+* A managed database service such as AWS RDS or Google Cloud SQL is recommended.
+* Allocate at least **10 GB** of storage with automatic expansion enabled.
 
-### Networking
-- **SSL/TLS**: Mandatory for all clinical data. Use a Load Balancer (AWS ALB, Nginx Ingress) for SSL termination.
-- **VPC**: Database should be in a private subnet.
+## Compute Resources
 
----
+Recommended minimum resources:
 
-## 🔄 CI/CD Pipeline
+* **CPU:** 2 vCPUs
+* **Memory:** 4 GB RAM (approximately 1–2 GB reserved for the backend JVM)
 
-The project includes a GitHub Actions workflow in `.github/workflows/ci.yml` that:
-1. Validates the build on every PR.
-2. Runs unit and integration tests.
-3. Verifies container build compatibility.
+## Network & Security
 
-For production CD, it is recommended to extend this to:
-1. Push images to a private registry (AWS ECR, Docker Hub).
-2. Trigger a blue-green or rolling update on your orchestrator (Kubernetes, ECS).
+* Enable **HTTPS** for all external traffic.
+* Terminate SSL/TLS using a load balancer or reverse proxy such as AWS ALB or Nginx.
+* Place the PostgreSQL instance inside a private network or subnet to prevent direct public access.
 
 ---
 
-## 📈 Monitoring & Maintenance
+# 🔄 CI/CD
 
-### Actuator Endpoints
-- Health: `/api/v1/actuator/health`
-- Metrics: `/api/v1/actuator/metrics`
+The repository includes a GitHub Actions workflow located in `.github/workflows/ci.yml`.
 
-### Logs
-Backend logs are configured to output to `stdout` in JSON format (when `prod` profile is active) for consumption by ELK or CloudWatch.
+The current pipeline performs the following tasks:
 
-### Token Cleanup
-The `TokenCleanupService` runs daily at midnight to prune expired sessions from the database.
+* Validates every pull request.
+* Executes unit and integration tests.
+* Confirms successful Docker image builds.
+
+For production deployments, consider extending the pipeline to include:
+
+* Publishing Docker images to a private container registry (AWS ECR, Docker Hub, etc.).
+* Performing rolling or blue-green deployments using Kubernetes, Amazon ECS, or another orchestration platform.
+
+---
+
+# 📈 Monitoring
+
+## Spring Boot Actuator
+
+The following endpoints are available for monitoring application health and metrics:
+
+* **Health:** `/api/v1/actuator/health`
+* **Metrics:** `/api/v1/actuator/metrics`
+
+## Application Logs
+
+When the production profile is enabled, backend logs are written to standard output in JSON format, making them compatible with centralized logging platforms such as ELK Stack or Amazon CloudWatch.
+
+## Scheduled Maintenance
+
+`TokenCleanupService` executes automatically once each day at midnight to remove expired refresh tokens and verification records from the database.
+
+---
+
+# ✅ Production Checklist
+
+Before deploying MediConnect, verify the following:
+
+* Secure environment variables have been configured.
+* HTTPS is enabled.
+* The database is not publicly accessible.
+* Flyway migrations complete successfully.
+* Health endpoints report the application as healthy.
+* CI pipeline passes before releasing new versions.
