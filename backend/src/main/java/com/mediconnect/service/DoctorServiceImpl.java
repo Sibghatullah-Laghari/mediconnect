@@ -22,6 +22,14 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service implementation for managing doctor profiles.
+ * <p>
+ * Provides CRUD operations for doctors with caching, role-based authorization,
+ * and email uniqueness enforcement. Caches are evicted appropriately on changes
+ * to keep data consistent.
+ * </p>
+ */
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -29,6 +37,19 @@ public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorRepository doctorRepository;
 
+    /**
+     * Creates a new doctor profile.
+     * <p>
+     * Validates that the email is not already used by another doctor and that the
+     * current user is authorized (admin or the doctor themselves). Evicts all
+     * doctor and specialization caches upon successful creation.
+     * </p>
+     *
+     * @param request the doctor creation request
+     * @return the created DoctorResponse
+     * @throws DuplicateEmailException if the email already exists
+     * @throws UnauthorizedException if the user lacks permission
+     */
     @Override
     @Caching(evict = {
             @CacheEvict(cacheNames = "specializations", allEntries = true),
@@ -36,7 +57,7 @@ public class DoctorServiceImpl implements DoctorService {
     })
     public DoctorResponse createDoctor(CreateDoctorRequest request) {
         if (doctorRepository.existsByEmail(request.email())) {
-            throw new DuplicateEmailException( "Doctor having " + request.email() + "email already exists");
+            throw new DuplicateEmailException("Doctor having " + request.email() + "email already exists");
         }
 
         ensureCanUseEmail(request.email());
@@ -54,6 +75,12 @@ public class DoctorServiceImpl implements DoctorService {
         return toResponse(saved);
     }
 
+    /**
+     * Converts a Doctor entity to a DoctorResponse DTO.
+     *
+     * @param doctor the doctor entity
+     * @return the response DTO
+     */
     private DoctorResponse toResponse(Doctor doctor) {
         return new DoctorResponse(
                 doctor.getId(),
@@ -67,6 +94,13 @@ public class DoctorServiceImpl implements DoctorService {
         );
     }
 
+    /**
+     * Retrieves a doctor by ID with caching.
+     *
+     * @param id the doctor ID
+     * @return the DoctorResponse
+     * @throws ResourceNotFoundException if the doctor does not exist
+     */
     @Override
     @Transactional(readOnly = true)
     @Cacheable(cacheNames = "doctors", key = "#id")
@@ -75,6 +109,11 @@ public class DoctorServiceImpl implements DoctorService {
         return toResponse(doctor);
     }
 
+    /**
+     * Retrieves all doctors (unpaged).
+     *
+     * @return list of all DoctorResponse objects
+     */
     @Override
     @Transactional(readOnly = true)
     public List<DoctorResponse> getAllDoctors() {
@@ -84,12 +123,24 @@ public class DoctorServiceImpl implements DoctorService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves all doctors with pagination.
+     *
+     * @param pageable pagination information
+     * @return a page of DoctorResponse objects
+     */
     @Override
     @Transactional(readOnly = true)
     public Page<DoctorResponse> getAllDoctors(Pageable pageable) {
         return doctorRepository.findAll(pageable).map(this::toResponse);
     }
 
+    /**
+     * Retrieves doctors by their specialization with caching.
+     *
+     * @param specialization the specialization to filter by
+     * @return list of DoctorResponse objects
+     */
     @Override
     @Transactional(readOnly = true)
     @Cacheable(cacheNames = "doctors", key = "'spec:' + #specialization")
@@ -100,6 +151,11 @@ public class DoctorServiceImpl implements DoctorService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves all distinct specializations with caching.
+     *
+     * @return list of specialization strings
+     */
     @Override
     @Transactional(readOnly = true)
     @Cacheable(cacheNames = "specializations")
@@ -107,6 +163,12 @@ public class DoctorServiceImpl implements DoctorService {
         return doctorRepository.findDistinctSpecializations();
     }
 
+    /**
+     * Retrieves the doctor profile of the currently authenticated user.
+     *
+     * @return the DoctorResponse of the current doctor
+     * @throws ResourceNotFoundException if no doctor is associated with the current user's email
+     */
     @Override
     public DoctorResponse getCurrentDoctor() {
         Doctor doctor = doctorRepository.findByEmail(SecurityUtils.getCurrentUserEmail())
@@ -114,6 +176,12 @@ public class DoctorServiceImpl implements DoctorService {
         return toResponse(doctor);
     }
 
+    /**
+     * Retrieves a doctor entity by ID or throws ResourceNotFoundException.
+     *
+     * @param id the doctor ID
+     * @return the Doctor entity
+     */
     private Doctor getDoctorEntityById(Long id) {
         return doctorRepository.findById(id)
                 .orElseThrow(() ->
@@ -121,6 +189,21 @@ public class DoctorServiceImpl implements DoctorService {
                 );
     }
 
+    /**
+     * Updates an existing doctor profile.
+     * <p>
+     * Ensures the current user is authorized (admin or the doctor themselves),
+     * validates email uniqueness, and evicts relevant caches for the updated
+     * doctor, affected specialization, and all specializations.
+     * </p>
+     *
+     * @param id the ID of the doctor to update
+     * @param request the update request
+     * @return the updated DoctorResponse
+     * @throws ResourceNotFoundException if doctor not found
+     * @throws DuplicateEmailException if the new email is already used by another doctor
+     * @throws UnauthorizedException if the user lacks permission
+     */
     @Override
     @Caching(evict = {
             @CacheEvict(cacheNames = "doctors", key = "#id"),
@@ -135,7 +218,7 @@ public class DoctorServiceImpl implements DoctorService {
         if (doctorRepository.existsByEmail(request.email()) && !doctor.getEmail().equalsIgnoreCase(request.email())) {
             throw new DuplicateEmailException("Doctor having " + request.email() + "email already exists");
         }
-        
+
         doctor.setName(request.name());
         doctor.setGender(request.gender());
         doctor.setSpecialization(request.specialization());
@@ -147,6 +230,19 @@ public class DoctorServiceImpl implements DoctorService {
         return toResponse(doctorRepository.save(doctor));
     }
 
+    /**
+     * Deletes a doctor profile.
+     * <p>
+     * Ensures the current user is authorized, and that the doctor has no existing
+     * appointments before deletion. Evicts the specific doctor cache and all
+     * specializations.
+     * </p>
+     *
+     * @param id the ID of the doctor to delete
+     * @throws ResourceNotFoundException if doctor not found
+     * @throws BadRequestException if the doctor has existing appointments
+     * @throws UnauthorizedException if the user lacks permission
+     */
     @Override
     @Caching(evict = {
             @CacheEvict(cacheNames = "doctors", key = "#id"),
@@ -163,6 +259,15 @@ public class DoctorServiceImpl implements DoctorService {
         doctorRepository.delete(doctor);
     }
 
+    /**
+     * Ensures that the current user is allowed to use the given email address.
+     * <p>
+     * Admins can use any email; non‑admins can only use their own email.
+     * </p>
+     *
+     * @param email the email to check
+     * @throws UnauthorizedException if the user is not allowed
+     */
     private void ensureCanUseEmail(String email) {
         if (SecurityUtils.hasRole(Role.ADMIN)) {
             return;
@@ -173,6 +278,15 @@ public class DoctorServiceImpl implements DoctorService {
         }
     }
 
+    /**
+     * Ensures that the current user has access to the given doctor profile.
+     * <p>
+     * Admins have full access; other users can only access their own profile.
+     * </p>
+     *
+     * @param doctor the doctor to check
+     * @throws UnauthorizedException if the user lacks permission
+     */
     private void ensureCanAccessDoctor(Doctor doctor) {
         if (SecurityUtils.hasRole(Role.ADMIN)) {
             return;
