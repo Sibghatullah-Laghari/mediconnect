@@ -1,53 +1,58 @@
-# Security Policy & Audit - MediConnect
+# Security Policy & Audit – MediConnect
 
-This document outlines the security architecture, audit findings, and hardening measures implemented in MediConnect.
+This document summarizes the security design, audit outcomes, and protection mechanisms implemented within MediConnect to strengthen the application's overall security posture.
 
 ---
 
 ## 🔐 Security Architecture
 
-MediConnect follows a defense-in-depth strategy, integrating security at multiple layers of the stack.
+MediConnect applies a layered security approach, ensuring protection across authentication, authorization, and infrastructure.
 
 ### 1. Authentication
-- **Stateless JWT**: Uses short-lived JSON Web Tokens for authentication.
-- **Refresh Token Rotation**: Hashed refresh tokens stored in the database with one-time-use logic (revoked on use).
-- **OTP Verification**: Registration and sensitive profile changes require 6-digit email verification.
+
+* **JWT-Based Authentication:** Uses stateless, short-lived JSON Web Tokens (JWT) for user authentication.
+* **Refresh Token Rotation:** Refresh tokens are securely hashed before storage and can only be used once before being replaced.
+* **Email OTP Verification:** A six-digit verification code is required during account registration and for sensitive account updates.
 
 ### 2. Authorization
-- **Role-Based Access Control (RBAC)**: Enforced via Spring Security Method Security (`@PreAuthorize`, `@EnableMethodSecurity`).
-- **Domain Scoping**: Service layer ensures users can only access data they own (e.g., Patients can only see their own appointments).
+
+* **Role-Based Access Control (RBAC):** Access permissions are enforced using Spring Security Method Security (`@PreAuthorize` and `@EnableMethodSecurity`).
+* **Resource Ownership Validation:** Service-layer checks ensure users can only access resources that belong to their own accounts (for example, patients can view only their own appointments).
 
 ### 3. Infrastructure Security
-- **Rate Limiting**: Protected against brute-force attacks via `Bucket4j` on auth endpoints.
-- **Security Headers**: Standard headers (HSTS, CSP, No-Sniff) are enforced via a global filter.
-- **CORS**: Strict CORS policy allowing only configured origins.
+
+* **Rate Limiting:** Authentication endpoints are protected against brute-force attacks using Bucket4j.
+* **Security Headers:** Standard HTTP security headers, including HSTS, CSP, and X-Content-Type-Options, are applied through a centralized filter.
+* **CORS Configuration:** Cross-Origin Resource Sharing is restricted to explicitly configured trusted origins.
 
 ---
 
-## 🛡️ Hardening Measures (Audit Fixes)
+## 🛡️ Security Improvements
 
-During the recent security audit, the following improvements were implemented:
+The following enhancements were introduced after the latest security review:
 
-| Issue | Resolution |
-| :--- | :--- |
-| **Redundant DB Lookups** | Optimized JWT Filter to reduce redundant user loading and token parsing. |
-| **Sensitive Data Exposure** | Ensured DTOs never expose internal fields like `passwordHash` or `deletedAt`. |
-| **Account Lockout** | Implemented `AccountLockoutService` to lock accounts after 5 failed attempts (15 min duration). |
-| **Token Hijacking** | Enforced 32-byte minimum length for `JWT_SECRET` and secure HMAC-SHA256 signing. |
-| **XSS / Injection** | Enforced strict Content Security Policy (CSP) and parameterized JPA queries. |
-
----
-
-## 📋 Security Checklist for Production
-
-- [ ] Change `JWT_SECRET` to a cryptographically strong, random string.
-- [ ] Use a production-grade SMTP server for OTP delivery.
-- [ ] Ensure `ALLOWED_ORIGINS` does not include wildcards (`*`).
-- [ ] Run the database on a private network, not exposed to the internet.
-- [ ] Enable SSL/TLS for all traffic.
+| Finding                            | Improvement                                                                                                                   |
+| :--------------------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
+| **Repeated Database Queries**      | Improved the JWT authentication filter to minimize unnecessary user lookups and token processing.                             |
+| **Exposure of Sensitive Fields**   | Updated DTO mappings to prevent internal fields such as `passwordHash` and `deletedAt` from being returned.                   |
+| **Protection Against Brute Force** | Added an `AccountLockoutService` that temporarily locks accounts for 15 minutes after five consecutive failed login attempts. |
+| **JWT Secret Hardening**           | Enforced a minimum 32-byte `JWT_SECRET` and secure HMAC-SHA256 signing.                                                       |
+| **XSS & Injection Protection**     | Applied a strict Content Security Policy (CSP) and ensured database operations use parameterized JPA queries.                 |
 
 ---
 
-## 🚨 Reporting a Vulnerability
+## 📋 Production Security Checklist
 
-If you find a security vulnerability, please do not open a public issue. Instead, contact the security team at security@mediconnect.com.
+Before deploying to production, verify the following:
+
+* [ ] Replace `JWT_SECRET` with a strong, randomly generated secret.
+* [ ] Configure a reliable production SMTP provider for OTP email delivery.
+* [ ] Ensure `ALLOWED_ORIGINS` contains only trusted domains and does not use wildcards (`*`).
+* [ ] Keep the database on a private network and avoid exposing it directly to the public internet.
+* [ ] Enable HTTPS with SSL/TLS for all client-server communication.
+
+---
+
+## 🚨 Reporting Security Issues
+
+If you discover a potential security vulnerability, please avoid creating a public GitHub issue. Instead, report it privately by contacting the security team at **[security@mediconnect.com](mailto:security@mediconnect.com)**.
