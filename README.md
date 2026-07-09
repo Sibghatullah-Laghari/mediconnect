@@ -1,109 +1,121 @@
-# MediConnect - Production-Grade Healthcare Platform
+# MediConnect – Production-Ready Healthcare Management Platform
 
-MediConnect is a comprehensive, production-ready healthcare appointment management system built with Spring Boot and React. Designed with scalability, security, and performance in mind, it provides a seamless experience for patients, doctors, and administrators.
-
----
-
-## 🚀 Key Features
-
-### 👤 Patient Management
-- **Secure Registration**: Identity assurance via OTP-verified email registration.
-- **Doctor Discovery**: Advanced search and filtering by specialization and availability.
-- **Appointment Booking**: Real-time conflict detection and instant booking.
-- **Personalized Dashboard**: Manage upcoming visits and medical history.
-
-### 🩺 Doctor Operations
-- **Schedule Orchestration**: Comprehensive tools to confirm, complete, or cancel appointments.
-- **Professional Profiles**: Manage expertise, experience, and consultation fees.
-- **Availability Monitoring**: Real-time views of clinical load and patient queues.
-
-### 🛡️ Administrative Control
-- **System Oversight**: Global management of all users, practitioners, and clinical data.
-- **Integrity Management**: Soft-delete mechanisms and audit-ready data structures.
-- **Security Monitoring**: Rate-limiting and account lockout protection.
+MediConnect is a modern healthcare appointment management platform developed with **Spring Boot** and **React**. The application is designed for security, scalability, and maintainability, providing an efficient experience for patients, healthcare professionals, and administrators.
 
 ---
 
-## 🏗️ Architecture & Tech Stack
+# 🚀 Features
 
-### Backend (The Core)
-- **Framework**: Spring Boot 3.2.5 (Java 21)
-- **Security**: Stateless JWT-based authentication with Refresh Token rotation.
-- **Persistence**: Spring Data JPA with PostgreSQL 16.
-- **Performance**: Optimized queries with JOIN FETCH to eliminate N+1 problems; asynchronous processing for non-blocking operations.
-- **Reliability**: Scheduled cleanup services and robust error handling.
-- **Tech Stack**: Hibernate, HikariCP, Bucket4j, Lombok, Jakarta Validation.
+## 👤 Patient Features
 
-### Frontend (The Interface)
-- **Framework**: React 18 with Vite.
-- **State Management**: TanStack Query (React Query) v5 for efficient server-state synchronization.
-- **Styling**: Tailwind CSS & Shadcn UI for a professional, accessible design.
-- **Validation**: Zod schema validation with React Hook Form.
+* **Secure Account Registration** – Email verification using a one-time password (OTP).
+* **Doctor Search** – Find doctors by specialization, availability, and other filters.
+* **Appointment Scheduling** – Book appointments with automatic conflict validation.
+* **Patient Dashboard** – View upcoming appointments and manage personal healthcare information.
 
-### DevOps & Infrastructure
-- **Containerization**: Fully Dockerized (multi-stage builds).
-- **CI/CD**: GitHub Actions for automated testing and verification.
-- **Monitoring**: Spring Boot Actuator for health checks and metrics.
+## 🩺 Doctor Features
 
----
+* **Appointment Management** – Confirm, complete, or cancel scheduled appointments.
+* **Professional Profile Management** – Update qualifications, specialties, experience, and consultation fees.
+* **Availability Tracking** – Monitor schedules and daily patient appointments.
 
-## 🔒 Security & Performance
+## 🛡️ Administration
 
-MediConnect is engineered with a **Security-First** approach:
-- **JWT Optimization**: Optimized filter chain reducing JWT parsing overhead and redundant DB lookups.
-- **Brute-Force Protection**: IP-based rate limiting on sensitive authentication endpoints.
-- **Account Lockout**: Automated protection against credential stuffing.
-- **Data Integrity**: Soft-delete implementation ensuring historical record preservation.
-- **Security Headers**: Production-grade CSP, HSTS, and XSS protection headers.
+* **User Management** – Manage patients, doctors, and system administrators.
+* **Data Integrity** – Soft-delete support for preserving historical records.
+* **Platform Security** – Built-in rate limiting and account lockout mechanisms for authentication endpoints.
 
 ---
 
-## 🛠️ Getting Started
+# 🏗️ Technology Stack
 
-Detailed instructions can be found in [SETUP.md](./SETUP.md).
+## Backend
 
-### Quick Start with Docker
-```bash
+* **Framework:** Spring Boot 3.2.5 (Java 21)
+* **Authentication:** Stateless JWT authentication with refresh token rotation.
+* **Database:** PostgreSQL 16 with Spring Data JPA.
+* **Performance:** Optimized database queries using `JOIN FETCH` and asynchronous processing where appropriate.
+* **Core Libraries:** Hibernate, HikariCP, Bucket4j, Lombok, and Jakarta Validation.
+* **Reliability:** Global exception handling and scheduled maintenance tasks.
+
+## Frontend
+
+* **Framework:** React 18 with Vite.
+* **State Management:** TanStack Query (React Query v5).
+* **UI:** Tailwind CSS with Shadcn UI components.
+* **Form Validation:** React Hook Form integrated with Zod.
+
+## DevOps
+
+* **Containerization:** Docker with multi-stage image builds.
+* **Continuous Integration:** GitHub Actions for automated verification.
+* **Monitoring:** Spring Boot Actuator for application health and metrics.
+
+---
+
+# 🔒 Security & Performance
+
+Security is integrated throughout the platform using multiple layers of protection.
+
+* **Efficient JWT Processing** – Reduced unnecessary token parsing and redundant database queries.
+* **Rate Limiting** – Protects authentication endpoints from brute-force attempts.
+* **Account Lockout** – Automatically locks accounts after repeated failed login attempts.
+* **Soft Delete Support** – Preserves historical records without permanently removing data.
+* **HTTP Security Headers** – Includes CSP, HSTS, XSS protection, and other recommended security headers.
+
+---
+
+# 🛠️ Getting Started
+
+Complete installation instructions are available in **SETUP.md**.
+
+## Quick Start
+
+```bash id="n2hklx"
 # Clone the repository
 git clone https://github.com/mediconnect/mediconnect.git
 
-# Set up environment variables
+# Create the environment configuration
 cp .env.example .env
 
-# Launch the platform
+# Build and start the application
 docker compose up --build
 ```
 
 ---
 
-## 🤖 Future Roadmap & AI Integration
+# 🤖 Future Plans
 
-MediConnect is continuously evolving. Our future roadmap includes:
+MediConnect will continue to evolve with additional features and infrastructure improvements.
 
-### AI-Powered Features (Planned)
-- **AI-Assisted Patient History Analysis**: Leveraging LLMs to summarize patient medical records for doctors.
-- **Clinical Summaries**: Automated generation of appointment notes and clinical summaries.
-- **Intelligent Search**: Semantic search for doctors based on natural language symptoms.
-- **Predictive Analytics**: Forecasting appointment demand and patient no-show risks.
+## Planned AI Capabilities
 
-### System Enhancements
-- **Redis Integration**: Distributed caching for global scalability.
-- **Event-Driven Migration**: Transition to RabbitMQ/Kafka for cross-domain communication.
-- **Mobile Application**: Native iOS and Android clients.
+* AI-assisted summaries of patient medical histories.
+* Automatic generation of clinical notes after appointments.
+* Natural language search for doctors based on patient symptoms.
+* Predictive analytics for appointment demand and no-show probabilities.
 
----
+## Planned Infrastructure Improvements
 
-## 📄 Documentation Index
-
-- [Architecture Overview](./ARCHITECTURE.md)
-- [API Documentation](./API.md)
-- [Security Audit](./SECURITY.md)
-- [Deployment Guide](./DEPLOYMENT.md)
-- [Setup Guide](./SETUP.md)
-- [Contributing Guidelines](./CONTRIBUTING.md)
+* Redis integration for distributed caching.
+* Event-driven architecture using RabbitMQ or Kafka.
+* Native mobile applications for Android and iOS.
 
 ---
 
-## ⚖️ License
+# 📚 Documentation
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Additional project documentation is available in the following files:
+
+* `ARCHITECTURE.md`
+* `API.md`
+* `SECURITY.md`
+* `DEPLOYMENT.md`
+* `SETUP.md`
+* `CONTRIBUTING.md`
+
+---
+
+# 📄 License
+
+This project is licensed under the **MIT License**. See the `LICENSE` file for complete licensing information.
