@@ -1,53 +1,84 @@
 # Contributing to MediConnect
 
-First off, thank you for considering contributing to MediConnect! Your efforts help make it a valuable tool for the healthcare community.
+Thank you for your interest in contributing to MediConnect. Every contribution—whether it's fixing bugs, improving documentation, or adding new features—helps improve the project for everyone.
 
 ---
 
-## 🚦 Getting Started
+# 🚀 Getting Started
 
-1. **Fork the Repository**: Create your own copy of the project on GitHub.
-2. **Clone Locally**:
-   ```bash
-   git clone https://github.com/your-username/mediconnect.git
-Set Up Your Development Environment: Follow the instructions in SETUP.md.
+To begin contributing:
 
-Create a Branch: Use a descriptive name, e.g., feature/appointment-cancellation or fix/auth-leak.
+1. **Fork the repository** to your own GitHub account.
+2. **Clone your fork** to your local machine.
 
-🛠️ Development Standards
-Backend (Java/Spring Boot)
-Code Style: Follow the Google Java Style Guide.
+```bash id="n9p5ih"
+git clone https://github.com/your-username/mediconnect.git
+```
 
-REST Principles: Use appropriate HTTP methods (GET, POST, PUT, PATCH, DELETE) and meaningful status codes.
+3. **Configure your development environment** by following the instructions provided in `SETUP.md`.
+4. **Create a dedicated branch** for your work using a meaningful branch name, for example:
 
-Validation: Leverage Jakarta Bean Validation (@NotNull, @NotBlank, etc.) in DTOs.
+   * `feature/appointment-cancellation`
+   * `feature/doctor-search`
+   * `fix/authentication-bug`
 
-Testing: Write unit tests for services and integration tests for controllers.
+---
 
-Frontend (React)
-Component Design: Prefer functional components with hooks.
+# 🛠️ Development Guidelines
 
-State Management: Use React Query for server state; avoid global state (Redux/Context) unless absolutely needed.
+## Backend (Spring Boot / Java)
 
-Styling: Apply Tailwind CSS utility classes—avoid inline styles or raw CSS files.
+* Follow the **Google Java Style Guide** for consistent code formatting.
+* Design REST APIs using appropriate HTTP methods (`GET`, `POST`, `PUT`, `PATCH`, and `DELETE`).
+* Return meaningful HTTP status codes and error responses.
+* Use **Jakarta Bean Validation** annotations such as `@NotNull` and `@NotBlank` in request DTOs.
+* Add unit tests for business logic and integration tests for REST controllers whenever applicable.
 
-Performance: Memoize expensive computations and prevent unnecessary re-renders.
+## Frontend (React)
 
-🧪 Submission Process
-Format Your Code: Ensure consistent indentation and formatting.
+* Prefer functional components with React Hooks.
+* Manage server-side data using **TanStack Query (React Query)**.
+* Avoid introducing global state unless it is clearly justified.
+* Use **Tailwind CSS** for styling instead of inline styles or custom CSS whenever possible.
+* Optimize rendering by memoizing expensive computations and reducing unnecessary component updates.
 
-Run Tests:
+---
 
-Backend: ./mvnw test
+# 🧪 Before Submitting
 
-Frontend: npm run lint
+Before opening a pull request, make sure you have completed the following steps:
 
-Commit Changes: Follow Conventional Commits (e.g., feat: add doctor specialization filter).
+* Format and review your code.
+* Execute the backend test suite.
 
-Open a Pull Request: Provide a clear description of your changes and link any related issues.
+```bash id="p7u7g0"
+./mvnw test
+```
 
-🛡️ Code of Conduct
-We are committed to fostering a welcoming and respectful community. Please be professional and considerate in all interactions.
+* Run frontend linting.
 
-⚖️ License
-By contributing, you agree that your contributions will be licensed under the project's MIT License.
+```bash id="vlu6wn"
+npm run lint
+```
+
+* Use **Conventional Commits** for commit messages, for example:
+
+```text id="8q7z1k"
+feat: add doctor specialization filter
+fix: resolve appointment validation issue
+docs: update setup guide
+```
+
+* Create a pull request with a clear explanation of your changes and reference any related issues when appropriate.
+
+---
+
+# 🤝 Community Guidelines
+
+Please be respectful, constructive, and professional when interacting with other contributors. We aim to maintain a welcoming environment where everyone can collaborate effectively.
+
+---
+
+# 📄 License
+
+By submitting contributions to MediConnect, you agree that your work will be distributed under the terms of the project's **MIT License**.
