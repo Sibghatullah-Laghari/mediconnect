@@ -1,83 +1,107 @@
-# Setup Guide - MediConnect
+# Setup Guide – MediConnect
 
-This guide provides step-by-step instructions for setting up the MediConnect development environment.
-
----
-
-## 🛠️ Prerequisites
-
-Before you begin, ensure you have the following installed:
-- **Docker & Docker Compose** (Recommended)
-- **JDK 21** (If running backend locally)
-- **Node.js 18+** & **npm** (If running frontend locally)
-- **PostgreSQL 16** (If running DB locally)
+This guide explains how to configure and run the MediConnect project for local development using either Docker or a manual installation.
 
 ---
 
-## 🚀 Docker Setup (Recommended)
+# 🛠️ Prerequisites
 
-The easiest way to get started is using Docker Compose.
+Before starting, make sure the following software is installed on your system:
 
-1.  **Clone the Repository**:
-    ```bash
-    git clone https://github.com/your-username/mediconnect.git
-    cd mediconnect
-    ```
-
-2.  **Configure Environment Variables**:
-    Create a `.env` file in the root directory and copy the contents from [Environment Variables](#-environment-variables).
-
-3.  **Launch the Services**:
-    ```bash
-    docker compose up --build
-    ```
-
-4.  **Verify**:
-    - Frontend: `http://localhost:5173`
-    - Backend: `http://localhost:8080`
-    - Postgres: `localhost:5432`
+* **Docker & Docker Compose** (recommended for quick setup)
+* **Java Development Kit (JDK 21)** for running the backend locally
+* **Node.js 18 or later** with **npm** for the frontend
+* **PostgreSQL 16** if you plan to use a local database instead of Docker
 
 ---
 
-## 💻 Manual Setup (Development Mode)
+# 🚀 Running with Docker (Recommended)
 
-### 1. Database
-- Create a PostgreSQL database named `mediconnect`.
-- Update `backend/src/main/resources/application-dev.properties` or set environment variables.
+Docker provides the fastest way to launch the complete application.
 
-### 2. Backend
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-2. Build the project:
-   ```bash
-   ./mvnw clean install
-   ```
-3. Run the application:
-   ```bash
-   ./mvnw spring-boot:run
-   ```
+### 1. Clone the Repository
 
-### 3. Frontend
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Run in development mode:
-   ```bash
-   npm run dev
-   ```
+```bash
+git clone https://github.com/your-username/mediconnect.git
+cd mediconnect
+```
+
+### 2. Configure Environment Variables
+
+Create a `.env` file in the project root and populate it using the values shown in the **Environment Variables** section below.
+
+### 3. Build and Start the Containers
+
+```bash
+docker compose up --build
+```
+
+### 4. Verify the Services
+
+After the containers finish starting, the application should be available at:
+
+* **Frontend:** `http://localhost:5173`
+* **Backend API:** `http://localhost:8080`
+* **PostgreSQL:** `localhost:5432`
 
 ---
 
-## 🔑 Environment Variables
+# 💻 Manual Development Setup
 
-Create a `.env` file in the root with the following variables. **Note: Do not commit your real `.env` file to version control.**
+If you prefer not to use Docker, you can run each service independently.
+
+## Database
+
+* Create a PostgreSQL database named **mediconnect**.
+* Update the database configuration in `backend/src/main/resources/application-dev.properties` or provide the required environment variables.
+
+## Backend
+
+Navigate to the backend project:
+
+```bash
+cd backend
+```
+
+Build the application:
+
+```bash
+./mvnw clean install
+```
+
+Start the Spring Boot server:
+
+```bash
+./mvnw spring-boot:run
+```
+
+## Frontend
+
+Navigate to the frontend directory:
+
+```bash
+cd frontend
+```
+
+Install the required packages:
+
+```bash
+npm install
+```
+
+Launch the development server:
+
+```bash
+npm run dev
+```
+
+---
+
+# 🔑 Environment Variables
+
+Create a `.env` file in the project root before running the application.
+
+> **Important:** Never commit your actual `.env` file or sensitive credentials to version control.
 
 ```env
 # Database Configuration
@@ -86,12 +110,12 @@ POSTGRES_USER=postgres
 POSTGRES_PASSWORD=your_secure_password
 SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/mediconnect
 
-# Security
+# JWT Configuration
 JWT_SECRET=your_32_character_long_secret_key_here
 JWT_ACCESS_TOKEN_EXPIRY_MINUTES=60
 JWT_REFRESH_TOKEN_EXPIRY_DAYS=7
 
-# Mail (SMTP)
+# Mail Configuration
 SPRING_MAIL_HOST=smtp.gmail.com
 SPRING_MAIL_PORT=587
 SPRING_MAIL_USERNAME=your-email@gmail.com
@@ -99,24 +123,28 @@ SPRING_MAIL_PASSWORD=your-app-password
 SPRING_MAIL_SMTP_AUTH=true
 SPRING_MAIL_SMTP_STARTTLS=true
 
-# Application
+# Application Configuration
 SPRING_PROFILES_ACTIVE=dev
 ALLOWED_ORIGINS=http://localhost:5173
 ```
 
 ---
 
-## 🧪 Testing
+# 🧪 Running Tests
 
-### Backend Tests
-Run the Spring Boot test suite:
+## Backend
+
+Execute the Spring Boot test suite:
+
 ```bash
 cd backend
 ./mvnw test
 ```
 
-### Frontend Linting
-Run ESLint to check for code quality issues:
+## Frontend
+
+Run ESLint to detect potential code quality issues:
+
 ```bash
 cd frontend
 npm run lint
@@ -124,8 +152,19 @@ npm run lint
 
 ---
 
-## 🛠️ Troubleshooting
+# 🛠️ Common Issues
 
-- **Database Connection Issues**: Ensure the `SPRING_DATASOURCE_URL` correctly points to the `postgres` service name when using Docker, or `localhost` if running locally.
-- **CORS Errors**: Verify that `ALLOWED_ORIGINS` in your `.env` matches the URL of your frontend.
-- **Mail Failures**: If using Gmail, ensure you have "App Passwords" enabled and are using the specific app password instead of your main account password.
+### Database Connection Problems
+
+Verify that `SPRING_DATASOURCE_URL` points to the correct database host:
+
+* Use **postgres** when running through Docker.
+* Use **localhost** when connecting to a locally installed PostgreSQL server.
+
+### CORS Errors
+
+Ensure the value of `ALLOWED_ORIGINS` matches the URL where the frontend application is running.
+
+### Email Configuration Issues
+
+When using Gmail as the SMTP provider, generate and use an **App Password** instead of your regular account password. Also verify that SMTP settings are configured correctly.
