@@ -1,6 +1,6 @@
 # API Documentation - MediConnect
 
-The MediConnect API is a RESTful service that provides endpoints for authentication, profile management, and appointment scheduling.
+The MediConnect API is a RESTful service that exposes endpoints for authentication, profile management, and appointment scheduling.
 
 ---
 
@@ -8,12 +8,12 @@ The MediConnect API is a RESTful service that provides endpoints for authenticat
 
 | Method | Endpoint | Description | Auth Required |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/api/v1/auth/register` | Register a new user | No |
-| `POST` | `/api/v1/auth/login` | Authenticate and receive tokens | No |
-| `POST` | `/api/v1/auth/refresh` | Refresh access token | No |
-| `GET` | `/api/v1/auth/me` | Get current user details | Yes |
-| `POST` | `/api/v1/auth/send-otp` | Send OTP to email | No |
-| `POST` | `/api/v1/auth/verify-otp` | Verify OTP and enable account | No |
+| `POST` | `/api/v1/auth/register` | Register a new user account | No |
+| `POST` | `/api/v1/auth/login` | Authenticate a user and receive access tokens | No |
+| `POST` | `/api/v1/auth/refresh` | Refresh the access token | No |
+| `GET` | `/api/v1/auth/me` | Retrieve the current user's details | Yes |
+| `POST` | `/api/v1/auth/send-otp` | Send an OTP to the user's email | No |
+| `POST` | `/api/v1/auth/verify-otp` | Verify the OTP and activate the account | No |
 
 ---
 
@@ -21,12 +21,12 @@ The MediConnect API is a RESTful service that provides endpoints for authenticat
 
 | Method | Endpoint | Description | Auth Required |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/v1/doctors` | List all doctors (paginated) | No |
-| `GET` | `/api/v1/doctors/{id}` | Get doctor details | No |
-| `GET` | `/api/v1/doctors/specializations` | Get all specializations | No |
-| `GET` | `/api/v1/doctors/specialization/{name}`| Filter doctors by specialization | No |
-| `POST` | `/api/v1/doctors` | Create doctor profile | Yes (Doctor) |
-| `PUT` | `/api/v1/doctors/{id}` | Update doctor profile | Yes (Owner/Admin) |
+| `GET` | `/api/v1/doctors` | Retrieve a paginated list of doctors | No |
+| `GET` | `/api/v1/doctors/{id}` | Retrieve doctor details | No |
+| `GET` | `/api/v1/doctors/specializations` | Retrieve all available specializations | No |
+| `GET` | `/api/v1/doctors/specialization/{name}` | Retrieve doctors by specialization | No |
+| `POST` | `/api/v1/doctors` | Create a doctor profile | Yes (Doctor) |
+| `PUT` | `/api/v1/doctors/{id}` | Update a doctor profile | Yes (Owner/Admin) |
 
 ---
 
@@ -34,10 +34,10 @@ The MediConnect API is a RESTful service that provides endpoints for authenticat
 
 | Method | Endpoint | Description | Auth Required |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/v1/patients/me` | Get current patient profile | Yes (Patient) |
-| `POST` | `/api/v1/patients` | Create patient profile | Yes (Patient) |
-| `PUT` | `/api/v1/patients/{id}` | Update patient profile | Yes (Owner/Admin) |
-| `GET` | `/api/v1/patients` | List all patients | Yes (Admin) |
+| `GET` | `/api/v1/patients/me` | Retrieve the current patient's profile | Yes (Patient) |
+| `POST` | `/api/v1/patients` | Create a patient profile | Yes (Patient) |
+| `PUT` | `/api/v1/patients/{id}` | Update a patient profile | Yes (Owner/Admin) |
+| `GET` | `/api/v1/patients` | Retrieve a list of all patients | Yes (Admin) |
 
 ---
 
@@ -46,22 +46,25 @@ The MediConnect API is a RESTful service that provides endpoints for authenticat
 | Method | Endpoint | Description | Auth Required |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/api/v1/appointments` | Book a new appointment | Yes (Patient) |
-| `GET` | `/api/v1/appointments` | List appointments (role-scoped) | Yes |
-| `GET` | `/api/v1/appointments/{id}` | Get appointment details | Yes |
-| `PUT` | `/api/v1/appointments/{id}/status` | Update appointment status | Yes |
-| `PATCH` | `/api/v1/appointments/{id}/confirm` | Confirm appointment | Yes (Doctor/Admin)|
-| `PATCH` | `/api/v1/appointments/{id}/complete`| Mark appointment as completed | Yes (Doctor/Admin)|
-| `PATCH` | `/api/v1/appointments/{id}/cancel` | Cancel appointment | Yes |
+| `GET` | `/api/v1/appointments` | Retrieve appointments based on the user's role | Yes |
+| `GET` | `/api/v1/appointments/{id}` | Retrieve appointment details | Yes |
+| `PUT` | `/api/v1/appointments/{id}/status` | Update the appointment status | Yes |
+| `PATCH` | `/api/v1/appointments/{id}/confirm` | Confirm an appointment | Yes (Doctor/Admin) |
+| `PATCH` | `/api/v1/appointments/{id}/complete` | Mark an appointment as completed | Yes (Doctor/Admin) |
+| `PATCH` | `/api/v1/appointments/{id}/cancel` | Cancel an appointment | Yes |
 
 ---
 
 ## 🛠️ Global Responses
 
 ### Success (200 OK / 201 Created)
-Standard JSON responses with the requested data.
+
+Successful requests return standard JSON responses containing the requested data.
 
 ### Error (4xx / 5xx)
-MediConnect uses a standardized error format:
+
+MediConnect uses a standardized JSON error response format:
+
 ```json
 {
   "timestamp": "2024-03-27T10:00:00Z",
@@ -75,14 +78,18 @@ MediConnect uses a standardized error format:
 ---
 
 ## 🚦 Rate Limiting
-Authentication endpoints are rate-limited to prevent brute-force attacks. If the limit is exceeded, the API returns:
+
+Authentication endpoints are protected by rate limiting to help prevent brute-force attacks. If the rate limit is exceeded, the API returns:
+
 - **Status**: `429 Too Many Requests`
-- **Body**: Standard error response with "Too many requests" message.
+- **Body**: A standard error response with a "Too many requests" message.
 
 ---
 
 ## 📝 Pagination
-Endpoints that return lists support pagination via query parameters:
-- `page`: Page number (default: 0)
-- `size`: Items per page (default: 10)
-- `sort`: Sorting criteria (e.g., `id,desc`)
+
+Endpoints that return collections support pagination through query parameters:
+
+- `page`: Page number (default: `0`)
+- `size`: Number of items per page (default: `10`)
+- `sort`: Sorting criteria (for example, `id,desc`)
