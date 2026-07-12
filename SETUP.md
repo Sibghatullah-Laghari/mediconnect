@@ -6,9 +6,9 @@ This guide explains how to configure and run the MediConnect project for local d
 
 # 🛠️ Prerequisites
 
-Before starting, make sure the following software is installed on your system:
+Before getting started, ensure the following software is installed on your system:
 
-* **Docker & Docker Compose** (recommended for quick setup)
+* **Docker & Docker Compose** (recommended for the quickest setup)
 * **Java Development Kit (JDK 21)** for running the backend locally
 * **Node.js 18 or later** with **npm** for the frontend
 * **PostgreSQL 16** if you plan to use a local database instead of Docker
@@ -17,7 +17,7 @@ Before starting, make sure the following software is installed on your system:
 
 # 🚀 Running with Docker (Recommended)
 
-Docker provides the fastest way to launch the complete application.
+Docker provides the fastest and easiest way to launch the complete application.
 
 ### 1. Clone the Repository
 
@@ -28,7 +28,7 @@ cd mediconnect
 
 ### 2. Configure Environment Variables
 
-Create a `.env` file in the project root and populate it using the values shown in the **Environment Variables** section below.
+Create a `.env` file in the project root and populate it using the values provided in the **Environment Variables** section below.
 
 ### 3. Build and Start the Containers
 
@@ -38,7 +38,7 @@ docker compose up --build
 
 ### 4. Verify the Services
 
-After the containers finish starting, the application should be available at:
+After all containers have started successfully, the application should be available at:
 
 * **Frontend:** `http://localhost:5173`
 * **Backend API:** `http://localhost:8080`
@@ -69,7 +69,7 @@ Build the application:
 ./mvnw clean install
 ```
 
-Start the Spring Boot server:
+Start the Spring Boot application:
 
 ```bash
 ./mvnw spring-boot:run
@@ -83,13 +83,13 @@ Navigate to the frontend directory:
 cd frontend
 ```
 
-Install the required packages:
+Install the project dependencies:
 
 ```bash
 npm install
 ```
 
-Launch the development server:
+Start the development server:
 
 ```bash
 npm run dev
@@ -101,7 +101,7 @@ npm run dev
 
 Create a `.env` file in the project root before running the application.
 
-> **Important:** Never commit your actual `.env` file or sensitive credentials to version control.
+> **Important:** Never commit your actual `.env` file or any sensitive credentials to version control.
 
 ```env
 # Database Configuration
@@ -134,7 +134,7 @@ ALLOWED_ORIGINS=http://localhost:5173
 
 ## Backend
 
-Execute the Spring Boot test suite:
+Run the Spring Boot test suite:
 
 ```bash
 cd backend
@@ -143,7 +143,7 @@ cd backend
 
 ## Frontend
 
-Run ESLint to detect potential code quality issues:
+Run ESLint to identify potential code quality issues:
 
 ```bash
 cd frontend
@@ -158,13 +158,13 @@ npm run lint
 
 Verify that `SPRING_DATASOURCE_URL` points to the correct database host:
 
-* Use **postgres** when running through Docker.
-* Use **localhost** when connecting to a locally installed PostgreSQL server.
+* Use **postgres** when running the application with Docker.
+* Use **localhost** when connecting to a locally installed PostgreSQL instance.
 
 ### CORS Errors
 
-Ensure the value of `ALLOWED_ORIGINS` matches the URL where the frontend application is running.
+Ensure that the value of `ALLOWED_ORIGINS` matches the URL where the frontend application is running.
 
 ### Email Configuration Issues
 
-When using Gmail as the SMTP provider, generate and use an **App Password** instead of your regular account password. Also verify that SMTP settings are configured correctly.
+When using Gmail as the SMTP provider, generate and use an **App Password** instead of your regular account password. Also, verify that the SMTP settings are configured correctly.
