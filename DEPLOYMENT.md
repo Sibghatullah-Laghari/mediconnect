@@ -1,6 +1,6 @@
 # Deployment Guide – MediConnect
 
-This guide describes the recommended approach for deploying MediConnect to a production environment using Docker containers.
+This guide explains the recommended process for deploying MediConnect to a production environment using Docker containers.
 
 ---
 
@@ -33,7 +33,7 @@ For the initial deployment, start the database service first:
 ```bash
 docker compose up -d postgres
 
-# Wait until PostgreSQL is ready
+# Wait until PostgreSQL is fully available
 
 docker compose up -d backend frontend
 ```
@@ -44,9 +44,9 @@ docker compose up -d backend frontend
 
 ## Database
 
-* Use **PostgreSQL 16** or a newer version.
+* Use **PostgreSQL 16** or a later version.
 * A managed database service, such as AWS RDS or Google Cloud SQL, is recommended.
-* Allocate at least **10 GB** of storage with automatic storage expansion enabled.
+* Allocate at least **10 GB** of storage with automatic expansion enabled.
 
 ## Compute Resources
 
@@ -59,7 +59,7 @@ Recommended minimum resources:
 
 * Enable **HTTPS** for all external traffic.
 * Terminate SSL/TLS at a load balancer or reverse proxy, such as AWS ALB or Nginx.
-* Place the PostgreSQL instance inside a private network or subnet to prevent direct public access.
+* Place the PostgreSQL instance within a private network or subnet to prevent direct public access.
 
 ---
 
@@ -71,7 +71,7 @@ The current pipeline performs the following tasks:
 
 * Validates every pull request.
 * Runs unit and integration tests.
-* Verifies that Docker images build successfully.
+* Verifies that Docker images are built successfully.
 
 For production deployments, consider extending the pipeline to include:
 
@@ -95,7 +95,7 @@ When the production profile is enabled, backend logs are written to standard out
 
 ## Scheduled Maintenance
 
-`TokenCleanupService` runs automatically once every day at midnight to remove expired refresh tokens and verification records from the database.
+`TokenCleanupService` runs automatically once each day at midnight to remove expired refresh tokens and verification records from the database.
 
 ---
 
@@ -103,7 +103,7 @@ When the production profile is enabled, backend logs are written to standard out
 
 Before deploying MediConnect, verify the following:
 
-* Secure environment variables are properly configured.
+* Secure environment variables are configured.
 * HTTPS is enabled.
 * The database is not publicly accessible.
 * Flyway migrations complete successfully.
