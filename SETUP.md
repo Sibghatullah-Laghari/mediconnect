@@ -6,7 +6,7 @@ This guide explains how to configure and run the MediConnect project for local d
 
 # 🛠️ Prerequisites
 
-Before getting started, ensure the following software is installed on your system:
+Before getting started, make sure the following software is installed on your system:
 
 * **Docker & Docker Compose** (recommended for the quickest setup)
 * **Java Development Kit (JDK 21)** for running the backend locally
@@ -17,7 +17,7 @@ Before getting started, ensure the following software is installed on your syste
 
 # 🚀 Running with Docker (Recommended)
 
-Docker provides the fastest and easiest way to launch the complete application.
+Docker provides the fastest and most convenient way to launch the complete application.
 
 ### 1. Clone the Repository
 
@@ -38,7 +38,7 @@ docker compose up --build
 
 ### 4. Verify the Services
 
-After all containers have started successfully, the application should be available at:
+After all containers have started successfully, the application should be accessible at:
 
 * **Frontend:** `http://localhost:5173`
 * **Backend API:** `http://localhost:8080`
@@ -167,4 +167,4 @@ Ensure that the value of `ALLOWED_ORIGINS` matches the URL where the frontend ap
 
 ### Email Configuration Issues
 
-When using Gmail as the SMTP provider, generate and use an **App Password** instead of your regular account password. Also, verify that the SMTP settings are configured correctly.
+When using Gmail as the SMTP provider, generate and use an **App Password** instead of your regular account password. Also, make sure the SMTP settings are configured correctly.
