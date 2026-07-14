@@ -1,6 +1,6 @@
 # MediConnect – Production-Ready Healthcare Management Platform
 
-MediConnect is a modern healthcare appointment management platform developed with **Spring Boot** and **React**. The application is designed for security, scalability, and maintainability, providing an efficient experience for patients, healthcare professionals, and administrators.
+MediConnect is a modern healthcare appointment management platform built with **Spring Boot** and **React**. The application focuses on security, scalability, and long-term maintainability while providing an efficient experience for patients, healthcare professionals, and administrators.
 
 ---
 
@@ -8,22 +8,22 @@ MediConnect is a modern healthcare appointment management platform developed wit
 
 ## 👤 Patient Features
 
-* **Secure Account Registration** – Email verification using a one-time password (OTP).
-* **Doctor Search** – Find doctors by specialization, availability, and other filters.
-* **Appointment Scheduling** – Book appointments with automatic conflict validation.
-* **Patient Dashboard** – View upcoming appointments and manage personal healthcare information.
+* **Secure Account Registration** – Email verification through a one-time password (OTP).
+* **Doctor Search** – Search for doctors by specialization, availability, and additional filters.
+* **Appointment Scheduling** – Schedule appointments with automatic conflict validation.
+* **Patient Dashboard** – Track upcoming appointments and manage personal healthcare information.
 
 ## 🩺 Doctor Features
 
-* **Appointment Management** – Confirm, complete, or cancel scheduled appointments.
-* **Professional Profile Management** – Update qualifications, specialties, experience, and consultation fees.
-* **Availability Tracking** – Monitor schedules and daily patient appointments.
+* **Appointment Management** – Confirm, complete, or cancel scheduled patient appointments.
+* **Professional Profile Management** – Manage qualifications, specialties, experience, and consultation fees.
+* **Availability Tracking** – Track schedules and daily patient appointments.
 
 ## 🛡️ Administration
 
-* **User Management** – Manage patients, doctors, and system administrators.
-* **Data Integrity** – Soft-delete support for preserving historical records.
-* **Platform Security** – Built-in rate limiting and account lockout mechanisms for authentication endpoints.
+* **User Management** – Manage patient, doctor, and administrator accounts.
+* **Data Integrity** – Soft-delete support to preserve historical records.
+* **Platform Security** – Integrated rate limiting and account lockout mechanisms for authentication endpoints.
 
 ---
 
@@ -33,10 +33,10 @@ MediConnect is a modern healthcare appointment management platform developed wit
 
 * **Framework:** Spring Boot 3.2.5 (Java 21)
 * **Authentication:** Stateless JWT authentication with refresh token rotation.
-* **Database:** PostgreSQL 16 with Spring Data JPA.
-* **Performance:** Optimized database queries using `JOIN FETCH` and asynchronous processing where appropriate.
+* **Database:** PostgreSQL 16 using Spring Data JPA.
+* **Performance:** Optimized database queries with `JOIN FETCH` and asynchronous processing where appropriate.
 * **Core Libraries:** Hibernate, HikariCP, Bucket4j, Lombok, and Jakarta Validation.
-* **Reliability:** Global exception handling and scheduled maintenance tasks.
+* **Reliability:** Centralized exception handling and scheduled maintenance tasks.
 
 ## Frontend
 
@@ -47,75 +47,36 @@ MediConnect is a modern healthcare appointment management platform developed wit
 
 ## DevOps
 
-* **Containerization:** Docker with multi-stage image builds.
-* **Continuous Integration:** GitHub Actions for automated verification.
-* **Monitoring:** Spring Boot Actuator for application health and metrics.
+* **Containerization:** Docker using multi-stage image builds.
+* **Continuous Integration:** GitHub Actions for automated project verification.
+* **Monitoring:** Spring Boot Actuator for health checks and application metrics.
 
 ---
 
 # 🔒 Security & Performance
 
-Security is integrated throughout the platform using multiple layers of protection.
+Security is implemented across the platform through multiple layers of protection.
 
-* **Efficient JWT Processing** – Reduced unnecessary token parsing and redundant database queries.
-* **Rate Limiting** – Protects authentication endpoints from brute-force attempts.
-* **Account Lockout** – Automatically locks accounts after repeated failed login attempts.
-* **Soft Delete Support** – Preserves historical records without permanently removing data.
+* **Efficient JWT Processing** – Minimizes unnecessary token parsing and redundant database queries.
+* **Rate Limiting** – Protects authentication endpoints against brute-force attempts.
+* **Account Lockout** – Automatically locks user accounts after repeated failed login attempts.
+* **Soft Delete Support** – Maintains historical records without permanently deleting data.
 * **HTTP Security Headers** – Includes CSP, HSTS, XSS protection, and other recommended security headers.
 
 ---
 
 # 🛠️ Getting Started
 
-Complete installation instructions are available in **SETUP.md**.
+Detailed installation instructions are available in **SETUP.md**.
 
 ## Quick Start
 
-```bash id="n2hklx"
-# Clone the repository
+```bash
+# Clone the project repository
 git clone https://github.com/mediconnect/mediconnect.git
 
-# Create the environment configuration
+# Create the local environment configuration
 cp .env.example .env
 
-# Build and start the application
+# Build and launch the application
 docker compose up --build
-```
-
----
-
-# 🤖 Future Plans
-
-MediConnect will continue to evolve with additional features and infrastructure improvements.
-
-## Planned AI Capabilities
-
-* AI-assisted summaries of patient medical histories.
-* Automatic generation of clinical notes after appointments.
-* Natural language search for doctors based on patient symptoms.
-* Predictive analytics for appointment demand and no-show probabilities.
-
-## Planned Infrastructure Improvements
-
-* Redis integration for distributed caching.
-* Event-driven architecture using RabbitMQ or Kafka.
-* Native mobile applications for Android and iOS.
-
----
-
-# 📚 Documentation
-
-Additional project documentation is available in the following files:
-
-* `ARCHITECTURE.md`
-* `API.md`
-* `SECURITY.md`
-* `DEPLOYMENT.md`
-* `SETUP.md`
-* `CONTRIBUTING.md`
-
----
-
-# 📄 License
-
-This project is licensed under the **MIT License**. See the `LICENSE` file for complete licensing information.
