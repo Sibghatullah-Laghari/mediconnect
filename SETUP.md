@@ -1,23 +1,23 @@
 # Setup Guide – MediConnect
 
-This guide explains how to configure and run the MediConnect project for local development using either Docker or a manual installation.
+This guide describes how to configure and run the MediConnect project for local development using Docker or a manual setup.
 
 ---
 
 # 🛠️ Prerequisites
 
-Before getting started, make sure the following software is installed on your system:
+Before starting, ensure the following software is installed on your system:
 
-* **Docker & Docker Compose** (recommended for the quickest setup)
+* **Docker & Docker Compose** (recommended for a quick setup)
 * **Java Development Kit (JDK 21)** for running the backend locally
 * **Node.js 18 or later** with **npm** for the frontend
-* **PostgreSQL 16** if you plan to use a local database instead of Docker
+* **PostgreSQL 16** if you intend to use a local database instead of Docker
 
 ---
 
 # 🚀 Running with Docker (Recommended)
 
-Docker provides the fastest and most convenient way to launch the complete application.
+Docker offers the fastest and most convenient approach to launch the complete application.
 
 ### 1. Clone the Repository
 
@@ -28,7 +28,7 @@ cd mediconnect
 
 ### 2. Configure Environment Variables
 
-Create a `.env` file in the project root and populate it using the values provided in the **Environment Variables** section below.
+Create a `.env` file in the project root and add the values listed in the **Environment Variables** section below.
 
 ### 3. Build and Start the Containers
 
@@ -38,7 +38,7 @@ docker compose up --build
 
 ### 4. Verify the Services
 
-After all containers have started successfully, the application should be accessible at:
+Once all containers have started successfully, the application should be available at:
 
 * **Frontend:** `http://localhost:5173`
 * **Backend API:** `http://localhost:8080`
@@ -48,12 +48,12 @@ After all containers have started successfully, the application should be access
 
 # 💻 Manual Development Setup
 
-If you prefer not to use Docker, you can run each service independently.
+If you prefer to avoid Docker, each service can be started independently.
 
 ## Database
 
 * Create a PostgreSQL database named **mediconnect**.
-* Update the database configuration in `backend/src/main/resources/application-dev.properties` or provide the required environment variables.
+* Update the database settings in `backend/src/main/resources/application-dev.properties` or provide the required environment variables.
 
 ## Backend
 
@@ -69,7 +69,7 @@ Build the application:
 ./mvnw clean install
 ```
 
-Start the Spring Boot application:
+Run the Spring Boot application:
 
 ```bash
 ./mvnw spring-boot:run
@@ -89,7 +89,7 @@ Install the project dependencies:
 npm install
 ```
 
-Start the development server:
+Launch the development server:
 
 ```bash
 npm run dev
@@ -99,9 +99,9 @@ npm run dev
 
 # 🔑 Environment Variables
 
-Create a `.env` file in the project root before running the application.
+Create a `.env` file in the project root before starting the application.
 
-> **Important:** Never commit your actual `.env` file or any sensitive credentials to version control.
+> **Important:** Never commit your real `.env` file or sensitive credentials to version control.
 
 ```env
 # Database Configuration
@@ -134,7 +134,7 @@ ALLOWED_ORIGINS=http://localhost:5173
 
 ## Backend
 
-Run the Spring Boot test suite:
+Execute the Spring Boot test suite:
 
 ```bash
 cd backend
@@ -143,7 +143,7 @@ cd backend
 
 ## Frontend
 
-Run ESLint to identify potential code quality issues:
+Run ESLint to check for potential code quality issues:
 
 ```bash
 cd frontend
@@ -156,15 +156,15 @@ npm run lint
 
 ### Database Connection Problems
 
-Verify that `SPRING_DATASOURCE_URL` points to the correct database host:
+Confirm that `SPRING_DATASOURCE_URL` uses the correct database host:
 
-* Use **postgres** when running the application with Docker.
+* Use **postgres** when running the application through Docker.
 * Use **localhost** when connecting to a locally installed PostgreSQL instance.
 
 ### CORS Errors
 
-Ensure that the value of `ALLOWED_ORIGINS` matches the URL where the frontend application is running.
+Make sure the `ALLOWED_ORIGINS` value matches the URL where the frontend application is running.
 
 ### Email Configuration Issues
 
-When using Gmail as the SMTP provider, generate and use an **App Password** instead of your regular account password. Also, make sure the SMTP settings are configured correctly.
+When using Gmail as the SMTP provider, generate and use an **App Password** rather than your regular account password. Also ensure that the SMTP settings are configured correctly.
