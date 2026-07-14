@@ -8,56 +8,56 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
- * Utility class for security-related operations.
+ * Utility class for common security-related operations.
  * <p>
- * Provides static methods to access the current authentication context,
- * retrieve the currently authenticated user's email and ID, check roles,
- * and enforce role-based permissions. This class is intended to be used
- * throughout the application for security checks and user context retrieval.
+ * Provides static helper methods to access the current authentication context,
+ * retrieve the authenticated user's email and ID, verify roles,
+ * and enforce role-based authorization. This utility is intended for
+ * application-wide security checks and user context retrieval.
  * </p>
  */
 public final class SecurityUtils {
 
     /**
-     * Private constructor to prevent instantiation of this utility class.
+     * Private constructor to prevent instantiation.
      */
     private SecurityUtils() {
     }
 
     /**
-     * Retrieves the current Authentication object from the SecurityContext.
+     * Returns the current Authentication object from the SecurityContext.
      *
-     * @return the Authentication object, or null if none is set
+     * @return the current Authentication object, or null if none is available
      */
     public static Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
     /**
-     * Gets the email of the currently authenticated user.
+     * Returns the email address of the currently authenticated user.
      *
-     * @return the email of the authenticated user
-     * @throws UnauthorizedException if no authenticated user is found
+     * @return the authenticated user's email
+     * @throws UnauthorizedException if no authenticated user is available
      */
     public static String getCurrentUserEmail() {
         return getCurrentAuthenticatedUser().getEmail();
     }
 
     /**
-     * Gets the ID of the currently authenticated user.
+     * Returns the ID of the currently authenticated user.
      *
-     * @return the ID of the authenticated user
-     * @throws UnauthorizedException if no authenticated user is found
+     * @return the authenticated user's ID
+     * @throws UnauthorizedException if no authenticated user is available
      */
     public static Long getCurrentUserId() {
         return getCurrentAuthenticatedUser().getId();
     }
 
     /**
-     * Checks whether the currently authenticated user has the specified role.
+     * Determines whether the currently authenticated user has the specified role.
      *
-     * @param role the role to check against the user's granted authorities
-     * @return true if the user has the role, false otherwise (including if not authenticated)
+     * @param role the role to verify against the user's granted authorities
+     * @return true if the user has the specified role; otherwise false
      */
     public static boolean hasRole(Role role) {
         Authentication authentication = getAuthentication();
@@ -70,13 +70,13 @@ public final class SecurityUtils {
     }
 
     /**
-     * Enforces that the currently authenticated user must have the specified role.
+     * Ensures that the currently authenticated user has the specified role.
      * <p>
-     * If the user does not have the role, an UnauthorizedException is thrown.
+     * Throws an UnauthorizedException if the required role is not present.
      * </p>
      *
      * @param role the required role
-     * @throws UnauthorizedException if the user does not have the role
+     * @throws UnauthorizedException if the user does not have the required role
      */
     public static void requireRole(Role role) {
         if (!hasRole(role)) {
@@ -85,14 +85,15 @@ public final class SecurityUtils {
     }
 
     /**
-     * Retrieves the AuthenticatedUser object from the current SecurityContext.
+     * Returns the AuthenticatedUser from the current SecurityContext.
      * <p>
-     * This method validates that the user is authenticated and that the principal
-     * is an instance of AuthenticatedUser. If not, an UnauthorizedException is thrown.
+     * This method verifies that the current user is authenticated and that
+     * the security principal is an instance of AuthenticatedUser. Otherwise,
+     * an UnauthorizedException is thrown.
      * </p>
      *
-     * @return the AuthenticatedUser representing the currently logged-in user
-     * @throws UnauthorizedException if not authenticated or principal is invalid
+     * @return the currently authenticated AuthenticatedUser
+     * @throws UnauthorizedException if authentication is missing or invalid
      */
     public static AuthenticatedUser getCurrentAuthenticatedUser() {
         Authentication authentication = getAuthentication();
