@@ -18,11 +18,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Filter that applies rate limiting to authentication endpoints.
+ * Filter responsible for rate limiting authentication endpoints.
  * <p>
- * This filter intercepts requests to sensitive auth endpoints (login, register, OTP, refresh)
- * and enforces a limit of 5 attempts per minute per client IP address using the Bucket4j library.
- * When the limit is exceeded, a 429 Too Many Requests response is returned.
+ * Intercepts requests to sensitive authentication endpoints (login, register, OTP, refresh)
+ * and applies a limit of 5 attempts per minute for each client IP using the Bucket4j library.
+ * A 429 Too Many Requests response is returned when the configured limit is exceeded.
  * </p>
  */
 @Slf4j
@@ -30,23 +30,23 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RateLimitingFilter extends OncePerRequestFilter {
 
     /**
-     * In-memory cache mapping client IP addresses to their respective token buckets.
-     * Each bucket tracks the number of allowed requests within a time window.
+     * In-memory store that maps client IP addresses to individual token buckets.
+     * Each bucket tracks allowed requests within the configured time window.
      */
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
 
     /**
-     * Performs rate limiting for authentication requests before passing the request down the filter chain.
+     * Applies rate limiting to authentication requests before continuing the filter chain.
      * <p>
-     * The method extracts the client IP (preferring X-Forwarded-For header for proxies),
-     * retrieves or creates a bucket for that IP, and attempts to consume one token.
-     * If successful, the request proceeds; otherwise, a 429 response is sent.
+     * The client IP is extracted by preferring the X-Forwarded-For header when available,
+     * then a bucket is retrieved or created for that IP before consuming a token.
+     * Successful requests continue through the chain; otherwise, a 429 response is returned.
      * </p>
      *
-     * @param req  the HttpServletRequest
-     * @param res  the HttpServletResponse
-     * @param chain the FilterChain to continue the request processing
-     * @throws ServletException if a servlet error occurs
+     * @param req   the HttpServletRequest
+     * @param res   the HttpServletResponse
+     * @param chain the FilterChain used to continue request processing
+     * @throws ServletException if a servlet-related error occurs
      * @throws IOException if an I/O error occurs
      */
     @Override
@@ -55,22 +55,22 @@ public class RateLimitingFilter extends OncePerRequestFilter {
             HttpServletResponse res,
             FilterChain chain
     ) throws ServletException, IOException {
-        // Only apply rate limiting to authentication-related endpoints
+        // Apply rate limiting only to authentication endpoints
         if (req.getRequestURI().matches(".*/auth/(login|register|send-otp|verify-otp|refresh)")) {
-            // Determine client IP: use X-Forwarded-For if available, otherwise fallback to remote address
+            // Resolve the client IP from the proxy header or remote address
             String ip = req.getHeader("X-Forwarded-For");
             if (ip == null || ip.isBlank()) {
                 ip = req.getRemoteAddr();
             }
 
-            // Retrieve or create a token bucket for this IP
+            // Find or initialize the token bucket associated with this IP
             Bucket bucket = buckets.computeIfAbsent(ip, key -> Bucket4j.builder()
                     .addLimit(Bandwidth.classic(5, Refill.intervally(5, Duration.ofMinutes(1))))
                     .build());
 
-            // Try to consume one token from the bucket
+            // Attempt to consume a single token from the current bucket
             if (!bucket.tryConsume(1)) {
-                // Rate limit exceeded – log and return 429 Too Many Requests
+                // Log the exceeded limit and return a 429 response
                 log.warn("Rate limit exceeded for IP: {} at {}", ip, req.getRequestURI());
                 res.setStatus(429);
                 res.setContentType("application/json");
@@ -79,7 +79,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
             }
         }
 
-        // Continue with the rest of the filter chain
+        // Pass the request to the remaining filters
         chain.doFilter(req, res);
     }
 }
