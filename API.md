@@ -15,6 +15,8 @@ The MediConnect API is a RESTful service that exposes endpoints for authenticati
 | `POST` | `/api/v1/auth/send-otp` | Send an OTP to the user's email | No |
 | `POST` | `/api/v1/auth/verify-otp` | Verify the OTP and activate the account | No |
 
+> **📌 Note**: All authentication endpoints are rate‑limited (see [Rate Limiting](#-rate-limiting) below) to prevent brute‑force attacks.
+
 ---
 
 ## 🩺 Doctors
@@ -28,6 +30,8 @@ The MediConnect API is a RESTful service that exposes endpoints for authenticati
 | `POST` | `/api/v1/doctors` | Create a doctor profile | Yes (Doctor) |
 | `PUT` | `/api/v1/doctors/{id}` | Update a doctor profile | Yes (Owner/Admin) |
 
+> **💡 Short note**: The `GET /doctors` endpoint supports sorting by `rating` or `experience` – check the query parameters.
+
 ---
 
 ## 👤 Patients
@@ -38,6 +42,8 @@ The MediConnect API is a RESTful service that exposes endpoints for authenticati
 | `POST` | `/api/v1/patients` | Create a patient profile | Yes (Patient) |
 | `PUT` | `/api/v1/patients/{id}` | Update a patient profile | Yes (Owner/Admin) |
 | `GET` | `/api/v1/patients` | Retrieve a list of all patients | Yes (Admin) |
+
+> **⚠️ Admin only**: The last endpoint is restricted to administrators – regular users will receive a `403 Forbidden`.
 
 ---
 
@@ -52,6 +58,8 @@ The MediConnect API is a RESTful service that exposes endpoints for authenticati
 | `PATCH` | `/api/v1/appointments/{id}/confirm` | Confirm an appointment | Yes (Doctor/Admin) |
 | `PATCH` | `/api/v1/appointments/{id}/complete` | Mark an appointment as completed | Yes (Doctor/Admin) |
 | `PATCH` | `/api/v1/appointments/{id}/cancel` | Cancel an appointment | Yes |
+
+> **📌 Important**: When booking, the `doctorId` and `dateTime` are mandatory. The system automatically checks for conflicts.
 
 ---
 
@@ -73,23 +81,3 @@ MediConnect uses a standardized JSON error response format:
   "message": "Validation failed for object...",
   "path": "/api/v1/appointments"
 }
-```
-
----
-
-## 🚦 Rate Limiting
-
-Authentication endpoints are protected by rate limiting to help prevent brute-force attacks. If the rate limit is exceeded, the API returns:
-
-- **Status**: `429 Too Many Requests`
-- **Body**: A standard error response with a "Too many requests" message.
-
----
-
-## 📝 Pagination
-
-Endpoints that return collections support pagination through query parameters:
-
-- `page`: Page number (default: `0`)
-- `size`: Number of items per page (default: `10`)
-- `sort`: Sorting criteria (for example, `id,desc`)
