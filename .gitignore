@@ -1,36 +1,102 @@
+# ============================================
+# OS / System files
+# ============================================
 .DS_Store
 Thumbs.db
+*.swp
+*.swo
+# Windows shortcut files
+*.lnk
 
+# ============================================
 # Editors and IDEs
+# ============================================
 .idea/
 .vscode/
 *.iml
+# Eclipse / STS
+.classpath
+.project
+.settings/
+# NetBeans
+nbproject/
 
+# ============================================
 # Logs
+# ============================================
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+# Server logs
+logs/
 
-# Environment files
+# ============================================
+# Environment variables (sensitive data)
+# ============================================
 .env
 .env.local
 .env.*.local
+# Also ignore .env files in subdirs
+**/.env
 
-# Frontend
+# ============================================
+# Frontend (Node.js / Vite)
+# ============================================
 frontend/node_modules/
 frontend/dist/
 frontend/.vite/
 frontend/.cache/
+# Build output
+frontend/build/
+frontend/out/
 
-# Backend
+# ============================================
+# Backend (Java / Maven / Gradle)
+# ============================================
 backend/target/
 backend/.mvn/
 backend/.gradle/
+# Maven wrapper
+backend/mvnw
+backend/mvnw.cmd
+# Gradle wrapper
+backend/gradlew
+backend/gradlew.bat
+# Compiled classes
+*.class
 
-# OS / temporary
+# ============================================
+# Temporary / cache directories
+# ============================================
 tmp/
 temp/
-*.swp
-*.swo
+# OS temp files
+*.tmp
+
+# ============================================
+# Coverage & test reports
+# ============================================
+coverage/
+.nyc_output/
+*.test-results/
+
+# ============================================
+# Package manager lock files (optional)
+# If you want to keep them, comment out the lines below
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# ============================================
+# Docker / Kubernetes
+# ============================================
+*.dockerignore
+docker-compose.override.yml
+*.kubeconfig
+
+# ============================================
+# Additional note (2026-07-16):
+# Keep this file updated as the project grows.
+# ============================================
