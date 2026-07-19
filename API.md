@@ -71,7 +71,7 @@ Successful requests return standard JSON responses containing the requested data
 
 ### Error (4xx / 5xx)
 
-MediConnect uses a standardized JSON error response format:
+MediConnect uses a standardized JSON error response format:-
 
 ```json
 {
