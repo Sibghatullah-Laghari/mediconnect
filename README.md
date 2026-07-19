@@ -73,7 +73,7 @@ Detailed installation instructions are available in **SETUP.md**.
 
 ```bash
 # Clone the project repository
-git clone https://github.com/mediconnect/mediconnect.git
+git clone https://github.com/mediconnect/mediconnect.git.
 
 # Create the local environment configuration
 cp .env.example .env
