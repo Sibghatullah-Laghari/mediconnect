@@ -49,7 +49,7 @@ The following improvements were introduced after the latest security review:
 
 ---
 
-## 📋 Production Security Checklist
+## 📋 Production Security Checklist:-
 
 Before deploying MediConnect to a production environment, verify the following:
 
