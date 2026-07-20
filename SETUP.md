@@ -12,7 +12,7 @@ This guide describes how to configure and run the MediConnect project for local 
 
 Before starting, ensure the following software is installed on your system:
 
-* **Docker & Docker Compose** (recommended for a quick setup)
+* **Docker & Docker Compose** (recommended for a quick setup).
 * **Java Development Kit (JDK 21)** for running the backend locally
 * **Node.js 18 or later** with **npm** for the frontend
 * **PostgreSQL 16** if you intend to use a local database instead of Docker
