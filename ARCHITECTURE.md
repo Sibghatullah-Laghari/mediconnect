@@ -43,7 +43,7 @@ MediConnect is built as a **Modular Monolith**, where the application is deploye
 +---------------------------+
 ```
 
-### Component Responsibilities
+### Component Responsibilities:-
 
 * **Client Applications** – Web and mobile clients communicate with the backend through REST APIs.
 * **Nginx** – Serves the frontend application and forwards API requests to the backend while supporting SPA routing.
