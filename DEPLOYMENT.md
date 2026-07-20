@@ -63,7 +63,7 @@ Recommended minimum resources:
 
 ---
 
-# 🔄 CI/CD
+# 🔄 CI/CD:-
 
 The repository includes a GitHub Actions workflow located in `.github/workflows/ci.yml`.
 
