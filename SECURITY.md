@@ -12,7 +12,7 @@ MediConnect uses a layered security approach to provide protection across authen
 
 ### 1. Authentication
 
-* **JWT-Based Authentication:** Uses stateless and short-lived JSON Web Tokens (JWTs) for user authentication.
+* **JWT-Based Authentication:** Uses stateless and short-lived JSON Web Tokens (JWTs) for user authentication..
 * **Refresh Token Rotation:** Refresh tokens are securely hashed before storage and can be used only once before rotation.
 * **Email OTP Verification:** A six-digit verification code is required during account registration and for sensitive account-related changes.
 
