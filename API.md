@@ -13,7 +13,7 @@ The MediConnect API is a RESTful service that exposes endpoints for authenticati
 | `POST` | `/api/v1/auth/refresh` | Refresh the access token | No |
 | `GET` | `/api/v1/auth/me` | Retrieve the current user's details | Yes |
 | `POST` | `/api/v1/auth/send-otp` | Send an OTP to the user's email | No |
-| `POST` | `/api/v1/auth/verify-otp` | Verify the OTP and activate the account | No |
+| `POST` | `/api/v1/auth/verify-otp` | Verify the OTP and activate the account | No |.
 
 > **📌 Note**: All authentication endpoints are rate‑limited (see [Rate Limiting](#-rate-limiting) below) to prevent brute‑force attacks.
 
