@@ -19,7 +19,7 @@ The MediConnect API is a RESTful service that exposes endpoints for authenticati
 
 ---
 
-## 🩺 Doctors
+## 🩺 Doctors.
 
 | Method | Endpoint | Description | Auth Required |
 | :--- | :--- | :--- | :--- |
@@ -34,7 +34,7 @@ The MediConnect API is a RESTful service that exposes endpoints for authenticati
 
 ---
 
-## 👤 Patients
+## 👤 Patients.
 
 | Method | Endpoint | Description | Auth Required |
 | :--- | :--- | :--- | :--- |
@@ -47,7 +47,7 @@ The MediConnect API is a RESTful service that exposes endpoints for authenticati
 
 ---
 
-## 📅 Appointments
+## 📅 Appointments.
 
 | Method | Endpoint | Description | Auth Required |
 | :--- | :--- | :--- | :--- |
@@ -63,7 +63,7 @@ The MediConnect API is a RESTful service that exposes endpoints for authenticati
 
 ---
 
-## 🛠️ Global Responses
+## 🛠️ Global Responses.
 
 ### Success (200 OK / 201 Created)
 
