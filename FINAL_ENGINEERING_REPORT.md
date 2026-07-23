@@ -42,7 +42,7 @@ MediConnect has evolved into a production-ready healthcare management platform t
 
 ---
 
-# 📚 Documentation Updates
+# 📚 Documentation Updates.
 
 Project documentation has been refreshed and expanded across multiple areas:
 
@@ -54,7 +54,7 @@ Project documentation has been refreshed and expanded across multiple areas:
 
 ---
 
-# ⚠️ Known Limitations
+# ⚠️ Known Limitations.
 
 Although the platform is production-ready, a few architectural improvements remain for future iterations.
 
@@ -63,7 +63,7 @@ Although the platform is production-ready, a few architectural improvements rema
 
 ---
 
-# 🚀 Future Recommendations
+# 🚀 Future Recommendations.
 
 The following enhancements are recommended for future development:
 
