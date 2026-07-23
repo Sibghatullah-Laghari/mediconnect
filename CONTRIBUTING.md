@@ -4,7 +4,7 @@ Thank you for your interest in contributing to MediConnect. Every contribution�
 
 ---
 
-# 🚀 Getting Started
+# 🚀 Getting Started.
 
 To begin contributing:
 
@@ -24,9 +24,9 @@ git clone https://github.com/your-username/mediconnect.git
 
 ---
 
-# 🛠️ Development Guidelines
+# 🛠️ Development Guidelines.
 
-## Backend (Spring Boot / Java)
+## Backend (Spring Boot / Java).
 
 * Follow the **Google Java Style Guide** for consistent code formatting.
 * Design REST APIs using appropriate HTTP methods (`GET`, `POST`, `PUT`, `PATCH`, and `DELETE`).
@@ -34,7 +34,7 @@ git clone https://github.com/your-username/mediconnect.git
 * Use **Jakarta Bean Validation** annotations such as `@NotNull` and `@NotBlank` in request DTOs.
 * Add unit tests for business logic and integration tests for REST controllers whenever applicable.
 
-## Frontend (React)
+## Frontend (React).
 
 * Prefer functional components with React Hooks.
 * Manage server-side data using **TanStack Query (React Query)**.
@@ -44,7 +44,7 @@ git clone https://github.com/your-username/mediconnect.git
 
 ---
 
-# 🧪 Before Submitting
+# 🧪 Before Submitting.
 
 Before opening a pull request, make sure you have completed the following steps:
 
@@ -73,12 +73,12 @@ docs: update setup guide
 
 ---
 
-# 🤝 Community Guidelines
+# 🤝 Community Guidelines.
 
 Please be respectful, constructive, and professional when interacting with other contributors. We aim to maintain a welcoming environment where everyone can collaborate effectively.
 
 ---
 
-# 📄 License
+# 📄 License.
 
 By submitting contributions to MediConnect, you agree that your work will be distributed under the terms of the project's **MIT License**.
