@@ -55,7 +55,7 @@ Before opening a pull request, make sure you have completed the following steps:
 ./mvnw test
 ```
 
-* Run frontend linting.
+* Run frontend linting...
 
 ```bash id="vlu6wn"
 npm run lint
