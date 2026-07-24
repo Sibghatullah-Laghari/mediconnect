@@ -46,7 +46,7 @@ docker compose up -d backend frontend
 
 * Use **PostgreSQL 16** or a later version.
 * A managed database service, such as AWS RDS or Google Cloud SQL, is recommended.
-* Allocate at least **10 GB** of storage with automatic expansion enabled.
+* Allocate at least **10 GB** of storage with automatic expansion enabled...
 
 ## Compute Resources
 
