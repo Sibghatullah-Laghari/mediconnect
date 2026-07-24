@@ -43,7 +43,7 @@ MediConnect is a modern healthcare appointment management platform built with **
 * **Framework:** React 18 with Vite.
 * **State Management:** TanStack Query (React Query v5)..
 * **UI:** Tailwind CSS with Shadcn UI components.
-* **Form Validation:** React Hook Form integrated with Zod.
+* **Form Validation:** React Hook Form integrated with Zod..
 
 ## DevOps
 
