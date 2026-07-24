@@ -81,3 +81,4 @@ MediConnect uses a standardized JSON error response format:-
   "message": "Validation failed for object...",
   "path": "/api/v1/appointments"
 }
+..
