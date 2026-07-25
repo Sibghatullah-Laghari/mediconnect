@@ -16,7 +16,7 @@ docker compose build
 
 ## Configure Environment Variables
 
-Before starting the application, ensure that the `.env` file contains secure production values.
+Before starting the application, ensure that the `.env` file contains secure production values..
 
 Recommended secrets include:
 
