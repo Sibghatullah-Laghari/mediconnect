@@ -63,7 +63,7 @@ The MediConnect API is a RESTful service that exposes endpoints for authenticati
 
 ---
 
-## 🛠️ Global Responses.
+## 🛠️ Global Responses...
 
 ### Success (200 OK / 201 Created)
 
