@@ -9,7 +9,7 @@ Verification performed:
 - Backend test files discovered: `backend/src/test/java/com/mediconnect/BackendApplicationTests.java`, `backend/src/test/java/com/mediconnect/controller/AuthControllerTest.java`, `backend/src/test/java/com/mediconnect/controller/DoctorControllerTest.java`, `backend/src/test/java/com/mediconnect/service/UserServiceImplTest.java`.
 - No frontend test files were present under `frontend/src/`.
 
-Assumptions and estimates are explicitly labeled when used. Everything else is grounded in the code and repo configuration.
+Assumptions and estimates are explicitly labeled when used. Everything else is grounded in the code and repo configuration...
 
 ## Section 1 - Executive Summary
 
