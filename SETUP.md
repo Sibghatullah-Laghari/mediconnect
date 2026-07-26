@@ -10,7 +10,7 @@ This guide describes how to configure and run the MediConnect project for local 
 
 ## 🛠️ Prerequisites
 
-Before starting, ensure the following software is installed on your system:
+Before starting, ensure the following software is installed on your system:-
 
 * **Docker & Docker Compose** (recommended for a quick setup).
 * **Java Development Kit (JDK 21)** for running the backend locally..
@@ -21,7 +21,7 @@ Before starting, ensure the following software is installed on your system:
 
 ---
 
-## 🚀 Running with Docker (Recommended)
+## 🚀 Running with Docker (Recommended):-
 
 Docker offers the fastest and most convenient approach to launch the complete application.
 
