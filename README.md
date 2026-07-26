@@ -67,7 +67,7 @@ Security is implemented across the platform through multiple layers of protectio
 
 # 🛠️ Getting Started
 
-Detailed installation instructions are available in **SETUP.md**.
+Detailed installation instructions are available in **SETUP.md**..
 
 ## Quick Start
 
