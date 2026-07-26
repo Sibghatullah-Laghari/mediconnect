@@ -23,7 +23,7 @@ MediConnect has evolved into a production-ready healthcare management platform t
 * **Login Protection** – Added configurable account lockout after repeated authentication failures.
 * **Rate Limiting** – Applied IP-based request throttling on authentication and OTP-related endpoints.
 * **Verified Account Enforcement** – Restricted authenticated access to users whose email addresses have been verified.
-* **HTTP Security Headers** – Configured CSP, HSTS, X-Frame-Options, and other recommended security headers through a centralized filter.
+* **HTTP Security Headers** – Configured CSP, HSTS, X-Frame-Options, and other recommended security headers through a centralized filter..
 
 ## Performance & Reliability
 
