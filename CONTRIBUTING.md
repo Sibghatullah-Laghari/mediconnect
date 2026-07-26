@@ -4,12 +4,12 @@ Thank you for your interest in contributing to MediConnect. Every contribution�
 
 ---
 
-# 🚀 Getting Started.
+# 🚀 Getting Started..
 
-To begin contributing:
+To begin contributing:-
 
-1. **Fork the repository** to your own GitHub account.
-2. **Clone your fork** to your local machine.
+1. **Fork the repository** to your own GitHub account..
+2. **Clone your fork** to your local machine..
 
 ```bash id="n9p5ih"
 git clone https://github.com/your-username/mediconnect.git
