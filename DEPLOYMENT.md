@@ -84,7 +84,7 @@ For production deployments, consider extending the pipeline to include:
 
 ## Spring Boot Actuator
 
-The following endpoints are available for monitoring application health and metrics:
+The following endpoints are available for monitoring application health and metrics:-
 
 * **Health:** `/api/v1/actuator/health`
 * **Metrics:** `/api/v1/actuator/metrics`
