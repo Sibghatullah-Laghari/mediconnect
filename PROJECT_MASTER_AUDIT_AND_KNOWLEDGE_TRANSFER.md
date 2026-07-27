@@ -69,7 +69,7 @@ What is risky:
 - `POST /api/v1/auth/send-otp` - emails a one-time verification code; purpose is email verification; business value is account assurance; source: `backend/src/main/java/com/mediconnect/controller/AuthController.java:49-53`, `backend/src/main/java/com/mediconnect/service/AuthServiceImpl.java:100-118`.
 - `POST /api/v1/auth/verify-otp` - verifies the OTP and marks the user email as verified; purpose is identity confirmation; business value is trust and fraud reduction; source: `backend/src/main/java/com/mediconnect/controller/AuthController.java:55-58`, `backend/src/main/java/com/mediconnect/service/AuthServiceImpl.java:121-136`.
 - Client-side token refresh on 401 and automatic session restoration; purpose is transparent auth recovery; business value is smoother UX; source: `frontend/src/api/axios.js:21-78`, `frontend/src/auth/AuthContext.jsx:19-49`.
-- Client-side logout by clearing in-memory access token and sessionStorage refresh token; purpose is sign-out; business value is account switching and session reset; source: `frontend/src/auth/tokenManager.js:1-26`, `frontend/src/auth/AuthContext.jsx:70-73`.
+- Client-side logout by clearing in-memory access token and sessionStorage refresh token; purpose is sign-out; business value is account switching and session reset; source: `frontend/src/auth/tokenManager.js:1-26`, `frontend/src/auth/AuthContext.jsx:70-73`..
 
 ### User Management
 - `POST /api/v1/users/register` - creates a user record without issuing tokens; purpose is direct account creation; business value is backend-driven onboarding and admin tooling, although the frontend does not use it; source: `backend/src/main/java/com/mediconnect/controller/UserController.java:34-38`.
