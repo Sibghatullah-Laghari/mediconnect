@@ -16,7 +16,7 @@ MediConnect is a modern healthcare appointment management platform built with **
 ## 🩺 Doctor Features
 
 * **Appointment Management** – Confirm, complete, or cancel scheduled patient appointments.
-* **Professional Profile Management** – Manage qualifications, specialties, experience, and consultation fees.
+* **Professional Profile Management** – Manage qualifications, specialties, experience, and consultation fees..
 * **Availability Tracking** – Track schedules and daily patient appointments.
 
 ## 🛡️ Administration
