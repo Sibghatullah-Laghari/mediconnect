@@ -8,7 +8,7 @@ This document provides an overview of the security architecture, audit findings,
 
 ## 🔐 Security Architecture:-
 
-MediConnect uses a layered security approach to provide protection across authentication, authorization, and infrastructure.
+MediConnect uses a layered security approach to provide protection across authentication, authorization, and infrastructure..
 
 ### 1. Authentication:-
 
