@@ -23,7 +23,7 @@ MediConnect is a modern healthcare appointment management platform built with **
 
 * **User Management** – Manage patient, doctor, and administrator accounts.
 * **Data Integrity** – Soft-delete support to preserve historical records.
-* **Platform Security** – Integrated rate limiting and account lockout mechanisms for authentication endpoints.
+* **Platform Security** – Integrated rate limiting and account lockout mechanisms for authentication endpoints..
 
 ---
 
