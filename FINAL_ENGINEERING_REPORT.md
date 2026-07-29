@@ -49,7 +49,7 @@ Project documentation has been refreshed and expanded across multiple areas:
 * **README.md** – Updated project overview, features, and setup instructions.
 * **ARCHITECTURE.md** – Added a detailed explanation of the layered architecture and request flow.
 * **API.md** – Expanded REST API documentation, including pagination behavior and error responses.
-* **SECURITY.md** – Documented implemented security mechanisms and audit improvements.
+* **SECURITY.md** – Documented implemented security mechanisms and audit improvements..
 * **DEPLOYMENT.md** – Added deployment instructions and production recommendations.
 
 ---
