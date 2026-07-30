@@ -4,7 +4,7 @@ Thank you for your interest in contributing to MediConnect. Every contribution�
 
 ---
 
-# 🚀 Getting Started..
+# 🚀 Getting Started.
 
 To begin contributing:-
 
