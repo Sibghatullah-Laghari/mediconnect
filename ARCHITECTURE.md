@@ -45,8 +45,8 @@ MediConnect is built as a **Modular Monolith**, where the application is deploye
 
 ### Component Responsibilities:-
 
-* **Client Applications** – Web and mobile clients communicate with the backend through REST APIs...
-* **Nginx** – Serves the frontend application and forwards API requests to the backend while supporting SPA routing..
-* **Spring Boot API** – Handles authentication, business logic, validation, and communication with external services..
+* **Client Applications** – Web and mobile clients communicate with the backend through REST APIs.
+* **Nginx** – Serves the frontend application and forwards API requests to the backend while supporting SPA routing.
+* **Spring Boot API** – Handles authentication, business logic, validation, and communication with external services.
 * **SMTP Server** – Delivers OTP verification emails and other email notifications..
-* **PostgreSQL** – Stores application data, user accounts, appointments, and other persistent information..
+* **PostgreSQL** – Stores application data, user accounts, appointments, and other persistent information.
