@@ -28,7 +28,7 @@ Recommended secrets include:
 
 Database migrations are executed automatically by Flyway during application startup.
 
-For the initial deployment, start the database service first:
+For the initial deployment, start the database service first
 
 ```bash
 docker compose up -d postgres
