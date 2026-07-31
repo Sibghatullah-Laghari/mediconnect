@@ -1,6 +1,6 @@
 # API Documentation - MediConnect
 
-The MediConnect API is a RESTful service that exposes endpoints for authentication, profile management, and appointment scheduling..
+The MediConnect API is a RESTful service that exposes endpoints for authentication, profile management, and appointment scheduling.
 
 ---
 
