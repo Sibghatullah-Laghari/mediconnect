@@ -65,7 +65,7 @@ Before deploying MediConnect to a production environment, verify the following:
 
 ## 🚨 Reporting Security Issues
 
-If you discover a potential security vulnerability, please avoid opening a public GitHub issue. Instead, report the issue privately by contacting the security team at **[security@mediconnect.com](mailto:security@mediconnect.com)**.
+If you discover a potential security vulnerability, please avoid opening a public GitHub issue. Instead, report the issue privately by contacting the security team at **[security@mediconnect.com](mailto:security@mediconnect.com)**
 
 > 📌 *Response SLA:* The team acknowledges all reports within 48 hours and provides a preliminary fix timeline within 5 business days.
 
