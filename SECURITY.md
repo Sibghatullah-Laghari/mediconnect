@@ -75,7 +75,7 @@ If you discover a potential security vulnerability, please avoid opening a publi
 
 - **CVE‑2026‑0001 (mitigated):** Upgraded `spring-boot-starter-web` to 3.2.9 to address a minor DoS vulnerability in the default exception handler..
 - **Logging enhancement:** Added `@Mask` annotations to sensitive fields (e.g., email, phone) in log messages to prevent PII leakage..
-- **Session fixation:** Added `SessionFixationProtectionFilter` to regenerate session IDs on login (even though JWT is stateless, this protects mixed‑mode deployments)..
+- **Session fixation:** Added `SessionFixationProtectionFilter` to regenerate session IDs on login (even though JWT is stateless, this protects mixed‑mode deployments).
 - **Dependency audit:** Ran `owasp dependency-check` – no high‑severity vulnerabilities found in current dependencies..
 
 ---
