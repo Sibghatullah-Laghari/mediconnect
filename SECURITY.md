@@ -8,13 +8,13 @@ This document provides an overview of the security architecture, audit findings,
 
 ## 🔐 Security Architecture:-
 
-MediConnect uses a layered security approach to provide protection across authentication, authorization, and infrastructure..
+MediConnect uses a layered security approach to provide protection across authentication, authorization, and infrastructure.
 
 ### 1. Authentication:-
 
-* **JWT-Based Authentication:** Uses stateless and short-lived JSON Web Tokens (JWTs) for user authentication..
+* **JWT-Based Authentication:** Uses stateless and short-lived JSON Web Tokens (JWTs) for user authentication.
 * **Refresh Token Rotation:** Refresh tokens are securely hashed before storage and can be used only once before rotation.
-* **Email OTP Verification:** A six-digit verification code is required during account registration and for sensitive account-related changes...
+* **Email OTP Verification:** A six-digit verification code is required during account registration and for sensitive account-related changes.
 
 > 💡 *Best practice:* The OTP expires after 5 minutes – this window is deliberately short to reduce the risk of replay attacks...
 
