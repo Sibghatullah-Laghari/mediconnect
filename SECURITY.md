@@ -16,7 +16,7 @@ MediConnect uses a layered security approach to provide protection across authen
 * **Refresh Token Rotation:** Refresh tokens are securely hashed before storage and can be used only once before rotation.
 * **Email OTP Verification:** A six-digit verification code is required during account registration and for sensitive account-related changes.
 
-> 💡 *Best practice:* The OTP expires after 5 minutes – this window is deliberately short to reduce the risk of replay attacks...
+> 💡 *Best practice:* The OTP expires after 5 minutes – this window is deliberately short to reduce the risk of replay attacks.
 
 ### 2. Authorization
 
