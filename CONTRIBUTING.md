@@ -61,7 +61,7 @@ Before opening a pull request, make sure you have completed the following steps:
 npm run lint
 ```
 
-* Use **Conventional Commits** for commit messages, for example:
+* Use **Conventional Commits** for commit messages, for example
 
 ```text id="8q7z1k"
 feat: add doctor specialization filter
