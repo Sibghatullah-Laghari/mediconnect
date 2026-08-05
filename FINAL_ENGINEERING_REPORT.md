@@ -65,7 +65,7 @@ Although the platform is production-ready, a few architectural improvements rema
 
 # 🚀 Future Recommendations.
 
-The following enhancements are recommended for future development:
+The following enhancements are recommended for future development
 
 1. Replace email-based entity relationships with surrogate key foreign keys.
 2. Add comprehensive audit logging for medical record updates and appointment lifecycle events.
