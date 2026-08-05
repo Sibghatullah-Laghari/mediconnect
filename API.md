@@ -67,7 +67,7 @@ The MediConnect API is a RESTful service that exposes endpoints for authenticati
 
 ### Success (200 OK / 201 Created)
 
-Successful requests return standard JSON responses containing the requested data...
+Successful requests return standard JSON responses containing the requested data.
 
 ### Error (4xx / 5xx)
 
