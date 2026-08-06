@@ -51,4 +51,4 @@ MediConnect is built as a **Modular Monolith**, where the application is deploye
 * **SMTP Server** – Delivers OTP verification emails and other email notifications..
 * **PostgreSQL** – Stores application data, user accounts, appointments, and other persistent information.
 
-.
+
