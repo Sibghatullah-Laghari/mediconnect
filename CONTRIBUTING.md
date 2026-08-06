@@ -83,4 +83,3 @@ Please be respectful, constructive, and professional when interacting with other
 
 By submitting contributions to MediConnect, you agree that your work will be distributed under the terms of the project's **MIT License**
 
-.
