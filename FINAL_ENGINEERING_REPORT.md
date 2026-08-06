@@ -73,5 +73,4 @@ The following enhancements are recommended for future development
 4. Expand automated integration testing to cover additional booking, scheduling, and authentication scenarios.
 
 ---
-
 *Engineering review completed by Junie – AI Principal Software Engineer*
