@@ -100,3 +100,4 @@ docker-compose.override.yml
 # Additional note (2026-07-16):
 # Keep this file updated as the project grows.
 # ============================================
+...
