@@ -82,5 +82,4 @@ If you discover a potential security vulnerability, please avoid opening a publi
 
 *This document is reviewed quarterly. Last review: 2026-07-16. Next review scheduled: 2026-10-16.*
 ..
-......
-......
+.
