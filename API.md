@@ -82,4 +82,3 @@ MediConnect uses a standardized JSON error response format
   "path": "/api/v1/appointments"
 }
 
-....
