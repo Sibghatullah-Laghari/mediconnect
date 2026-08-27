@@ -52,5 +52,5 @@ MediConnect is built as a **Modular Monolith**, where the application is deploye
 * **PostgreSQL** – Stores application data, user accounts, appointments, and other persistent information.
 
 
-.....
+
 
