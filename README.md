@@ -69,7 +69,7 @@ Security is implemented across the platform through multiple layers of protectio
 
 Detailed installation instructions are available in **SETUP.md**
 
-## Quick Start
+## Quick Start:-
 
 ```bash
 # Clone the project repository
