@@ -1,3 +1,5 @@
+//this is a class
+
 package com.mediconnect.dto.appointment;
 
 import java.time.LocalDate;
