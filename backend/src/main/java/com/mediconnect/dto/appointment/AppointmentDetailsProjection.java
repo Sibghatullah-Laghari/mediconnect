@@ -1,3 +1,5 @@
+// this is class
+
 package com.mediconnect.dto.appointment;
 
 import com.mediconnect.model.AppointmentStatus;
