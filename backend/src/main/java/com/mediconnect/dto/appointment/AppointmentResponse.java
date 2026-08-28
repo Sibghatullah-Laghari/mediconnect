@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 /**
- * Response DTO representing appointment details returned to clients.
+ * Response DTO representing appointment details returned to clients...
  */
 @Getter
 @NoArgsConstructor
