@@ -108,4 +108,3 @@ Before deploying MediConnect, verify the following:
 * The database is not publicly accessible.
 * Flyway migrations complete successfully.
 * Health endpoints report the application as healthy.
-* The CI pipeline passes before releasing a new version.
