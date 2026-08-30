@@ -30,7 +30,7 @@ The MediConnect API is a RESTful service that exposes endpoints for authenticati
 | `POST` | `/api/v1/doctors` | Create a doctor profile | Yes (Doctor) |
 | `PUT` | `/api/v1/doctors/{id}` | Update a doctor profile | Yes (Owner/Admin) |
 
-> **💡 Short note**: The `GET /doctors` endpoint supports sorting by `rating` or `experience` – check the query parameters.
+
 
 ---
 
