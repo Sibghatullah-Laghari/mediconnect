@@ -27,6 +27,3 @@ Docker offers the fastest and most convenient approach to launch the complete ap
 
 ### 1. Clone the Repository
 
-```bash
-git clone https://github.com/your-username/mediconnect.git
-cd mediconnect.
