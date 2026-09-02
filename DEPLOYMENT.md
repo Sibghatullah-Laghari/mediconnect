@@ -106,5 +106,3 @@ Before deploying MediConnect, verify the following:
 * Secure environment variables are configured.
 * HTTPS is enabled.
 * The database is not publicly accessible.
-* Flyway migrations complete successfully.
-* Health endpoints report the application as healthy.
