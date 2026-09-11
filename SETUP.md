@@ -1,6 +1,6 @@
 # Setup Guide – MediConnect
 
-This guide describes how to configure and run the MediConnect project for local development using Docker or a manual setup.
+This guide describes how to configure and run the MediConnect project for local development using Docker or a manual setup..
 
 ---
 
@@ -23,6 +23,6 @@ Before starting, ensure the following software is installed on your system:-
 
 ## 🚀 Running with Docker (Recommended):-
 
-Docker offers the fastest and most convenient approach to launch the complete application.
+Docker offers the fastest and most convenient approach to launch the complete application..
 
 
