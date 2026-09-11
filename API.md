@@ -59,7 +59,7 @@ The MediConnect API is a RESTful service that exposes endpoints for authenticati
 | `PATCH` | `/api/v1/appointments/{id}/complete` | Mark an appointment as completed | Yes (Doctor/Admin) |
 | `PATCH` | `/api/v1/appointments/{id}/cancel` | Cancel an appointment | Yes |
 
-> **📌 Important**: When booking, the `doctorId` and `dateTime` are mandatory. The system automatically checks for conflicts.
+> **📌 Important**: When booking, the `doctorId` and `dateTime` are mandatory. The system automatically checks for conflicts..
 
 ---
 
@@ -82,3 +82,7 @@ MediConnect uses a standardized JSON error response format
   "path": "/api/v1/appointments"
 }
 
+..
+{
+.
+}
