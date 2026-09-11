@@ -25,5 +25,4 @@ Before starting, ensure the following software is installed on your system:-
 
 Docker offers the fastest and most convenient approach to launch the complete application.
 
-### 1. Clone the Repository
 
