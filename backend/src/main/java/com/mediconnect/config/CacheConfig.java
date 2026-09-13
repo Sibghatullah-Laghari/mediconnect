@@ -21,9 +21,7 @@ public class CacheConfig {
      * Creates and configures a Caffeine cache specification.
      * <p>
      * This bean defines the default caching behavior including initial capacity,
-     * maximum size, expiration policy, and statistics recording.
-     *
-     * @return a configured Caffeine builder instance
+     * maximum size, expiration policy, and statistics recording
      */
     @Bean
     public Caffeine<Object, Object> caffeineSpec() {
