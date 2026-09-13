@@ -33,7 +33,6 @@ public class DoctorController {
      * Creates a new doctor.
      *
      * @param request the doctor creation details
-     * @return the created doctor response
      */
     @PostMapping
     public ResponseEntity<DoctorResponse> createDoctor(@Valid @RequestBody CreateDoctorRequest request) {
