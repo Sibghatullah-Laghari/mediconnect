@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
  *     <li>JWT token refresh</li>
  *     <li>Current user retrieval</li>
  *     <li>OTP generation and verification</li>
- *     <li>User logout</li>
  * </ul>
  */
 @Slf4j
