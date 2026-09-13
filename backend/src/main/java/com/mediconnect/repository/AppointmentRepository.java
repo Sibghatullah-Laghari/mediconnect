@@ -15,10 +15,10 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repository for managing Appointment entities.
+ * Repository for managing Appointment entities..
  *
- * <p>Provides CRUD operations and custom query methods for
- * retrieving appointments by patient, doctor, status, and date.
+ * <p>Provides CRUD operations and custom query methods for..
+ * retrieving appointments by patient, doctor, status, and date..
  */
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
