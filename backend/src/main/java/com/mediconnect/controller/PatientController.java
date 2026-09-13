@@ -31,7 +31,6 @@ public class PatientController {
 
     /**
      * Creates a new patient.
-     *
      * @param request the patient creation details
      * @return the created patient response
      */
