@@ -56,7 +56,7 @@ Project documentation has been refreshed and expanded across multiple areas:
 
 # ⚠️ Known Limitations.
 
-Although the platform is production-ready, a few architectural improvements remain for future iterations.
+Although the platform is production-ready, a few architectural improvements remain for future iterations..
 
 * **Email-Based Relationships** – Doctor and Patient entities are currently associated with users through email matching. Migrating to explicit UUID or Long foreign keys would improve consistency and simplify future email updates.
 * **Caching Layer** – Introducing Redis would improve performance for frequently accessed data such as doctor specializations and other common lookups.
