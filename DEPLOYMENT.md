@@ -99,10 +99,3 @@ When the production profile is enabled, backend logs are written to standard out
 
 ---
 
-# ✅ Production Checklist
-
-Before deploying MediConnect, verify the following:
-
-* Secure environment variables are configured.
-* HTTPS is enabled.
-* The database is not publicly accessible.
