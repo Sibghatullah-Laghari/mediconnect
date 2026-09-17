@@ -311,12 +311,6 @@ This works for a small MVP, but it is not a strong long-term data model because:
 - The migration creates the schema.
 - JPA entities use `@SQLDelete` and `@Where` for soft deletes.
 - Services map DTOs to entities manually.
-- Appointment lookups currently fetch entities and then dereference lazy associations in memory, which creates N+1 pressure.
-
-### External Integration Flow
-- SMTP mail is the only real external service integration.
-- `JavaMailSender` sends OTP email through Gmail SMTP settings in `application.properties`.
-- There is no payment provider, SMS provider, push provider, or third-party API beyond auth-related libraries.
 
 ### Textual Architecture Diagram
 Client
