@@ -100,6 +100,4 @@ When the production profile is enabled, backend logs are written to standard out
 ---
 
 ........
-////////
-,,,,,,,
-;;;;;;
+
