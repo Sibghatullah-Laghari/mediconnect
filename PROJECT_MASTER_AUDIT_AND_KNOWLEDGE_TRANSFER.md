@@ -206,8 +206,6 @@ What is risky:
 | `doctors` | Stores doctor profile data | `id` | None | One doctor can own many appointments | Soft delete via `deleted_at`; email is unique only inside this table, not globally; source: `backend/src/main/resources/db/migration/V1__init.sql:26-38`, `backend/src/main/java/com/mediconnect/model/Doctor.java:17-70`. |
 | `appointments` | Stores visit booking and lifecycle data | `id` | `patient_id -> patients.id`, `doctor_id -> doctors.id` | Many appointments belong to one patient and one doctor | Soft delete, status history through enum, no direct auth-user FK; source: `backend/src/main/resources/db/migration/V1__init.sql:40-53`, `backend/src/main/java/com/mediconnect/model/Appointment.java:28-75`. |
 | `refresh_tokens` | Stores long-lived session tokens | `id` | `user_id -> users.id` | Many tokens belong to one user | Tokens are stored in plaintext; source: `backend/src/main/resources/db/migration/V1__init.sql:55-63`, `backend/src/main/java/com/mediconnect/model/RefreshToken.java:19-45`. |
-| `email_verification_tokens` | Stores OTP codes for email verification | `id` | `user_id -> users.id` | Many OTP records belong to one user | Uses `verified` flag and expiry timestamp; source: `backend/src/main/resources/db/migration/V1__init.sql:65-73`, `backend/src/main/java/com/mediconnect/model/EmailVerificationToken.java:19-50`. |
-
 ### Entity Relationship Diagram Description
 - `users` 1 -> many `refresh_tokens`
 - `users` 1 -> many `email_verification_tokens`
