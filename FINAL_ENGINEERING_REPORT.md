@@ -62,6 +62,3 @@ Although the platform is production-ready, a few architectural improvements rema
 * **Caching Layer** – Introducing Redis would improve performance for frequently accessed data such as doctor specializations and other common lookups.
 
 ---
-
-,,,,,,,,,....
-/////////
