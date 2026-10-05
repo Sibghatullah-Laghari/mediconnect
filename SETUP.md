@@ -22,4 +22,3 @@ Before starting, ensure the following software is installed on your system:-
 ---
 
 ## 🚀 Running with Docker (Recommended):-
-..................
